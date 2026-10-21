@@ -686,7 +686,7 @@ function readUI(){
     else if(Math.round((last(y)-y[0])/gt)<1) msg='The first and last points must be at least one generation apart. Using the last valid years.';
     else if((last(y)-y[0])/gt>MAXG) msg=`The sampling period spans ${Math.round((last(y)-y[0])/gt).toLocaleString()} generations; the maximum is ${MAXG.toLocaleString()}. Using the last valid values.`;
     $('y-hint').textContent=msg;
-    if(!msg){const tied=st.onset===st.years[0]; st.years=y; st.genTime=gt; $('onset').min=y[0]; $('onset').max=last(y)-1; if(tied) $('onset').value=y[0];} }
+    if(!msg){const tied=st.onset===st.years[0]&&y[0]!==st.years[0]; st.years=y; st.genTime=gt; $('onset').min=y[0]; $('onset').max=last(y)-1; if(tied) $('onset').value=y[0];} }
   st.onset=Math.min(Math.max(+$('onset').value,st.years[0]),last(st.years)-1);
   {const a=+$('decline').value; if(a!==DMAP.from(st.decline)) st.decline=+DMAP.to(a).toPrecision(2);} st.mig=+$('mig').value; st.pMig=+$('pmig').value; st.sMale=+$('smale').value; st.kSib=+$('ksib').value; st.maleFrac=+$('mfrac').value;
   st.perfect=$('perfect').checked; st.depthEarly=+$('dh').value; st.depthLast=+$('dm').value; st.err=+$('err').value; st.minDP=+$('mindp').value;
