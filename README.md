@@ -67,7 +67,7 @@ For each replicate:
 
 1. **Start** at the first sampling point with the selected allele at frequency **p₀** in both sexes.
 2. **Each generation**:
-   - form female zygotes from the breeding females and males;
+   - form female zygotes from the breeding females and males (in the haploid system, each individual simply carries one allele);
    - apply **selection** in females (diploid) and in males (haploid or diploid);
    - apply **drift** by binomially sampling the next generation's breeding females and males;
    - optionally apply **population change** and **migration**.
@@ -160,9 +160,9 @@ If α/m is so small that fewer than 10 neutral replicates are expected beyond th
 
 **Set these to match the study design:** inheritance system, years per generation, sampling years, n per point, sex of sampled individuals, sequencing depth, and number of candidate loci.
 
-**Explore these with the parameter power curve:** Ne (via breeding numbers), p₀, s, h and onset year. They are rarely known, and power depends strongly on them.
+**Explore these with the parameter power curve:** Ne (via breeding numbers, or per interval for a known demographic history), p₀, s, h and onset year. They are rarely known, and power depends strongly on them.
 
-**Leave these at their defaults unless there is a specific reason:** no drift (off), population change (1), migration (0), selection in males (1), individuals per family (1), error rate, minimum depth, α, replicates and seed.
+**Leave these at their defaults unless there is a specific reason:** no drift (off), population change (1), Ne per interval (off), migration (0), selection in males (1), individuals per family (1), error rate, minimum depth, α, replicates and seed.
 
 ### Anchoring Ne with heterozygosity data
 
@@ -194,8 +194,8 @@ The tile "Neutral heterozygosity lost from the first to the last point" shows th
 | False-positive rate of a naive test | The fraction of **neutral** replicates rejected by the textbook threshold z₁₋α/m, which ignores drift. Shown in red when it clearly exceeds α/m. |
 | Power that naive test would report | Power using the textbook threshold. It is misleading when the false-positive rate above is inflated. |
 | Expected frequency at the last point without drift | Deterministic allele frequency at the last sampling point. |
-| Neutral heterozygosity lost | 1 − Π(1 − 1/(2·Ne_g)) over the generations from the first to the last point. |
-| Effective population size Ne | Computed from the breeding numbers (start → end if the population changes). |
+| Neutral heterozygosity lost | 1 − Π(1 − 1/(2·Ne_g)) over the generations from the first to the last point (1 − Π(1 − 1/N_g) in the haploid system). |
+| Effective population size Ne | Computed from the breeding numbers (start → end if the population changes), or the lowest and highest values when Ne is set per interval. |
 | Genotypes called correctly | Accuracy of heterozygote calls (or haploid calls), and the share of individuals below the minimum depth. |
 
 ### Charts
@@ -310,7 +310,8 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 |---|---|
 | `runPower(params, {keep})` | `{ trend, two, alphaAdj, zNaive, sel, neu, trajS, trajN, hetAcc, hapAcc, missRate }`. `trend` and `two` each contain `crit`, `method` (`'empirical'` or `'gaussian'`), `powerEmp`, `powerNaive` and `fprNaive`. `sel` and `neu` hold the Z values. `keep` = number of trajectories to return. |
 | `deterministic(params, both)` | The deterministic female frequency trajectory, or `{f, m}` for both sexes if `both` is true. |
-| `neFor(params)` | Ne from `Nf`, `Nm` and `system`. |
+| `neFor(params)` | Ne from `Nf`, `Nm` and `system` (`Nf` alone in the haploid system). |
+| `sizeFactor(params, gens, g)` | Multiplier applied to the breeding numbers in generation `g` (exponential change or per-interval Ne). |
 | `hetRetained(params)` | Expected fraction of neutral heterozygosity retained from the first to the last point. |
 | `gensOf(params)` | Generation index of each sampling year. |
 

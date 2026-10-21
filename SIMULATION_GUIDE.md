@@ -4,7 +4,7 @@ This guide explains, step by step and with real numbers, what SPOT (Selection Po
 
 Every number in this guide was produced with the simulator's own code (`sim.js`) or with the short R scripts mentioned at the end. Settings are given with each example so that it can be reproduced.
 
-The examples use the default design: four sampling points (1935, 1955, 1975 and 2025) and one generation per year. The simulator itself accepts 2 to 20 sampling points and any generation time from 0.05 to 100 years; the logic explained here is the same for any design.
+The examples use the default design: four sampling points (1935, 1955, 1975 and 2025) and one generation per year. The simulator itself accepts 2 to 20 sampling points, any generation time from 0.05 to 100 years, haploid, diploid or haplodiploid inheritance, and an Ne set separately for each interval between sampling points; the logic explained here is the same for any design.
 
 ---
 
@@ -473,6 +473,7 @@ With a very strict cut, too few neutral replays remain above it to place the thr
 
 - Diploid: **Ne = 4·Nf·Nm / (Nf + Nm)**. With N females and N males, Ne = 2N.
 - Haplodiploid: **Ne = 9·Nf·Nm / (4·Nm + 2·Nf)**. With N of each, Ne = 1.5N. Males carry only one copy, so they contribute fewer gene copies to the next generation and the population drifts more for the same head count.
+- Haploid: **Ne = N**, the number of breeding individuals. Each individual passes on one copy, and neutral diversity is lost at a rate of 1/N per generation.
 - A very skewed breeding sex ratio reduces Ne strongly: drift is dominated by the rarer sex.
 
 ### 11.6 Heterozygosity loss: anchoring Ne with real data
