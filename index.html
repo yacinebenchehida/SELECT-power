@@ -871,25 +871,39 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
   let W=0,H=0,ctx=null,raf=0,t0=performance.now();
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function size(){const dpr=Math.min(window.devicePixelRatio||1,2); W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);}
-  function bee(c,x,y,s,flap){ // generic bumblebee, top-down, heading right
-    c.save(); c.translate(x,y); c.scale(s,s);
-    c.fillStyle='rgba(205,222,255,.75)'; c.strokeStyle='rgba(60,80,120,.35)'; c.lineWidth=.6;
-    for(const sgn of [-1,1]){c.save(); c.rotate(sgn*(0.5+0.35*flap)); c.beginPath(); c.ellipse(-2,sgn*9,8,4.2,0,0,Math.PI*2); c.fill(); c.stroke(); c.restore();}
-    c.save(); c.beginPath(); c.ellipse(0,0,11,7.5,0,0,Math.PI*2); c.clip();
-    const bands=['#1d1d1d','#F2C230','#1d1d1d','#F2C230','#F4EFE4']; bands.forEach((col,i)=>{c.fillStyle=col; c.fillRect(-11+i*4.6,-8,4.7,16);}); c.restore();
-    c.beginPath(); c.ellipse(0,0,11,7.5,0,0,Math.PI*2); c.strokeStyle='rgba(0,0,0,.35)'; c.stroke();
-    c.fillStyle='#1d1d1d'; c.beginPath(); c.arc(12,0,4.2,0,Math.PI*2); c.fill();
-    c.strokeStyle='#1d1d1d'; c.lineWidth=1; c.beginPath(); c.moveTo(15,-2); c.quadraticCurveTo(19,-5,21,-8); c.moveTo(15,2); c.quadraticCurveTo(19,5,21,8); c.stroke();
+  function wing(c,ax,ay,sgn,ang,len,wid){ // translucent wing hinged at the thorax, swept back over the abdomen
+    c.save(); c.translate(ax,ay*sgn); c.rotate(sgn*ang);
+    c.beginPath(); c.ellipse(len/2,0,len/2,wid,0,0,Math.PI*2);
+    c.fillStyle='rgba(214,228,255,.55)'; c.strokeStyle='rgba(60,80,120,.45)'; c.lineWidth=.6; c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(1,0); c.lineTo(len*0.85,0); c.strokeStyle='rgba(60,80,120,.25)'; c.stroke(); // vein
     c.restore();
   }
-  function hoverfly(c,x,y,s,flap){ // generic hoverfly, top-down, heading left
+  function bee(c,x,y,s,flap){ // generic bumblebee, seen from above, heading right
+    c.save(); c.translate(x,y); c.scale(s,s);
+    // abdomen: black, yellow, black, white tail
+    c.save(); c.beginPath(); c.ellipse(-6,0,9,7,0,0,Math.PI*2); c.clip();
+    [['#F4EFE4',-15,5],['#1d1d1d',-10,4],['#F2C230',-6,4],['#1d1d1d',-2,6]].forEach(([col,x0,w])=>{c.fillStyle=col; c.fillRect(x0,-8,w+.2,16);}); c.restore();
+    c.beginPath(); c.ellipse(-6,0,9,7,0,0,Math.PI*2); c.strokeStyle='rgba(0,0,0,.35)'; c.lineWidth=.6; c.stroke();
+    // thorax: yellow collar, black band
+    c.save(); c.beginPath(); c.arc(5,0,5.6,0,Math.PI*2); c.clip(); c.fillStyle='#F2C230'; c.fillRect(-1,-6,12,12); c.fillStyle='#1d1d1d'; c.fillRect(2.5,-6,4,12); c.restore();
+    // head and antennae
+    c.fillStyle='#1d1d1d'; c.beginPath(); c.arc(12.5,0,3.8,0,Math.PI*2); c.fill();
+    c.strokeStyle='#1d1d1d'; c.lineWidth=1; c.beginPath(); c.moveTo(15,-1.5); c.quadraticCurveTo(18.5,-4,20,-7.5); c.moveTo(15,1.5); c.quadraticCurveTo(18.5,4,20,7.5); c.stroke();
+    // wings on top, hinged at the thorax
+    for(const sgn of [-1,1]) wing(c,5,2,sgn,Math.PI-0.42-0.25*flap,15,4);
+    c.restore();
+  }
+  function hoverfly(c,x,y,s,flap){ // generic hoverfly, seen from above, heading left
     c.save(); c.translate(x,y); c.scale(-s,s);
-    c.fillStyle='rgba(205,222,255,.7)'; c.strokeStyle='rgba(60,80,120,.35)'; c.lineWidth=.6;
-    for(const sgn of [-1,1]){c.save(); c.rotate(sgn*(0.35+0.25*flap)); c.beginPath(); c.ellipse(-3,sgn*7,10,3.2,0,0,Math.PI*2); c.fill(); c.stroke(); c.restore();}
-    c.save(); c.beginPath(); c.ellipse(-2,0,10,5,0,0,Math.PI*2); c.clip();
-    const bands=['#E58A1F','#1d1d1d','#E58A1F','#1d1d1d','#E58A1F','#1d1d1d','#E58A1F']; const wd=[4,1.5,3,1.5,3,1.5,6]; let xx=-12; bands.forEach((col,i)=>{c.fillStyle=col; c.fillRect(xx,-6,wd[i]+.2,12); xx+=wd[i];}); c.restore();
-    c.fillStyle='#4a4232'; c.beginPath(); c.ellipse(8,0,4,4.2,0,0,Math.PI*2); c.fill();
-    c.fillStyle='#8A2E1C'; c.beginPath(); c.ellipse(12,-2.4,2.6,3,0,0,Math.PI*2); c.ellipse(12,2.4,2.6,3,0,0,Math.PI*2); c.fill();
+    // flat banded abdomen
+    c.save(); c.beginPath(); c.ellipse(-5,0,9,4.8,0,0,Math.PI*2); c.clip();
+    const bands=['#E58A1F','#1d1d1d','#E58A1F','#1d1d1d','#E58A1F','#1d1d1d','#E58A1F']; const wd=[3,1.4,3,1.4,3,1.4,6]; let xx=-14; bands.forEach((col,i)=>{c.fillStyle=col; c.fillRect(xx,-6,wd[i]+.2,12); xx+=wd[i];}); c.restore();
+    c.beginPath(); c.ellipse(-5,0,9,4.8,0,0,Math.PI*2); c.strokeStyle='rgba(0,0,0,.3)'; c.lineWidth=.6; c.stroke();
+    // thorax, head, large red eyes
+    c.fillStyle='#4a4232'; c.beginPath(); c.ellipse(5,0,4.6,4.2,0,0,Math.PI*2); c.fill();
+    c.fillStyle='#8A2E1C'; c.beginPath(); c.ellipse(10.5,-2.3,2.5,2.9,0,0,Math.PI*2); c.ellipse(10.5,2.3,2.5,2.9,0,0,Math.PI*2); c.fill();
+    // long clear wings, held out to the sides and back
+    for(const sgn of [-1,1]) wing(c,4.5,1.5,sgn,Math.PI-0.85-0.2*flap,16,3.4);
     c.restore();
   }
   function frame(now){
