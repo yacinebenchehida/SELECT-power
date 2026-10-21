@@ -782,7 +782,7 @@ const SWEEPS={
   N:{label:'breeding females = breeding males (per generation)',vals:[100,300,1000,3000,10000,30000,100000],log:true,apply:(p,v)=>{p.Nf=v;p.Nm=v;p.noDrift=false;p.neByBlock=false},cur:p=>p.Nf},
   genTime:{label:'years per generation',log:true,valsFn:p=>{const span=last(p.years)-p.years[0];return [0.1,0.25,0.5,1,2,5,10,20,30,50].filter(v=>span/v<=MAXG&&Math.round(span/v)>=2)},vals:[],apply:(p,v)=>{p.genTime=v},cur:p=>p.genTime},
   depth:{label:'mean depth (×), all points',vals:[2,3,4,6,8,10,13,20,30],apply:(p,v)=>{p.depthEarly=v;p.depthLast=v;p.perfect=false},cur:p=>p.depthEarly},
-  onset:{label:'year selection starts',valsFn:p=>{const a=p.years[0],b=last(p.years);return [...new Set([0,1,2,3,4,5,6,7].map(i=>Math.round(a+(b-a)*i/8)))]},vals:[],apply:(p,v)=>{p.onset=v},cur:p=>p.onset},
+  onset:{label:'year selection starts',year:true,valsFn:p=>{const a=p.years[0],b=last(p.years);return [...new Set([0,1,2,3,4,5,6,7].map(i=>Math.round(a+(b-a)*i/8)))]},vals:[],apply:(p,v)=>{p.onset=v},cur:p=>p.onset},
   s:{label:'selection coefficient s',vals:[0.005,0.01,0.02,0.03,0.05,0.08,0.12,0.2],apply:(p,v)=>{p.s=v},cur:p=>p.s},
   p0:{label:'allele frequency at the first point (p₀)',vals:[0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.4],log:true,apply:(p,v)=>{p.p0=v},cur:p=>p.p0},
   h:{label:'dominance h (in females)',vals:[0,0.25,0.5,0.75,1],apply:(p,v)=>{p.h=v},cur:p=>p.h},
@@ -814,7 +814,7 @@ function drawSweep(def,pts){
   let s='';
   [0,.2,.4,.6,.8,1].forEach(p=>s+=`<line x1="${L}" x2="${W-R}" y1="${Y(p)}" y2="${Y(p)}" stroke="var(--line)"/><text x="${L-8}" y="${Y(p)+4}" text-anchor="end" font-size="10.5" fill="var(--muted)">${p*100}%</text>`);
   s+=`<line x1="${L}" x2="${W-R}" y1="${Y(.8)}" y2="${Y(.8)}" stroke="var(--muted)" stroke-dasharray="3 3"/>`;
-  vals.forEach(v=>s+=`<text x="${X(v)}" y="${B+16}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${v>=1000?fmtN(v):v}</text>`);
+  vals.forEach(v=>s+=`<text x="${X(v)}" y="${B+16}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${def.year?v:(v>=1000?fmtN(v):v)}</text>`);
   s+=`<text x="${(L+W-R)/2}" y="${B+36}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${def.label}</text>`;
   const cur=def.cur(st); if(cur>=vals[0]&&cur<=vals[vals.length-1]) s+=`<line x1="${X(cur)}" x2="${X(cur)}" y1="${T}" y2="${B}" stroke="var(--heather)" stroke-width="1.5"/><text x="${X(cur)+4}" y="${T+10}" font-size="10" fill="var(--heather)">current</text>`;
   const line=(k,c)=>{const d=pts.map((p,i)=>(i?'L':'M')+X(p.v).toFixed(1)+' '+Y(p[k]).toFixed(1)).join('');return `<path d="${d}" fill="none" stroke="${c}" stroke-width="2.2"/>`+pts.map(p=>`<circle cx="${X(p.v)}" cy="${Y(p[k])}" r="4" fill="${p.gauss&&k!=='fp'?'var(--surface)':c}" stroke="${c}" stroke-width="2"><title>${p.v}: ${(p[k]*100).toFixed(1)}%</title></circle>`).join('')};
