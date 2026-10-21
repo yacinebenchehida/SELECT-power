@@ -3,7 +3,7 @@
 // Uses 2,000 replicates under selection and 4,000 neutral (seed 1); takes about a minute.
 
 const S=require('../sim.js');
-const D={system:'haplodiploid',volt:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:2000,seed:1};
+const D={system:'haplodiploid',genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:2000,seed:1};
 const R=(o)=>{const r=S.runPower({...D,...o});return r};
 const f=x=>(x*100).toFixed(1)+'%';
 let r=R({}); console.log('DEFAULT hap', f(r.trend.powerEmp), f(r.two.powerEmp), 'fpr',f(r.trend.fprNaive),'het',f(r.hetAcc), 'det end', S.deterministic(D).slice(-1)[0].toFixed(3), 'Ne', S.neFor(D), 'Hlost', f(1-S.hetRetained(D)));
