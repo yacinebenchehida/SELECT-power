@@ -1,7 +1,5 @@
 # SPOT-simulator: Selection Power Over Time
 
-**SPOT** stands for **S**election **P**ower **O**ver **T**ime.
-
 **▶ Run it in the browser: <https://yacinebenchehida.github.io/SPOT-simulator/>**
 
 A browser-based tool for estimating the **statistical power to detect selection at a single candidate locus** from allele frequencies sampled at **two or more points in time** (for example museum specimens plus a modern sample, ancient DNA series, or any time series of population samples). Generation time is set in years, so it covers both short-lived species (several generations per year) and long-lived ones (decades per generation).
