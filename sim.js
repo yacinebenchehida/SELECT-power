@@ -24,15 +24,19 @@ function makeRng(seed){
   }
   return {u,gauss,binom,pois};
 }
-const YEARS=[1935,1955,1975,2025]; // default sampling years; override with P.years
+const YEARS=[1935,1955,1975,2025]; // default sampling years; override with P.years (any number of points, >= 2)
+/* years per generation: P.genTime, or 1/P.volt (generations per year) for older parameter sets */
+function genTimeOf(P){return P.genTime>0?P.genTime:1/(P.volt||1)}
+/* generation index of each sampling year */
+function gensOf(P){const Yr=P.years||YEARS, gt=genTimeOf(P); return Yr.map(y=>Math.round((y-Yr[0])/gt))}
 
 /* one replicate. Returns allele counts at the sampled points + optional trajectories (female, male) */
 function simulateRep(P,s,R,keep){
-  const Yr=P.years||YEARS, v=P.volt, gens=Yr.map(y=>Math.round((y-Yr[0])*v)), G=gens[gens.length-1];
-  const onset=(P.onset-Yr[0])*v, hap=P.system==='haplodiploid', h=P.h, sMrel=P.sMale;
+  const Yr=P.years||YEARS, gens=gensOf(P), K=gens.length, G=gens[K-1];
+  const onset=(P.onset-Yr[0])/genTimeOf(P), hap=P.system==='haplodiploid', h=P.h, sMrel=P.sMale;
   const inf=P.N===Infinity, mig=P.mig, pMig=P.pMig;
   let pf=P.p0, pm=P.p0, si=0;
-  const x=[0,0,0,0], n=[0,0,0,0], traj=keep?[]:null, trajM=keep?[]:null;
+  const x=new Array(K).fill(0), n=new Array(K).fill(0), traj=keep?[]:null, trajM=keep?[]:null;
   let hetTrue=0, hetCalled=0, missing=0, sampled=0, hapTot=0, hapOk=0;
   const mf=P.maleFrac||0;
   const callOne=(gt,dep)=>{ // returns called genotype or -1 (missing)
@@ -69,8 +73,8 @@ function simulateRep(P,s,R,keep){
     if(hap){ pms=pf*(1+sm)/(pf*(1+sm)+1-pf); }
     else { const wm=AA*(1+sm)+Aa*(1+h*sm)+(1-AA-Aa); mAA=AA*(1+sm)/wm; mAa=Aa*(1+h*sm)/wm; pms=mAA+mAa/2; }
     if(keep){traj.push(pfs);trajM.push(pms)}
-    if(g===gens[si]){
-      const ni=P.n[si], dep=si===3?P.depthLast:P.depthEarly, k=P.kSib;
+    while(si<K&&g===gens[si]){ // several sampling years can fall in the same generation
+      const ni=P.n[si], dep=si===K-1?P.depthLast:P.depthEarly, k=P.kSib;
       if(k<=1){
         for(let i=0;i<ni;i++){
           if(mf>0&&R.u()<mf){ // male
@@ -136,8 +140,8 @@ function prep(P){
 /* run R selected + 2R neutral replicates; compute power several ways */
 function runPower(P0,opt={}){
   const P=prep(P0), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
-  const Yr=P.years||YEARS, t=Yr.map(y=>Math.round((y-Yr[0])*P.volt));
-  const ALL=[0,1,2,3], TWO=[0,3];
+  const t=gensOf(P), K=t.length;
+  const ALL=t.map((_,i)=>i), TWO=[0,K-1];
   const keepK=opt.keep||0;
   const sel={trend:new Float64Array(reps),two:new Float64Array(reps)}, neu={trend:new Float64Array(nn),two:new Float64Array(nn)};
   const trajS=[],trajN=[]; let het=0,hetOk=0,miss=0,samp=0,hT=0,hO=0;
@@ -160,14 +164,14 @@ function runPower(P0,opt={}){
 }
 function deterministic(P0,both){
   const P=prep(Object.assign({},P0,{noDrift:true,perfect:true}));
-  const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:[0,0,0,0]}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
+  const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:(P.years||YEARS).map(()=>0)}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
 }
 /* neutral heterozygosity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)) */
 function hetRetained(P){
   if(P.noDrift) return 1;
-  const Yr=P.years||YEARS, G=Math.round((Yr[3]-Yr[0])*P.volt); let H=1;
+  const g=gensOf(P), G=g[g.length-1]; let H=1;
   for(let g=0;g<G;g++){const f=Math.pow(P.decline,g/G);H*=1-1/(2*neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}))}
   return H;
 }
 function neFor(P){return P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
-if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,YEARS};
+if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,YEARS};

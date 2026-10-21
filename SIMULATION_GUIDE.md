@@ -4,6 +4,8 @@ This guide explains, step by step and with real numbers, what SELECT (SELECTion 
 
 Every number in this guide was produced with the simulator's own code (`sim.js`) or with the short R scripts mentioned at the end. Settings are given with each example so that it can be reproduced.
 
+The examples use the default design: four sampling points (1935, 1955, 1975 and 2025) and one generation per year. The simulator itself accepts 2 to 20 sampling points and any generation time from 0.05 to 100 years; the logic explained here is the same for any design.
+
 ---
 
 ## Contents
@@ -449,7 +451,7 @@ t̄ = Σ nᵢ tᵢ / Σ nᵢ        p̄ = Σ xᵢ / Σ nᵢ
 - Denominator: √(0.506 · 0.494 · [40·62.5² + 40·12.5² + 80·37.5²]) = √(0.25 · 275,000) ≈ **262.2**.
 - **Z ≈ 3.58**, far above the usual thresholds (1.6–2.0): a clear rise.
 
-**The two-point version** uses only the first and last dates. With the same data (11/40 → 50/80) it gives Z ≈ 3.62, identical to the classic two-proportion z-test. The four-point version helps most when selection acts steadily from early on; when selection starts late, the middle dates add little (Example 22).
+**The two-point version** uses only the first and last dates. With the same data (11/40 → 50/80) it gives Z ≈ 3.62, identical to the classic two-proportion z-test. The trend version (all points) helps most when selection acts steadily from early on; when selection starts late, the middle dates add little (Example 22).
 
 ### 11.2 The empirical null with real data
 
@@ -562,7 +564,7 @@ A male gives one copy instead of two, so per specimen males carry less informati
 
 ## 12. How each setting moves the power: reference numbers
 
-Default settings (haplodiploid, 1,000 breeding females and 1,000 breeding males, Ne = 1,500, p₀ = 0.01, s = 0.05, h = 0.5, sampling 20/20/20/40 at 1935/1955/1975/2025, depth 10×/15×) give a four-point power of **67%** and a two-point power of **62%**. Switching only to diploid gives 51% (two-point 50%).
+Default settings (haplodiploid, 1,000 breeding females and 1,000 breeding males, Ne = 1,500, p₀ = 0.01, s = 0.05, h = 0.5, sampling 20/20/20/40 at 1935/1955/1975/2025, depth 10×/15×) give a trend-test power (all four points) of **67%** and a two-point power of **62%**. Switching only to diploid gives 51% (two-point 50%).
 
 | Setting changed | New power | Section |
 |---|---|---|
