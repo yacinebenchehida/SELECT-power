@@ -1,4 +1,4 @@
-/* ===== SELECT (SELECTion power over Time): core (pure functions, no DOM) =====
+/* ===== SPOT (Selection Power Over Time): core (pure functions, no DOM) =====
    Usable in the browser or in Node (module.exports at the bottom). See README.md. */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function makeRng(seed){
@@ -30,10 +30,16 @@ function genTimeOf(P){return P.genTime>0?P.genTime:1/(P.volt||1)}
 /* generation index of each sampling year */
 function gensOf(P){const Yr=P.years||YEARS, gt=genTimeOf(P); return Yr.map(y=>Math.round((y-Yr[0])/gt))}
 
+/* breeding-number multiplier in generation g: per-interval Ne (P.neByBlock) or exponential change (P.decline) */
+function sizeFactor(P,gens,g){
+  const K=gens.length, G=gens[K-1];
+  if(P.neByBlock&&P.neBlocks&&P.neBlocks.length>=K-1){let j=0; while(j<K-2&&g>=gens[j+1]) j++; return P.neBlocks[j]/neFor(P)}
+  return Math.pow(P.decline,g/G);
+}
 /* one replicate. Returns allele counts at the sampled points + optional trajectories (female, male) */
 function simulateRep(P,s,R,keep){
   const Yr=P.years||YEARS, gens=gensOf(P), K=gens.length, G=gens[K-1];
-  const onset=(P.onset-Yr[0])/genTimeOf(P), hap=P.system==='haplodiploid', h=P.h, sMrel=P.sMale;
+  const onset=(P.onset-Yr[0])/genTimeOf(P), hap=P.system==='haplodiploid', hpl=P.system==='haploid', h=P.h, sMrel=P.sMale;
   const inf=P.N===Infinity, mig=P.mig, pMig=P.pMig;
   let pf=P.p0, pm=P.p0, si=0;
   const x=new Array(K).fill(0), n=new Array(K).fill(0), traj=keep?[]:null, trajM=keep?[]:null;
@@ -64,18 +70,22 @@ function simulateRep(P,s,R,keep){
     return c;
   };
   for(let g=0; g<=G; g++){
-    const AA=pf*pm, Aa=pf*(1-pm)+pm*(1-pf);
     const sg=g>onset?s:0, sm=sg*sMrel;
-    const w=AA*(1+sg)+Aa*(1+h*sg)+(1-AA-Aa);
-    const fAA=AA*(1+sg)/w, fAa=Aa*(1+h*sg)/w;
-    const pfs=fAA+fAa/2;
-    let pms, mAA=0, mAa=0;
-    if(hap){ pms=pf*(1+sm)/(pf*(1+sm)+1-pf); }
-    else { const wm=AA*(1+sm)+Aa*(1+h*sm)+(1-AA-Aa); mAA=AA*(1+sm)/wm; mAa=Aa*(1+h*sm)/wm; pms=mAA+mAa/2; }
+    let pfs, pms, fAA=0, fAa=0, mAA=0, mAa=0;
+    if(hpl){ pfs=pf*(1+sg)/(1+pf*sg); pms=pfs; } // haploid: one allele per individual, fitness 1+s or 1
+    else{
+      const AA=pf*pm, Aa=pf*(1-pm)+pm*(1-pf);
+      const w=AA*(1+sg)+Aa*(1+h*sg)+(1-AA-Aa);
+      fAA=AA*(1+sg)/w; fAa=Aa*(1+h*sg)/w; pfs=fAA+fAa/2;
+      if(hap){ pms=pf*(1+sm)/(pf*(1+sm)+1-pf); }
+      else { const wm=AA*(1+sm)+Aa*(1+h*sm)+(1-AA-Aa); mAA=AA*(1+sm)/wm; mAa=Aa*(1+h*sm)/wm; pms=mAA+mAa/2; }
+    }
     if(keep){traj.push(pfs);trajM.push(pms)}
     while(si<K&&g===gens[si]){ // several sampling years can fall in the same generation
       const ni=P.n[si], dep=si===K-1?P.depthLast:P.depthEarly, k=P.kSib;
-      if(k<=1){
+      if(hpl){
+        for(let i=0;i<ni;i++){const c=callHap(R.u()<pfs?1:0,dep);if(c>=0){x[si]+=c;n[si]+=1}}
+      }else if(k<=1){
         for(let i=0;i<ni;i++){
           if(mf>0&&R.u()<mf){ // male
             if(hap){const c=callHap(R.u()<pms?1:0,dep);if(c>=0){x[si]+=c;n[si]+=1}}
@@ -101,9 +111,12 @@ function simulateRep(P,s,R,keep){
     }
     if(inf){pf=pfs;pm=pms}
     else{
-      const f=Math.pow(P.decline,g/G), Nf=Math.max(2,Math.round(P.Nf*f)), Nm=Math.max(2,Math.round(P.Nm*f));
-      pf=R.binom(2*Nf,pfs)/(2*Nf);
-      pm=hap? R.binom(Nm,pms)/Nm : R.binom(2*Nm,pms)/(2*Nm);
+      const f=sizeFactor(P,gens,g), Nf=Math.max(2,Math.round(P.Nf*f)), Nm=Math.max(2,Math.round(P.Nm*f));
+      if(hpl){ pf=R.binom(Nf,pfs)/Nf; pm=pf; }
+      else{
+        pf=R.binom(2*Nf,pfs)/(2*Nf);
+        pm=hap? R.binom(Nm,pms)/Nm : R.binom(2*Nm,pms)/(2*Nm);
+      }
     }
     if(mig>0){const pmg=pMig<0?P.p0:pMig; pf=(1-mig)*pf+mig*pmg; pm=(1-mig)*pm+mig*pmg;}
   }
@@ -166,12 +179,13 @@ function deterministic(P0,both){
   const P=prep(Object.assign({},P0,{noDrift:true,perfect:true}));
   const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:(P.years||YEARS).map(()=>0)}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
 }
-/* neutral heterozygosity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)) */
+/* neutral diversity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)), or prod (1 - 1/N_g) for haploids */
 function hetRetained(P){
   if(P.noDrift) return 1;
-  const g=gensOf(P), G=g[g.length-1]; let H=1;
-  for(let g=0;g<G;g++){const f=Math.pow(P.decline,g/G);H*=1-1/(2*neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}))}
+  const gens=gensOf(P), G=gens[gens.length-1]; let H=1;
+  for(let g=0;g<G;g++){const f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=P.system==='haploid'?1-1/ne:1-1/(2*ne)}
   return H;
 }
-function neFor(P){return P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
-if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,YEARS};
+/* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
+function neFor(P){return P.system==='haploid'? P.Nf : P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
+if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,sizeFactor,YEARS};

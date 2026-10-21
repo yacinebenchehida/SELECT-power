@@ -1,10 +1,12 @@
-# SELECT: SELECTion power over Time
+# SPOT-simulator: Selection Power Over Time
 
-**▶ Run it in the browser: <https://yacinebenchehida.github.io/SELECT-power/>**
+**SPOT** stands for **S**election **P**ower **O**ver **T**ime.
+
+**▶ Run it in the browser: <https://yacinebenchehida.github.io/SPOT-simulator/>**
 
 A browser-based tool for estimating the **statistical power to detect selection at a single candidate locus** from allele frequencies sampled at **two or more points in time** (for example museum specimens plus a modern sample, ancient DNA series, or any time series of population samples). Generation time is set in years, so it covers both short-lived species (several generations per year) and long-lived ones (decades per generation).
 
-It simulates populations forward in time with **genetic drift**, **haplodiploid or diploid inheritance**, **sex-specific breeding numbers and selection**, then samples individuals and passes them through a **low-coverage sequencing and genotype-calling** step. Power is computed against a **drift-aware null**: the test threshold comes from simulated neutral replicates, not from the textbook N(0, 1) distribution.
+It simulates populations forward in time with **genetic drift**, **haploid, diploid or haplodiploid inheritance**, **sex-specific breeding numbers and selection**, then samples individuals and passes them through a **low-coverage sequencing and genotype-calling** step. Power is computed against a **drift-aware null**: the test threshold comes from simulated neutral replicates, not from the textbook N(0, 1) distribution.
 
 Everything runs locally in the browser. A typical run (1,000 replicates under selection plus 2,000 neutral replicates) takes about 0.1–0.4 s.
 
@@ -50,7 +52,7 @@ Why the threshold matters: a standard test that ignores drift sets the threshold
 
 ## Quick start
 
-1. Open the [online version](https://yacinebenchehida.github.io/SELECT-power/), or download `index.html` and open it in any modern browser. No installation or server is needed.
+1. Open the [online version](https://yacinebenchehida.github.io/SPOT-simulator/), or download `index.html` and open it in any modern browser. No installation or server is needed.
 2. Set the parameters that describe **the study design**: inheritance system, years per generation, sampling years and individuals per time point (add or remove time points as needed), sequencing depth and number of candidate loci.
 3. Use the **parameter power curve** to explore the parameters that are **unknown**, such as effective population size, starting frequency, selection strength, dominance and onset of selection. Viewing power over a range is more informative than guessing one value.
 4. Read the first tile, **"Power, trend test across all time points, with a drift-aware threshold"**. This is the headline result.
@@ -88,11 +90,12 @@ Each entry gives the label used in the interface, the key in the JavaScript para
 
 | Interface label | Key | Default | Meaning |
 |---|---|---|---|
-| Haplodiploid / Diploid | `system` | `'haplodiploid'` | Inheritance system. **Haplodiploid**: females are diploid and males are haploid, developing from unfertilised eggs, so a son inherits only his mother's allele. **Diploid**: both sexes are diploid. |
+| Haplodiploid / Diploid / Haploid | `system` | `'haplodiploid'` | Inheritance system. **Haplodiploid**: females are diploid and males are haploid, developing from unfertilised eggs, so a son inherits only his mother's allele. **Diploid**: both sexes are diploid. **Haploid**: every individual carries one copy of the locus (for example haploid organisms or a haploid life stage); there are no sexes, no dominance and no families, so the settings for males, dominance and siblings are hidden. |
 | Years per generation | `genTime` | `1` | Generation time in years (between 0.05 and 100). The number of generations simulated is (last year − first year) / this value, rounded. Use 0.5 for two generations a year, 1 for one, and the average parental age for long-lived species (around 25–30 for humans). Older parameter sets that use `volt` (generations per year) are still accepted. |
-| Breeding females per generation | `Nf` | `1000` | Number of females that actually reproduce each generation. This is **not** a census count of all individuals, and it is not Ne itself (see below). In social insects this is roughly the number of successful reproductive females, not the number of workers. |
-| Breeding males per generation | `Nm` | `1000` | Number of males that actually reproduce each generation. Raise it relative to `Nf` to approximate multiple mating by females. |
+| Breeding females per generation (haploid: breeding individuals) | `Nf` | `1000` | Number of females that actually reproduce each generation. This is **not** a census count of all individuals, and it is not Ne itself (see below). In social insects this is roughly the number of successful reproductive females, not the number of workers. |
+| Breeding males per generation | `Nm` | `1000` | Number of males that actually reproduce each generation. Raise it relative to `Nf` to approximate multiple mating by females. Not used in the haploid system. |
 | No drift (infinite population) | `noDrift` | `false` | Switches drift off. Only useful to reproduce a deterministic calculation. Leave it off for realistic power. |
+| Set Ne separately for each interval | `neByBlock`, `neBlocks` | off | When ticked, an extra column "Ne to next" appears in the sampling design. Each value is the effective population size from that sampling point to the next (`neBlocks` has one value per interval, so one fewer than the number of points). Ne changes abruptly at the sampling dates, which gives simple histories such as a bottleneck between two dates followed by recovery. Breeding females and males are scaled to give exactly that Ne, keeping their ratio. This replaces the breeding numbers and the exponential change. |
 | Breeding numbers at the last point relative to the first | `decline` | `1` (100%) | Exponential change in `Nf` and `Nm` between the first and last sampling year. 1 means constant size, 0.1 a ten-fold decline, 2 a doubling. Use it to ask "what if the population declined?". Otherwise keep it at 1. |
 | Migrants per generation (fraction) | `mig` | `0` | Each generation, this fraction of breeding adults is replaced by migrants. **Keep it at 0** unless immigration from another population is to be modelled. |
 | Allele frequency in the migrant source | `pMig` | `-1` (= p₀) | Allele frequency among migrants. `-1` means "same as p₀", a source where the allele is not under selection. Only used when `mig > 0`. |
@@ -241,16 +244,17 @@ The "Analytic baseline" preset reproduces this setting within Monte Carlo error.
 Per generation g, with p_f and p_m the allele frequencies in breeding females and males:
 
 ```
-Female zygotes (both systems):  AA = p_f·p_m   Aa = p_f(1−p_m) + p_m(1−p_f)   aa = (1−p_f)(1−p_m)
+Female zygotes (diploid, haplodiploid):  AA = p_f·p_m   Aa = p_f(1−p_m) + p_m(1−p_f)   aa = (1−p_f)(1−p_m)
 Selection in females:           weights 1+s, 1+hs, 1      →  p_f* = (AA(1+s) + ½Aa(1+hs)) / w̄
 Males, haplodiploid:            allele from mother only; weights 1+s♂, 1
                                 →  p_m* = p_f(1+s♂) / (p_f(1+s♂) + 1 − p_f)
 Males, diploid:                 same zygote frequencies as females; weights 1+s♂, 1+hs♂, 1
 Male selection:                 s♂ = s × sMale
+Haploid system:                 weights 1+s, 1  →  p* = p(1+s) / (1 + p·s);   drift p' = Bin(N(g), p*) / N(g);   Ne = N
 Drift:                          p_f' = Bin(2·Nf(g), p_f*) / (2·Nf(g))
                                 p_m' = Bin(Nm(g), p_m*) / Nm(g)            (haplodiploid)
                                 p_m' = Bin(2·Nm(g), p_m*) / (2·Nm(g))      (diploid)
-Population change:              N(g) = N × decline^(g/G)
+Population change:              N(g) = N × decline^(g/G),  or, with per-interval Ne, N(g) scaled so that Ne(g) = Ne of the interval containing g
 Migration (after drift):        p' ← (1 − mig)·p' + mig·p_source           (both sexes)
 Sampling, kSib = 1:             each individual is male with probability maleFrac;
                                 diploid genotypes drawn from that sex's post-selection frequencies;
@@ -273,11 +277,12 @@ Selection starts in the generation after the onset year, so a sample taken at th
 const S = require('./sim.js');
 
 const params = {
-  system: 'haplodiploid',          // or 'diploid'
+  system: 'haplodiploid',          // or 'diploid' or 'haploid'
   genTime: 1,                      // years per generation
   Nf: 1000, Nm: 1000,              // breeding females / males per generation
   noDrift: false,
   decline: 1,                      // breeding numbers at the last point relative to the first
+  neByBlock: false, neBlocks: null,// optional: Ne for each interval between sampling points
   mig: 0, pMig: -1,                // migration fraction; source frequency (-1 = p0)
   p0: 0.01, s: 0.05, h: 0.5,       // starting frequency, selection, dominance
   sMale: 1,                        // selection in males, multiple of s
@@ -333,4 +338,5 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 | `sim.js` | Simulation core (pure functions), usable in Node or in the browser. |
 | `README.md` | This documentation. |
 | `SIMULATION_GUIDE.md` | Step-by-step explanation of the simulations, with worked examples. |
+| `POSSIBLE_IMPROVEMENTS.md` | Ideas that are not implemented yet and may be added depending on feedback. |
 | `examples/` | Short R scripts (selection only, drift only, selection + drift with the power calculation) and a Node script that reproduces the numbers in the guide. |

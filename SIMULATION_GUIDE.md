@@ -1,6 +1,6 @@
 # How the simulations work: a guide with worked examples
 
-This guide explains, step by step and with real numbers, what SELECT (SELECTion power over Time) does under the hood: how allele frequencies are simulated, how specimens are sampled, how a power value is produced, and what the more technical pieces of the tool do. It complements the [README](README.md), which describes the parameters and the interface.
+This guide explains, step by step and with real numbers, what SPOT (Selection Power Over Time) does under the hood: how allele frequencies are simulated, how specimens are sampled, how a power value is produced, and what the more technical pieces of the tool do. It complements the [README](README.md), which describes the parameters and the interface.
 
 Every number in this guide was produced with the simulator's own code (`sim.js`) or with the short R scripts mentioned at the end. Settings are given with each example so that it can be reproduced.
 

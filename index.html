@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>SELECT: selection power over time</title>
+<title>SPOT: Selection Power Over Time</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,6 +85,7 @@ input[type=number]:hover,select:hover{border-color:var(--line)}
 input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
 .tp-list{display:grid;gap:6px}
 .tp-row{display:grid;grid-template-columns:1.8em minmax(0,1.2fr) minmax(0,1fr) 30px;gap:6px;align-items:center}
+.tp-ne .tp-row{grid-template-columns:1.6em minmax(0,1.15fr) minmax(0,.9fr) minmax(0,1.1fr) 30px}
 .tp-head{font-size:.68rem;font-family:var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .tp-row .idx{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);text-align:center}
 .tp-row button.del{padding:0;width:28px;height:28px;border-radius:50%;line-height:1;font-size:1rem;color:var(--muted)}
@@ -92,6 +93,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
 .check{display:flex;align-items:center;gap:8px;font-size:.87rem}
 .hint{font-size:.78rem;color:var(--muted);line-height:1.45}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--sunk);border-radius:10px;padding:4px}
+.seg.seg3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .seg button{border:0;border-radius:7px;padding:7px 6px;font-size:.84rem;background:transparent;color:var(--muted);font-weight:500}
 .seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,48,.12)}
 button{font:inherit;font-size:.84rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;transition:border-color .15s,background .15s}
@@ -156,8 +158,8 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
 <header class="hero">
   <div class="hero-in">
   <div class="eyebrow"><span class="base a">A</span><span class="base c">C</span><span class="base g">G</span><span class="base t">T</span> Temporal population genomics · power analysis</div>
-  <h1><em>SELECT</em>: selection power over time</h1>
-  <p class="lede">Estimates the power to detect selection at one candidate locus from allele frequencies sampled at two or more points in time. It accounts for genetic drift, haplodiploid or diploid inheritance, which sex is sampled, related individuals in the sample, and genotype calls from low-coverage sequencing. Every parameter change re-runs fresh replicates under selection and under neutrality, in the browser, typically in well under a second.</p>
+  <h1><em>SPOT</em>: Selection Power Over Time</h1>
+  <p class="lede">Estimates the power to detect selection at one candidate locus from allele frequencies sampled at two or more points in time. It accounts for genetic drift, haploid, diploid or haplodiploid inheritance, changes in population size, which sex is sampled, related individuals in the sample, and genotype calls from low-coverage sequencing. Every parameter change re-runs fresh replicates under selection and under neutrality, in the browser, typically in well under a second.</p>
   <p class="hint">Model: one biallelic autosomal locus, discrete generations, separate numbers of breeding females and males, and selection that can differ between the sexes. Power is estimated by Monte Carlo against a drift-aware null. The README explains every parameter.</p>
   </div>
   <div class="hero-art"><canvas id="trace" role="img" aria-label="Illustration: allele frequencies drifting through time above a DNA helix, with one allele rising under selection, a bee and a hoverfly"></canvas></div>
@@ -175,17 +177,20 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
   </fieldset>
   <fieldset>
     <legend>Inheritance &amp; population</legend>
-    <div class="seg" role="group" aria-label="Inheritance system">
+    <div class="seg seg3" role="group" aria-label="Inheritance system">
       <button type="button" id="tx-hym" aria-pressed="true">Haplodiploid</button>
       <button type="button" id="tx-dip" aria-pressed="false">Diploid</button>
+      <button type="button" id="tx-hap" aria-pressed="false">Haploid</button>
     </div>
     <label for="gentime">Years per generation<input id="gentime" type="number" min="0.05" max="100" step="any"></label>
     <p class="hint">Average age of parents when their offspring are born: for example 1 for one generation a year, 0.5 for two a year, around 25–30 for humans.</p>
-    <label for="nf"><span class="row"><span>Breeding females per generation</span><output id="o-nf"></output></span><input id="nf" type="range" min="0" max="100" step="1"></label>
-    <label for="nm"><span class="row"><span>Breeding males per generation</span><output id="o-nm"></output></span><input id="nm" type="range" min="0" max="100" step="1"></label>
+    <label for="nf"><span class="row"><span id="lab-nf">Breeding females per generation</span><output id="o-nf"></output></span><input id="nf" type="range" min="0" max="100" step="1"></label>
+    <label for="nm" id="row-nm"><span class="row"><span>Breeding males per generation</span><output id="o-nm"></output></span><input id="nm" type="range" min="0" max="100" step="1"></label>
     <p class="hint" id="ne-hint"></p>
     <label class="check" for="nodrift"><input id="nodrift" type="checkbox"> No drift (infinite population)</label>
     <label for="decline"><span class="row"><span>Breeding numbers at the last point relative to the first</span><output id="o-decline"></output></span><input id="decline" type="range" min="0" max="100" step="1"></label>
+    <label class="check" for="neblock"><input id="neblock" type="checkbox"> Set Ne separately for each interval</label>
+    <p class="hint">When ticked, an "Ne to next" column appears in the sampling design, and Ne stays at the chosen value from one sampling point to the next (for example a bottleneck between two dates). It replaces the breeding numbers and the change above.</p>
     <label for="mig"><span class="row"><span>Migrants per generation (fraction)</span><output id="o-mig"></output></span><input id="mig" type="range" min="0" max="0.1" step="0.0025"></label>
     <label for="pmig">Allele frequency in the migrant source
       <select id="pmig"><option value="-1">Same as p₀ (allele not selected in source)</option><option value="0">0 (allele absent)</option><option value="0.5">0.5</option><option value="1">1 (fixed)</option></select></label>
@@ -194,23 +199,23 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <legend>Selection</legend>
     <label for="p0"><span class="row"><span>Allele frequency at the first point (p₀)</span><output id="o-p0"></output></span><input id="p0" type="range" min="0" max="100" step="1"></label>
     <label for="s"><span class="row"><span>Selection coefficient s</span><output id="o-s"></output></span><input id="s" type="range" min="0" max="0.6" step="0.005"></label>
-    <label for="h">Dominance in diploid individuals
+    <label for="h" id="row-h">Dominance in diploid individuals
       <select id="h"><option value="1">Dominant (h = 1)</option><option value="0.75">Partly dominant (h = 0.75)</option><option value="0.5">Additive (h = 0.5)</option><option value="0.25">Partly recessive (h = 0.25)</option><option value="0">Recessive (h = 0)</option></select></label>
-    <label for="smale"><span class="row"><span>Selection in males (× s)</span><output id="o-smale"></output></span><input id="smale" type="range" min="0" max="1.5" step="0.05"></label>
+    <label for="smale" id="row-smale"><span class="row"><span>Selection in males (× s)</span><output id="o-smale"></output></span><input id="smale" type="range" min="0" max="1.5" step="0.05"></label>
     <label for="onset"><span class="row"><span>Selection starts in year</span><output id="o-onset"></output></span><input id="onset" type="range" min="1935" max="2024" step="1"></label>
   </fieldset>
   <fieldset>
     <legend>Sampling design</legend>
-    <div class="tp-row tp-head" aria-hidden="true"><span>#</span><span>Year</span><span>Individuals</span><span></span></div>
+    <div class="tp-row tp-head" id="tp-head" aria-hidden="true"><span>#</span><span>Year</span><span>Individuals</span><span></span></div>
     <div id="tp-list" class="tp-list"></div>
     <div class="btns"><button type="button" id="tp-add">+ Add time point</button></div>
     <p class="hint" id="y-hint" style="color:var(--warn)"></p>
     <p class="hint" id="n-hint"></p>
     <p class="hint" id="tp-note"></p>
-    <label for="mfrac"><span class="row"><span>Males in the sample</span><output id="o-mfrac"></output></span><input id="mfrac" type="range" min="0" max="1" step="0.05"></label>
+    <label for="mfrac" id="row-mfrac"><span class="row"><span>Males in the sample</span><output id="o-mfrac"></output></span><input id="mfrac" type="range" min="0" max="1" step="0.05"></label>
     <p class="hint" id="mfrac-hint"></p>
-    <label for="ksib"><span class="row"><span>Sampled individuals per family</span><output id="o-ksib"></output></span><input id="ksib" type="range" min="1" max="10" step="1"></label>
-    <p class="hint">1 means every individual comes from a different family. Values above 1 sample groups of siblings (same mother and father), which are not independent.</p>
+    <label for="ksib" id="row-ksib"><span class="row"><span>Sampled individuals per family</span><output id="o-ksib"></output></span><input id="ksib" type="range" min="1" max="10" step="1"></label>
+    <p class="hint" id="ksib-hint">1 means every individual comes from a different family. Values above 1 sample groups of siblings (same mother and father), which are not independent.</p>
   </fieldset>
   <fieldset>
     <legend>Sequencing &amp; genotype calls</legend>
@@ -385,7 +390,8 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
 
   <div class="panel">
     <h3>Model details</h3>
-    <div class="eq">Female zygotes (both systems):  AA = p_f·p_m   Aa = p_f(1−p_m) + p_m(1−p_f)   aa = (1−p_f)(1−p_m)
+    <div class="eq">Haploid system:                weights 1+s, 1 → p* = p(1+s) / (1 + p·s);  drift p' = Bin(N(g), p*) / N(g);  Ne = N;  each sampled individual carries one allele
+Female zygotes (diploid, haplodiploid):  AA = p_f·p_m   Aa = p_f(1−p_m) + p_m(1−p_f)   aa = (1−p_f)(1−p_m)
 Selection in females:          weights 1+s, 1+hs, 1      → p_f* = (AA(1+s) + ½Aa(1+hs)) / w̄
 Males, haplodiploid:           allele from the mother only, haploid weights 1+s♂, 1  → p_m* = p_f(1+s♂) / (p_f(1+s♂) + 1 − p_f)
 Males, diploid:                same zygote frequencies as females, weights 1+s♂, 1+hs♂, 1
@@ -393,6 +399,7 @@ Male selection:                s♂ = s × (male multiplier)
 Drift (breeding adults):       p_f' = Bin(2N_f(g), p_f*) / 2N_f(g)     p_m' = Bin(N_m(g), p_m*) / N_m(g)  (haplodiploid)  or  Bin(2N_m(g), p_m*) / 2N_m(g)
 Generations:                   g(year) = round((year − first year) / years per generation),  G = g(last year)
 Population change:             N(g) = N(first point) × D^(g/G)      D = breeding numbers at the last point relative to the first
+                               or, with Ne set per interval, breeding numbers scaled so that Ne(g) = Ne of the interval containing g
 Migration (after drift):       p' ← (1 − m)·p' + m·p_source   in both sexes
 Sampled individuals, k = 1:    male with probability "males in the sample"; diploid individuals drawn from their sex's post-selection genotype frequencies;
                                haploid males carry one allele, A with probability p_m*, called by majority of reads
@@ -407,7 +414,7 @@ Heterozygosity retained:       H(last point) / H(first point) = Π_g (1 − 1 / 
 </div>
 
 <script>
-/* ===== SELECT (SELECTion power over Time): core (pure functions, no DOM) =====
+/* ===== SPOT (Selection Power Over Time): core (pure functions, no DOM) =====
    Usable in the browser or in Node (module.exports at the bottom). See README.md. */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function makeRng(seed){
@@ -439,10 +446,16 @@ function genTimeOf(P){return P.genTime>0?P.genTime:1/(P.volt||1)}
 /* generation index of each sampling year */
 function gensOf(P){const Yr=P.years||YEARS, gt=genTimeOf(P); return Yr.map(y=>Math.round((y-Yr[0])/gt))}
 
+/* breeding-number multiplier in generation g: per-interval Ne (P.neByBlock) or exponential change (P.decline) */
+function sizeFactor(P,gens,g){
+  const K=gens.length, G=gens[K-1];
+  if(P.neByBlock&&P.neBlocks&&P.neBlocks.length>=K-1){let j=0; while(j<K-2&&g>=gens[j+1]) j++; return P.neBlocks[j]/neFor(P)}
+  return Math.pow(P.decline,g/G);
+}
 /* one replicate. Returns allele counts at the sampled points + optional trajectories (female, male) */
 function simulateRep(P,s,R,keep){
   const Yr=P.years||YEARS, gens=gensOf(P), K=gens.length, G=gens[K-1];
-  const onset=(P.onset-Yr[0])/genTimeOf(P), hap=P.system==='haplodiploid', h=P.h, sMrel=P.sMale;
+  const onset=(P.onset-Yr[0])/genTimeOf(P), hap=P.system==='haplodiploid', hpl=P.system==='haploid', h=P.h, sMrel=P.sMale;
   const inf=P.N===Infinity, mig=P.mig, pMig=P.pMig;
   let pf=P.p0, pm=P.p0, si=0;
   const x=new Array(K).fill(0), n=new Array(K).fill(0), traj=keep?[]:null, trajM=keep?[]:null;
@@ -473,18 +486,22 @@ function simulateRep(P,s,R,keep){
     return c;
   };
   for(let g=0; g<=G; g++){
-    const AA=pf*pm, Aa=pf*(1-pm)+pm*(1-pf);
     const sg=g>onset?s:0, sm=sg*sMrel;
-    const w=AA*(1+sg)+Aa*(1+h*sg)+(1-AA-Aa);
-    const fAA=AA*(1+sg)/w, fAa=Aa*(1+h*sg)/w;
-    const pfs=fAA+fAa/2;
-    let pms, mAA=0, mAa=0;
-    if(hap){ pms=pf*(1+sm)/(pf*(1+sm)+1-pf); }
-    else { const wm=AA*(1+sm)+Aa*(1+h*sm)+(1-AA-Aa); mAA=AA*(1+sm)/wm; mAa=Aa*(1+h*sm)/wm; pms=mAA+mAa/2; }
+    let pfs, pms, fAA=0, fAa=0, mAA=0, mAa=0;
+    if(hpl){ pfs=pf*(1+sg)/(1+pf*sg); pms=pfs; } // haploid: one allele per individual, fitness 1+s or 1
+    else{
+      const AA=pf*pm, Aa=pf*(1-pm)+pm*(1-pf);
+      const w=AA*(1+sg)+Aa*(1+h*sg)+(1-AA-Aa);
+      fAA=AA*(1+sg)/w; fAa=Aa*(1+h*sg)/w; pfs=fAA+fAa/2;
+      if(hap){ pms=pf*(1+sm)/(pf*(1+sm)+1-pf); }
+      else { const wm=AA*(1+sm)+Aa*(1+h*sm)+(1-AA-Aa); mAA=AA*(1+sm)/wm; mAa=Aa*(1+h*sm)/wm; pms=mAA+mAa/2; }
+    }
     if(keep){traj.push(pfs);trajM.push(pms)}
     while(si<K&&g===gens[si]){ // several sampling years can fall in the same generation
       const ni=P.n[si], dep=si===K-1?P.depthLast:P.depthEarly, k=P.kSib;
-      if(k<=1){
+      if(hpl){
+        for(let i=0;i<ni;i++){const c=callHap(R.u()<pfs?1:0,dep);if(c>=0){x[si]+=c;n[si]+=1}}
+      }else if(k<=1){
         for(let i=0;i<ni;i++){
           if(mf>0&&R.u()<mf){ // male
             if(hap){const c=callHap(R.u()<pms?1:0,dep);if(c>=0){x[si]+=c;n[si]+=1}}
@@ -510,9 +527,12 @@ function simulateRep(P,s,R,keep){
     }
     if(inf){pf=pfs;pm=pms}
     else{
-      const f=Math.pow(P.decline,g/G), Nf=Math.max(2,Math.round(P.Nf*f)), Nm=Math.max(2,Math.round(P.Nm*f));
-      pf=R.binom(2*Nf,pfs)/(2*Nf);
-      pm=hap? R.binom(Nm,pms)/Nm : R.binom(2*Nm,pms)/(2*Nm);
+      const f=sizeFactor(P,gens,g), Nf=Math.max(2,Math.round(P.Nf*f)), Nm=Math.max(2,Math.round(P.Nm*f));
+      if(hpl){ pf=R.binom(Nf,pfs)/Nf; pm=pf; }
+      else{
+        pf=R.binom(2*Nf,pfs)/(2*Nf);
+        pm=hap? R.binom(Nm,pms)/Nm : R.binom(2*Nm,pms)/(2*Nm);
+      }
     }
     if(mig>0){const pmg=pMig<0?P.p0:pMig; pf=(1-mig)*pf+mig*pmg; pm=(1-mig)*pm+mig*pmg;}
   }
@@ -575,14 +595,15 @@ function deterministic(P0,both){
   const P=prep(Object.assign({},P0,{noDrift:true,perfect:true}));
   const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:(P.years||YEARS).map(()=>0)}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
 }
-/* neutral heterozygosity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)) */
+/* neutral diversity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)), or prod (1 - 1/N_g) for haploids */
 function hetRetained(P){
   if(P.noDrift) return 1;
-  const g=gensOf(P), G=g[g.length-1]; let H=1;
-  for(let g=0;g<G;g++){const f=Math.pow(P.decline,g/G);H*=1-1/(2*neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}))}
+  const gens=gensOf(P), G=gens[gens.length-1]; let H=1;
+  for(let g=0;g<G;g++){const f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=P.system==='haploid'?1-1/ne:1-1/(2*ne)}
   return H;
 }
-function neFor(P){return P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
+/* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
+function neFor(P){return P.system==='haploid'? P.Nf : P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
 (function(){
 const $=id=>document.getElementById(id);
 /* log-scale helpers for sliders */
@@ -595,7 +616,8 @@ const yearTicks=(a,b,k)=>{const span=b-a, raw=span/k, mag=Math.pow(10,Math.floor
 const pct=x=>isNaN(x)?'–':(x*100).toFixed(x>=0.995||x<0.005?1:0)+'%';
 
 const MAXP=20, MAXG=5000, MAXN=1000;
-const DEFAULTS={system:'haplodiploid',genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:1000,seed:1};
+const MAXNE=1e7;
+const DEFAULTS={system:'haplodiploid',neByBlock:false,neBlocks:null,genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:1000,seed:1};
 const PRESETS={
   defaults:DEFAULTS,
   analytic:Object.assign({},DEFAULTS,{system:'diploid',noDrift:true,perfect:true,h:1})
@@ -605,14 +627,19 @@ let stat='trend', lastRes=null; window.__simState=()=>st;
 const last=a=>a[a.length-1];
 const nGen=()=>Math.round((last(st.years)-st.years[0])/st.genTime);
 function fixEnds(){const K=st.n.length; if(st.n[0]<1) st.n[0]=1; if(st.n[K-1]<1) st.n[K-1]=1;}
+const HAPL=()=>st.system==='haploid';
+function ensureBlocks(){const K=st.years.length, d=Math.max(2,Math.round(neFor(st))); if(!Array.isArray(st.neBlocks)) st.neBlocks=[]; while(st.neBlocks.length<K-1) st.neBlocks.push(st.neBlocks.length?last(st.neBlocks):d); st.neBlocks.length=K-1;}
 function buildTP(){
-  const Lst=$('tp-list'), K=st.years.length; let h='';
-  st.years.forEach((y,i)=>{h+=`<div class="tp-row"><span class="idx">${i+1}</span><input type="number" step="1" id="y${i}" value="${y}" aria-label="Year of point ${i+1}"><input type="number" min="${i===0||i===K-1?1:0}" max="${MAXN}" step="1" id="n${i}" value="${st.n[i]}" aria-label="Individuals sampled at point ${i+1}"><button type="button" class="del" data-del="${i}" aria-label="Remove point ${i+1}"${K<=2?' disabled':''}>×</button></div>`});
+  ensureBlocks();
+  const Lst=$('tp-list'), K=st.years.length, nb=st.neByBlock; let h='';
+  Lst.parentElement.classList.toggle('tp-ne',nb);
+  $('tp-head').innerHTML='<span>#</span><span>Year</span><span>Individuals</span>'+(nb?'<span>Ne to next</span>':'')+'<span></span>';
+  st.years.forEach((y,i)=>{h+=`<div class="tp-row"><span class="idx">${i+1}</span><input type="number" step="1" id="y${i}" value="${y}" aria-label="Year of point ${i+1}"><input type="number" min="${i===0||i===K-1?1:0}" max="${MAXN}" step="1" id="n${i}" value="${st.n[i]}" aria-label="Individuals sampled at point ${i+1}">${nb?(i<K-1?`<input type="number" min="2" max="${MAXNE}" step="1" id="ne${i}" value="${st.neBlocks[i]}" aria-label="Ne between point ${i+1} and point ${i+2}">`:'<span class="idx">–</span>'):''}<button type="button" class="del" data-del="${i}" aria-label="Remove point ${i+1}"${K<=2?' disabled':''}>×</button></div>`});
   Lst.innerHTML=h; $('tp-add').disabled=K>=MAXP;
 }
 
 function writeUI(){
-  $('tx-hym').setAttribute('aria-pressed',st.system==='haplodiploid'); $('tx-dip').setAttribute('aria-pressed',st.system==='diploid');
+  $('tx-hym').setAttribute('aria-pressed',st.system==='haplodiploid'); $('tx-dip').setAttribute('aria-pressed',st.system==='diploid'); $('tx-hap').setAttribute('aria-pressed',st.system==='haploid'); $('neblock').checked=st.neByBlock;
   $('gentime').value=st.genTime; $('nf').value=NMAP.from(st.Nf); $('nm').value=NMAP.from(st.Nm); $('nodrift').checked=st.noDrift;
   $('p0').value=PMAP.from(st.p0); $('s').value=st.s; $('h').value=String(st.h); $('onset').value=st.onset;
   buildTP(); $('y-hint').textContent='';
@@ -627,21 +654,27 @@ function labels(){
   $('o-p0').textContent=st.p0; $('o-s').textContent=st.s.toFixed(3); $('o-onset').textContent=st.onset;
   $('o-decline').textContent=(st.decline*100<10?(st.decline*100).toFixed(1):Math.round(st.decline*100))+'%'; $('o-mig').textContent=(st.mig*100).toFixed(2).replace(/\.?0+$/,'')+'%'; $('o-smale').textContent=st.sMale.toFixed(2)+'×'; $('o-ksib').textContent=st.kSib; $('o-mfrac').textContent=Math.round(st.maleFrac*100)+'%';
   $('mfrac-hint').innerHTML=st.system==='haplodiploid'?'Haplodiploid: sampled males are haploid and contribute one allele each; females contribute two. 0% = females only.':'Diploid: both sexes carry two alleles. The male fraction only matters if selection in males differs from females.';
-  ['decline','mig'].forEach(k=>$(k).disabled=st.noDrift&&k==='decline');
+  $('decline').disabled=st.noDrift||st.neByBlock; $('neblock').disabled=st.noDrift;
+  $('lab-nf').textContent=HAPL()?'Breeding individuals per generation':'Breeding females per generation';
+  ['row-nm','row-h','row-smale','row-mfrac','mfrac-hint','row-ksib','ksib-hint'].forEach(id=>$(id).hidden=HAPL());
+  [...$('sweepvar').options].forEach(o=>{o.hidden=o.disabled=HAPL()&&['h','sMale','maleFrac','kSib'].includes(o.value)}); if($('sweepvar').selectedOptions[0].disabled) $('sweepvar').value='nMod';
   $('o-dh').textContent=st.depthEarly+'×'; $('o-dm').textContent=st.depthLast+'×'; $('o-mindp').textContent=st.minDP+' reads';
-  ['nf','nm'].forEach(k=>$(k).disabled=st.noDrift);
+  ['nf','nm'].forEach(k=>$(k).disabled=st.noDrift||st.neByBlock);
   ['dh','dm','err','mindp'].forEach(k=>$(k).disabled=st.perfect);
   const ne=neFor(st), ne2=neFor({system:st.system,Nf:st.Nf*st.decline,Nm:st.Nm*st.decline});
-  $('ne-hint').textContent=st.noDrift?'Drift switched off.':`Effective size Ne ≈ ${fmtN(Math.round(ne))}${st.decline!==1?' at the first point → '+fmtN(Math.round(ne2))+' at the last':''} (${st.system==='haplodiploid'?'haplodiploid: 9NfNm/(4Nm+2Nf)':'diploid: 4NfNm/(Nf+Nm)'}). ${nGen()} generations from ${st.years[0]} to ${last(st.years)}.`;
-  const tot=st.n.reduce((a,b)=>a+b,0), hapM=st.system==='haplodiploid'?st.maleFrac:0, al=Math.round(tot*(2-hapM));
-  $('n-hint').textContent=`${st.n.length} time points, ${tot} individuals ≈ ${al} alleles${hapM>0?' (haploid males count once)':''}.${st.n.length>2?' Set an intermediate point to 0 to leave it out.':''}`;
+  const form=st.system==='haploid'?'haploid: Ne = N':st.system==='haplodiploid'?'haplodiploid: 9NfNm/(4Nm+2Nf)':'diploid: 4NfNm/(Nf+Nm)';
+  $('ne-hint').textContent=st.noDrift?'Drift switched off.':(st.neByBlock?`Ne set per interval in the sampling design: ${st.neBlocks.map(v=>fmtN(v)).join(' → ')}. ${nGen()} generations from ${st.years[0]} to ${last(st.years)}.`:`Effective size Ne ≈ ${fmtN(Math.round(ne))}${st.decline!==1?' at the first point → '+fmtN(Math.round(ne2))+' at the last':''} (${form}). ${nGen()} generations from ${st.years[0]} to ${last(st.years)}.`);
+  const tot=st.n.reduce((a,b)=>a+b,0), hapM=st.system==='haplodiploid'?st.maleFrac:0, al=Math.round(tot*(HAPL()?1:2-hapM));
+  $('n-hint').textContent=`${st.n.length} time points, ${tot} individuals ≈ ${al} alleles${HAPL()?' (one per haploid individual)':hapM>0?' (haploid males count once)':''}.${st.n.length>2?' Set an intermediate point to 0 to leave it out.':''}`;
   const g=gensOf(st), same=[]; for(let i=1;i<g.length;i++) if(g[i]===g[i-1]) same.push((i)+' and '+(i+1));
   $('tp-note').textContent=same.length?`Points ${same.join(', ')} fall in the same generation, so they sample the same population.`:'';
 }
 function readUI(){
   {const a=+$('nf').value,b=+$('nm').value; if(a!==NMAP.from(st.Nf)) st.Nf=roundN(NMAP.to(a)); if(b!==NMAP.from(st.Nm)) st.Nm=roundN(NMAP.to(b));} st.noDrift=$('nodrift').checked;
   {const a=+$('p0').value; if(a!==PMAP.from(st.p0)) st.p0=roundP(PMAP.to(a));} st.s=+$('s').value; st.h=+$('h').value;
+  { const nb=$('neblock').checked; if(nb!==st.neByBlock){st.neByBlock=nb; ensureBlocks(); if(nb&&st.neBlocks.every(v=>v===st.neBlocks[0])) st.neBlocks=st.neBlocks.map(()=>Math.max(2,Math.round(neFor(st)))); buildTP();} }
   if(document.querySelectorAll('#tp-list .tp-row').length!==st.years.length) buildTP();
+  if(st.neByBlock) st.neBlocks=st.neBlocks.map((v,i)=>{const x=Math.round(+($('ne'+i)||{}).value); return Number.isFinite(x)&&x>=2?Math.min(MAXNE,x):v});
   const K=st.years.length;
   st.n=st.n.map((_,i)=>Math.max(i===0||i===K-1?1:0,Math.min(MAXN,Math.round(+$('n'+i).value||0))));
   { const y=st.years.map((_,i)=>Math.round(+$('y'+i).value)), gt=+$('gentime').value;
@@ -662,12 +695,13 @@ let tmr=null;
 let ranOnce=false;
 function schedule(){clearTimeout(tmr);$('status').textContent='Running…';tmr=setTimeout(run,180);if(ranOnce){$('sweep-status').textContent='Parameters changed. Press Draw curve to update this chart.';$('sexs-status').textContent='Parameters changed. Press Compare sampling designs to update.'}}
 document.querySelector('.params').addEventListener('input',e=>{if(e.target.matches('input,select')){readUI();schedule()}});
-$('tp-list').addEventListener('click',e=>{const b=e.target.closest('[data-del]'); if(!b||st.years.length<=2) return; const i=+b.dataset.del; st.years.splice(i,1); st.n.splice(i,1); fixEnds(); writeUI(); schedule();});
+$('tp-list').addEventListener('click',e=>{const b=e.target.closest('[data-del]'); if(!b||st.years.length<=2) return; const i=+b.dataset.del, K0=st.years.length; ensureBlocks(); st.neBlocks.splice(i===0?0:(i===K0-1?K0-2:i),1); st.years.splice(i,1); st.n.splice(i,1); fixEnds(); writeUI(); schedule();});
 $('tp-add').onclick=()=>{ if(st.years.length>=MAXP) return; const K=st.years.length, gap=Math.max(1,st.years[K-1]-st.years[K-2]); const y=st.years[K-1]+gap;
   if((y-st.years[0])/st.genTime>MAXG){$('y-hint').textContent=`Adding a point at ${y} would exceed ${MAXG.toLocaleString()} generations. Edit the years first.`;return}
-  st.years.push(y); st.n.push(st.n[K-1]); writeUI(); schedule(); const inp=$('y'+K); if(inp) inp.focus(); };
+  ensureBlocks(); st.neBlocks.push(last(st.neBlocks)); st.years.push(y); st.n.push(st.n[K-1]); writeUI(); schedule(); const inp=$('y'+K); if(inp) inp.focus(); };
 $('tx-hym').onclick=()=>{st.system='haplodiploid';writeUI();schedule()};
 $('tx-dip').onclick=()=>{st.system='diploid';writeUI();schedule()};
+$('tx-hap').onclick=()=>{st.system='haploid';writeUI();schedule()};
 document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{st=JSON.parse(JSON.stringify(PRESETS[b.dataset.preset]));writeUI();schedule()});
 $('st-trend').onclick=()=>{stat='trend';$('st-trend').setAttribute('aria-pressed',true);$('st-two').setAttribute('aria-pressed',false);if(lastRes)drawDist(lastRes)};
 $('st-two').onclick=()=>{stat='two';$('st-two').setAttribute('aria-pressed',true);$('st-trend').setAttribute('aria-pressed',false);if(lastRes)drawDist(lastRes)};
@@ -682,12 +716,14 @@ function run(){
   const inflated=r.trend.fprNaive>Math.max(1.5*r.alphaAdj,r.alphaAdj+0.01);
   $('tile-fpr').classList.toggle('bad',inflated);
   const det=deterministic(st); $('t-pend').textContent=det[det.length-1].toFixed(3);
-  { const n1=neFor(st), n2=neFor({system:st.system,Nf:st.Nf*st.decline,Nm:st.Nm*st.decline}); $('t-ne').textContent=st.noDrift?'∞':(st.decline!==1?fmtN(Math.round(n1))+'→'+fmtN(Math.round(n2)):fmtN(Math.round(n1))); $('t-ne-lab').textContent=st.decline!==1&&!st.noDrift?'Effective population size Ne, first → last point':'Effective population size Ne'; }
+  { const n1=neFor(st), n2=neFor({system:st.system,Nf:st.Nf*st.decline,Nm:st.Nm*st.decline}); const bl=st.neBlocks||[], bmin=Math.min(...bl), bmax=Math.max(...bl);
+    $('t-ne').textContent=st.noDrift?'∞':st.neByBlock?(bmin===bmax?fmtN(bmin):fmtN(bmin)+'–'+fmtN(bmax)):(st.decline!==1?fmtN(Math.round(n1))+'→'+fmtN(Math.round(n2)):fmtN(Math.round(n1)));
+    $('t-ne-lab').textContent=st.noDrift?'Effective population size Ne':st.neByBlock?'Effective population size Ne, range over intervals':st.decline!==1?'Effective population size Ne, first → last point':'Effective population size Ne'; }
   const hr=hetRetained(st); $('t-hl').textContent=pct(1-hr);
   $('t-het').textContent=st.perfect?'100%':pct(r.hetAcc);
   const onlyHap=isNaN(r.hetAcc)&&!isNaN(r.hapAcc);
   if(onlyHap) $('t-het').textContent=pct(r.hapAcc);
-  $('t-het-lab').textContent=st.perfect?'Genotypes called correctly (perfect genotypes)':(onlyHap?`Haploid male alleles called correctly; ${pct(r.missRate)} of specimens below minimum depth`:`Heterozygotes called correctly${!isNaN(r.hapAcc)?` (haploid males: ${pct(r.hapAcc)})`:''}; ${pct(r.missRate)} of specimens below minimum depth`);
+  $('t-het-lab').textContent=st.perfect?'Genotypes called correctly (perfect genotypes)':(onlyHap?`${HAPL()?'Haploid alleles':'Haploid male alleles'} called correctly; ${pct(r.missRate)} of specimens below minimum depth`:`Heterozygotes called correctly${!isNaN(r.hapAcc)?` (haploid males: ${pct(r.hapAcc)})`:''}; ${pct(r.missRate)} of specimens below minimum depth`);
   $('status').textContent=`${st.reps.toLocaleString()} replicates under selection + ${(2*st.reps).toLocaleString()} neutral · ${ms} ms · threshold: ${r.trend.method==='empirical'?'empirical quantile of neutral replicates':'Gaussian fit to neutral replicates (α′ too small for an empirical quantile)'}`;
   const dn=$('drift-note');
   if(inflated){dn.hidden=false;dn.innerHTML=`<b>Drift inflates false positives.</b> A test that treats sampling noise as the only source of variation would call ${pct(r.trend.fprNaive)} of neutral loci "selected" at a nominal α′ = ${+r.alphaAdj.toPrecision(2)}. The power it reports (${pct(r.trend.powerNaive)}) is therefore misleading. The drift-aware power (${pct(r.trend.powerEmp)}) is the realistic figure.`}
@@ -741,7 +777,7 @@ function drawDist(r){
 const SWEEPS={
   nHist:{label:'individuals at each earlier point',vals:[5,10,15,20,30,40,60],apply:(p,v)=>{const K=p.n.length;p.n=p.n.map((x,i)=>i===K-1?x:(i>0&&x===0?0:v))},cur:p=>p.n[0]},
   nMod:{label:'individuals at the last point',vals:[10,20,30,40,60,80,120],apply:(p,v)=>{p.n[p.n.length-1]=v},cur:p=>last(p.n)},
-  N:{label:'breeding females = breeding males (per generation)',vals:[100,300,1000,3000,10000,30000,100000],log:true,apply:(p,v)=>{p.Nf=v;p.Nm=v;p.noDrift=false},cur:p=>p.Nf},
+  N:{label:'breeding females = breeding males (per generation)',vals:[100,300,1000,3000,10000,30000,100000],log:true,apply:(p,v)=>{p.Nf=v;p.Nm=v;p.noDrift=false;p.neByBlock=false},cur:p=>p.Nf},
   genTime:{label:'years per generation',log:true,valsFn:p=>{const span=last(p.years)-p.years[0];return [0.1,0.25,0.5,1,2,5,10,20,30,50].filter(v=>span/v<=MAXG&&Math.round(span/v)>=2)},vals:[],apply:(p,v)=>{p.genTime=v},cur:p=>p.genTime},
   depth:{label:'mean depth (×), all points',vals:[2,3,4,6,8,10,13,20,30],apply:(p,v)=>{p.depthEarly=v;p.depthLast=v;p.perfect=false},cur:p=>p.depthEarly},
   onset:{label:'year selection starts',valsFn:p=>{const a=p.years[0],b=last(p.years);return [...new Set([0,1,2,3,4,5,6,7].map(i=>Math.round(a+(b-a)*i/8)))]},vals:[],apply:(p,v)=>{p.onset=v},cur:p=>p.onset},
@@ -749,7 +785,7 @@ const SWEEPS={
   p0:{label:'allele frequency at the first point (p₀)',vals:[0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.4],log:true,apply:(p,v)=>{p.p0=v},cur:p=>p.p0},
   h:{label:'dominance h (in females)',vals:[0,0.25,0.5,0.75,1],apply:(p,v)=>{p.h=v},cur:p=>p.h},
   sMale:{label:'selection in males (× s)',vals:[0,0.25,0.5,0.75,1,1.25,1.5],apply:(p,v)=>{p.sMale=v},cur:p=>p.sMale},
-  decline:{label:'breeding numbers at the last point relative to the first',vals:[0.01,0.03,0.1,0.3,1,3,10],log:true,apply:(p,v)=>{p.decline=v;p.noDrift=false},cur:p=>p.decline},
+  decline:{label:'breeding numbers at the last point relative to the first',vals:[0.01,0.03,0.1,0.3,1,3,10],log:true,apply:(p,v)=>{p.decline=v;p.noDrift=false;p.neByBlock=false},cur:p=>p.decline},
   mig:{label:'migrant fraction per generation',vals:[0,0.005,0.01,0.02,0.04,0.06,0.1],apply:(p,v)=>{p.mig=v},cur:p=>p.mig},
   maleFrac:{label:'fraction of males in the sample',vals:[0,0.25,0.5,0.75,1],apply:(p,v)=>{p.maleFrac=v},cur:p=>p.maleFrac},
   kSib:{label:'sampled individuals per family (siblings)',vals:[1,2,3,4,5,6,8,10],apply:(p,v)=>{p.kSib=v},cur:p=>p.kSib},
@@ -903,7 +939,7 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
   var COLS={
     s:{label:'selection coefficient s',vals:[0.01,0.02,0.05,0.1,0.2],apply:function(p,v){p.s=v}},
     h:{label:'dominance h',vals:[0,0.25,0.5,0.75,1],apply:function(p,v){p.h=v}},
-    N:{label:'breeding females = breeding males',vals:[100,300,1000,3000,10000],apply:function(p,v){p.Nf=v;p.Nm=v;p.noDrift=false}},
+    N:{label:'breeding females = breeding males',vals:[100,300,1000,3000,10000],apply:function(p,v){p.Nf=v;p.Nm=v;p.noDrift=false;p.neByBlock=false}},
     p0:{label:'allele frequency at the first point (p₀)',vals:[0.005,0.01,0.05,0.1,0.25],apply:function(p,v){p.p0=v}}
   };
   var fmt=function(v){return v>=1000?(v/1000)+'k':String(v)};
@@ -937,7 +973,7 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
     var k=0, t0=performance.now(); draw(def,grid,st);
     (function step(){
       if(my!==tok) return;
-      if(k>=jobs.length){$('plan-status').textContent=jobs.length+' settings × '+reps.toLocaleString()+' + '+(2*reps).toLocaleString()+' replicates in '+Math.round(performance.now()-t0)+' ms. '+(st.system==='haplodiploid'?'Haplodiploid':'Diploid')+' model; all other parameters at their current values.';return}
+      if(k>=jobs.length){$('plan-status').textContent=jobs.length+' settings × '+reps.toLocaleString()+' + '+(2*reps).toLocaleString()+' replicates in '+Math.round(performance.now()-t0)+' ms. '+({haplodiploid:'Haplodiploid',diploid:'Diploid',haploid:'Haploid'}[st.system])+' model; all other parameters at their current values.';return}
       var J=jobs[k], p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.n=scaleN(st.n,J[2]); def.apply(p,J[3]);
       grid[J[0]][J[1]]=runPower(p).trend.powerEmp; draw(def,grid,st);
       $('plan-status').textContent='Running '+(k+1)+' / '+jobs.length+'…'; k++; setTimeout(step,0);
@@ -950,8 +986,8 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
   document.querySelector('.params').addEventListener('input',stale);
   document.querySelector('.params').addEventListener('click',function(e){if(e.target.closest('button')) stale()});
   // diploid: hide the haploid-male comparison
-  function syncSex(){var dip=$('tx-dip').getAttribute('aria-pressed')==='true'; $('sex-section').hidden=dip;}
-  new MutationObserver(syncSex).observe($('tx-dip'),{attributes:true,attributeFilter:['aria-pressed']}); syncSex();
+  function syncSex(){var hd=$('tx-hym').getAttribute('aria-pressed')==='true'; $('sex-section').hidden=!hd;}
+  new MutationObserver(syncSex).observe($('tx-hym'),{attributes:true,attributeFilter:['aria-pressed']}); syncSex();
   setTimeout(function(){runPlan(); started=true;},8500);
 })();
 
