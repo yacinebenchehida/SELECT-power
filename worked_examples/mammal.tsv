@@ -1,0 +1,22 @@
+history	s	power_trend	power_naive	fpr_naive	power_first_vs_last
+bottleneck: Ne 5,000 then 200	0.02	0.0600	0.0620	0.0525	0.0650
+bottleneck: Ne 5,000 then 200	0.05	0.0850	0.0860	0.0525	0.0850
+bottleneck: Ne 5,000 then 200	0.1	0.1170	0.1140	0.0490	0.1110
+bottleneck: Ne 5,000 then 200	0.15	0.1960	0.1900	0.0490	0.1860
+bottleneck: Ne 5,000 then 200	0.2	0.2700	0.2660	0.0490	0.2490
+bottleneck: Ne 5,000 then 200	0.3	0.4510	0.4480	0.0490	0.4340
+bottleneck: Ne 5,000 then 200	0.5	0.8210	0.8160	0.0490	0.8010
+constant Ne 5,000	0.02	0.0690	0.0460	0.0390	0.0720
+constant Ne 5,000	0.05	0.0860	0.0680	0.0390	0.0870
+constant Ne 5,000	0.1	0.1320	0.1050	0.0390	0.1350
+constant Ne 5,000	0.15	0.2000	0.1710	0.0390	0.2000
+constant Ne 5,000	0.2	0.2750	0.2360	0.0390	0.2710
+constant Ne 5,000	0.3	0.5010	0.4410	0.0390	0.4760
+constant Ne 5,000	0.5	0.8610	0.8300	0.0390	0.8520
+severe bottleneck: Ne 5,000 then 50	0.02	0.0570	0.0920	0.0855	0.0500
+severe bottleneck: Ne 5,000 then 50	0.05	0.0660	0.1100	0.0855	0.0650
+severe bottleneck: Ne 5,000 then 50	0.1	0.1010	0.1470	0.0855	0.0940
+severe bottleneck: Ne 5,000 then 50	0.15	0.1430	0.2130	0.0855	0.1400
+severe bottleneck: Ne 5,000 then 50	0.2	0.1920	0.2690	0.0855	0.1970
+severe bottleneck: Ne 5,000 then 50	0.3	0.3180	0.4120	0.0855	0.3430
+severe bottleneck: Ne 5,000 then 50	0.5	0.6370	0.7230	0.0825	0.6790

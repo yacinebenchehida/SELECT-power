@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="440" viewBox="0 0 1000 440" font-family="Helvetica,Arial,sans-serif">
+<defs><g id="m0"><circle r="4" fill="#2B59D9" stroke="#fff" stroke-width="0.6"/></g><g id="m1"><circle r="4" fill="#0E9F6E" stroke="#fff" stroke-width="0.6"/></g><g id="m2"><circle r="4" fill="#C27A12" stroke="#fff" stroke-width="0.6"/></g><g id="m3"><circle r="3.5" fill="#2B59D9" stroke="#fff" stroke-width="0.6"/></g><g id="m4"><circle r="3.5" fill="#0E9F6E" stroke="#fff" stroke-width="0.6"/></g><g id="m5"><circle r="3.5" fill="#C27A12" stroke="#fff" stroke-width="0.6"/></g></defs>
+<rect width="1000" height="440" fill="#fff"/>
+<text x="75.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">Long-lived mammal (7 generations)</text>
+<text x="23.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">a</text>
+<line x1="75" x2="415" y1="340.0" y2="340.0" stroke="#E1E5EF"/>
+<text x="69" y="344.0" font-size="11" text-anchor="end" fill="#5A6480">0%</text>
+<line x1="75" x2="415" y1="282.0" y2="282.0" stroke="#E1E5EF"/>
+<text x="69" y="286.0" font-size="11" text-anchor="end" fill="#5A6480">20%</text>
+<line x1="75" x2="415" y1="224.0" y2="224.0" stroke="#E1E5EF"/>
+<text x="69" y="228.0" font-size="11" text-anchor="end" fill="#5A6480">40%</text>
+<line x1="75" x2="415" y1="166.0" y2="166.0" stroke="#E1E5EF"/>
+<text x="69" y="170.0" font-size="11" text-anchor="end" fill="#5A6480">60%</text>
+<line x1="75" x2="415" y1="108.0" y2="108.0" stroke="#E1E5EF"/>
+<text x="69" y="112.0" font-size="11" text-anchor="end" fill="#5A6480">80%</text>
+<line x1="75" x2="415" y1="50.0" y2="50.0" stroke="#E1E5EF"/>
+<text x="69" y="54.0" font-size="11" text-anchor="end" fill="#5A6480">100%</text>
+<line x1="75.0" x2="75.0" y1="340" y2="344" stroke="#5A6480"/>
+<text x="75.0" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0</text>
+<line x1="140.4" x2="140.4" y1="340" y2="344" stroke="#5A6480"/>
+<text x="140.4" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.1</text>
+<line x1="205.8" x2="205.8" y1="340" y2="344" stroke="#5A6480"/>
+<text x="205.8" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.2</text>
+<line x1="271.2" x2="271.2" y1="340" y2="344" stroke="#5A6480"/>
+<text x="271.2" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.3</text>
+<line x1="336.5" x2="336.5" y1="340" y2="344" stroke="#5A6480"/>
+<text x="336.5" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.4</text>
+<line x1="401.9" x2="401.9" y1="340" y2="344" stroke="#5A6480"/>
+<text x="401.9" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.5</text>
+<rect x="75" y="50" width="340" height="290" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="245.0" y="376.0" font-size="12" text-anchor="middle" fill="#0F1730">selection coefficient s (per generation)</text>
+<text x="31.0" y="195.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 31.0 195.0)">power</text>
+<path d="M75.0 108.0L415.0 108.0" fill="none" stroke="#5A6480" stroke-width="1.2" stroke-dasharray="5 4" stroke-opacity="1"/>
+<path d="M88.1 320.0L107.7 315.1L140.4 301.7L173.1 282.0L205.8 260.2L271.2 194.7L401.9 90.3" fill="none" stroke="#2B59D9" stroke-width="1.8" stroke-opacity="1"/>
+<use href="#m0" x="88.1" y="320.0"/>
+<use href="#m0" x="107.7" y="315.1"/>
+<use href="#m0" x="140.4" y="301.7"/>
+<use href="#m0" x="173.1" y="282.0"/>
+<use href="#m0" x="205.8" y="260.2"/>
+<use href="#m0" x="271.2" y="194.7"/>
+<use href="#m0" x="401.9" y="90.3"/>
+<path d="M88.1 326.7L107.7 320.3L140.4 309.6L173.1 290.4L205.8 271.6L271.2 212.1L401.9 99.3" fill="none" stroke="#2B59D9" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="1"/>
+<path d="M88.1 322.6L107.7 315.4L140.4 306.1L173.1 283.2L205.8 261.7L271.2 209.2L401.9 101.9" fill="none" stroke="#0E9F6E" stroke-width="1.8" stroke-opacity="1"/>
+<use href="#m1" x="88.1" y="322.6"/>
+<use href="#m1" x="107.7" y="315.4"/>
+<use href="#m1" x="140.4" y="306.1"/>
+<use href="#m1" x="173.1" y="283.2"/>
+<use href="#m1" x="205.8" y="261.7"/>
+<use href="#m1" x="271.2" y="209.2"/>
+<use href="#m1" x="401.9" y="101.9"/>
+<path d="M88.1 322.0L107.7 315.1L140.4 306.9L173.1 284.9L205.8 262.9L271.2 210.1L401.9 103.4" fill="none" stroke="#0E9F6E" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="1"/>
+<path d="M88.1 323.5L107.7 320.9L140.4 310.7L173.1 298.5L205.8 284.3L271.2 247.8L401.9 155.3" fill="none" stroke="#C27A12" stroke-width="1.8" stroke-opacity="1"/>
+<use href="#m2" x="88.1" y="323.5"/>
+<use href="#m2" x="107.7" y="320.9"/>
+<use href="#m2" x="140.4" y="310.7"/>
+<use href="#m2" x="173.1" y="298.5"/>
+<use href="#m2" x="205.8" y="284.3"/>
+<use href="#m2" x="271.2" y="247.8"/>
+<use href="#m2" x="401.9" y="155.3"/>
+<path d="M88.1 313.3L107.7 308.1L140.4 297.4L173.1 278.2L205.8 262.0L271.2 220.5L401.9 130.3" fill="none" stroke="#C27A12" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="1"/>
+<line x1="85" x2="105" y1="64" y2="64" stroke="#2B59D9" stroke-width="2"/>
+<use href="#m3" x="95.0" y="64.0"/>
+<text x="112.0" y="68.0" font-size="11" text-anchor="start" fill="#0F1730">constant Ne 5,000</text>
+<line x1="85" x2="105" y1="81" y2="81" stroke="#0E9F6E" stroke-width="2"/>
+<use href="#m4" x="95.0" y="81.0"/>
+<text x="112.0" y="85.0" font-size="11" text-anchor="start" fill="#0F1730">bottleneck, Ne 5,000 then 200</text>
+<line x1="85" x2="105" y1="98" y2="98" stroke="#C27A12" stroke-width="2"/>
+<use href="#m5" x="95.0" y="98.0"/>
+<text x="112.0" y="102.0" font-size="11" text-anchor="start" fill="#0F1730">severe bottleneck, Ne 5,000 then 50</text>
+<line x1="85" x2="105" y1="115" y2="115" stroke="#5A6480" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="112.0" y="119.0" font-size="11" text-anchor="start" fill="#0F1730">dashed: naive test</text>
+<text x="570.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">Bacterial pathogen (17,000 generations, rescaled)</text>
+<text x="518.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">b</text>
+<line x1="570" x2="910" y1="340.0" y2="340.0" stroke="#E1E5EF"/>
+<text x="564" y="344.0" font-size="11" text-anchor="end" fill="#5A6480">0%</text>
+<line x1="570" x2="910" y1="282.0" y2="282.0" stroke="#E1E5EF"/>
+<text x="564" y="286.0" font-size="11" text-anchor="end" fill="#5A6480">20%</text>
+<line x1="570" x2="910" y1="224.0" y2="224.0" stroke="#E1E5EF"/>
+<text x="564" y="228.0" font-size="11" text-anchor="end" fill="#5A6480">40%</text>
+<line x1="570" x2="910" y1="166.0" y2="166.0" stroke="#E1E5EF"/>
+<text x="564" y="170.0" font-size="11" text-anchor="end" fill="#5A6480">60%</text>
+<line x1="570" x2="910" y1="108.0" y2="108.0" stroke="#E1E5EF"/>
+<text x="564" y="112.0" font-size="11" text-anchor="end" fill="#5A6480">80%</text>
+<line x1="570" x2="910" y1="50.0" y2="50.0" stroke="#E1E5EF"/>
+<text x="564" y="54.0" font-size="11" text-anchor="end" fill="#5A6480">100%</text>
+<line x1="595.5" x2="595.5" y1="340" y2="344" stroke="#5A6480"/>
+<text x="595.5" y="357" font-size="11" text-anchor="middle" fill="#5A6480">2e-05</text>
+<line x1="676.5" x2="676.5" y1="340" y2="344" stroke="#5A6480"/>
+<text x="676.5" y="357" font-size="11" text-anchor="middle" fill="#5A6480">5e-05</text>
+<line x1="737.8" x2="737.8" y1="340" y2="344" stroke="#5A6480"/>
+<text x="737.8" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.0001</text>
+<line x1="799.2" x2="799.2" y1="340" y2="344" stroke="#5A6480"/>
+<text x="799.2" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.0002</text>
+<line x1="880.2" x2="880.2" y1="340" y2="344" stroke="#5A6480"/>
+<text x="880.2" y="357" font-size="11" text-anchor="middle" fill="#5A6480">0.0005</text>
+<rect x="570" y="50" width="340" height="290" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="740.0" y="376.0" font-size="12" text-anchor="middle" fill="#0F1730">selection coefficient s (per generation)</text>
+<text x="526.0" y="195.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 526.0 195.0)">power</text>
+<path d="M570.0 108.0L910.0 108.0" fill="none" stroke="#5A6480" stroke-width="1.2" stroke-dasharray="5 4" stroke-opacity="1"/>
+<path d="M595.5 319.7L676.5 304.6L737.8 261.1L799.2 133.5L880.2 51.7" fill="none" stroke="#2B59D9" stroke-width="1.8" stroke-opacity="1"/>
+<use href="#m0" x="595.5" y="319.7"/>
+<use href="#m0" x="676.5" y="304.6"/>
+<use href="#m0" x="737.8" y="261.1"/>
+<use href="#m0" x="799.2" y="133.5"/>
+<use href="#m0" x="880.2" y="51.7"/>
+<path d="M595.5 308.7L676.5 284.9L737.8 239.1L799.2 124.8L880.2 51.7" fill="none" stroke="#2B59D9" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="1"/>
+<line x1="580" x2="600" y1="64" y2="64" stroke="#2B59D9" stroke-width="2"/>
+<use href="#m3" x="590.0" y="64.0"/>
+<text x="607.0" y="68.0" font-size="11" text-anchor="start" fill="#0F1730">drift-aware test</text>
+<line x1="580" x2="600" y1="81" y2="81" stroke="#2B59D9" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="607.0" y="85.0" font-size="11" text-anchor="start" fill="#0F1730">naive test</text>
+<text x="75.0" y="392.0" font-size="11" text-anchor="start" fill="#5A6480">a: diploid, generation time 20 years, samples 1880/1950/2020 (20/20/40), Ne 5,000 before 1950 and as shown after; p₀ = 0.1.</text>
+<text x="75.0" y="408.0" font-size="11" text-anchor="start" fill="#5A6480">b: haploid, 100 generations per year, N = 100,000, samples 1850/1900/1950/2000/2020; p₀ = 0.05.</text>
+<text x="75.0" y="424.0" font-size="11" text-anchor="start" fill="#5A6480">Example scenarios of the page; 1,000 (a) and 500 (b) replicates under selection per point.</text>
+</svg>
