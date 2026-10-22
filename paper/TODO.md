@@ -4,7 +4,7 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 
 ## 1. Software before submission
 
-- [ ] **Rescaling for very many generations** (historical DNA of bacteria and viruses). Simulate at most about 2,000 generations, with selection made proportionally stronger and the population proportionally smaller (Ne·s and total drift unchanged). Choose the scaling factor automatically, keep scaled s below about 0.1, say on the page when rescaling is used, and allow generation times down to about one hour (0.0001 years). Validate against full simulations (for example 20,000 generations) before release.
+- [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations in `validation/` (results table there; `make_figure.py` draws the figure).
 - [x] **Use all processor cores (Web Workers)**: done for the power curve, planner and sampling comparison; results identical to serial runs.
 - [x] **Save, load and share settings; export results as CSV**: done (shareable link, settings file, CSV downloads). Useful for the paper: each figure can come with a link that reproduces it.
 - [ ] Optional: **replicate populations (1 to 100)**, evidence combined across replicates.
