@@ -172,7 +172,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
   <fieldset>
     <legend>Example scenarios</legend>
     <div class="btns">
-      <button type="button" data-preset="defaults">Museum bumblebee (default)</button>
+      <button type="button" data-preset="defaults">Bumblebees</button>
       <button type="button" data-preset="mammal">Long-lived mammal</button>
       <button type="button" data-preset="human">Human ancient DNA</button>
       <button type="button" data-preset="pathogen">Bacterial pathogen</button>
@@ -433,8 +433,8 @@ Heterozygosity retained:       H(last point) / H(first point) = Π_g (1 − 1 / 
 
   <div class="panel" id="cite">
     <h3>How to cite</h3>
-    <p style="font-size:.92rem">Until the accompanying article is available, please cite the software and the version used:</p>
-    <p class="cite">Benchehida, Y. (2026). SPOT: Selection Power Over Time, version <span class="spot-version"></span> [Computer software]. https://github.com/yacinebenchehida/SPOT-simulator</p>
+    <p style="font-size:.92rem">Please cite the software and the version used:</p>
+    <p class="cite">Benchehida, Y. et al. (2026). SPOT: Selection Power Over Time, version <span class="spot-version"></span>. https://github.com/yacinebenchehida/SPOT-simulator</p>
     <p class="hint">The version number is also written into saved settings files and the results CSV, so results can be traced to the version that produced them. Source code, documentation and validation: <a href="https://github.com/yacinebenchehida/SPOT-simulator">github.com/yacinebenchehida/SPOT-simulator</a>. Released under the MIT licence.</p>
   </div>
 </section>
@@ -757,7 +757,7 @@ const PRESETS={
   analytic:Object.assign({},DEFAULTS,{system:'diploid',noDrift:true,perfect:true,h:1})
 };
 const PRESET_INFO={
-  defaults:'Museum bumblebee (default): haplodiploid, four sampling dates from 1935 to 2025 (20, 20, 20 and 40 females), one generation a year, 1,000 breeding females and 1,000 males.',
+  defaults:'Bumblebees: haplodiploid, four sampling dates from 1935 to 2025 (20, 20, 20 and 40 females), one generation a year, 1,000 breeding females and 1,000 males.',
   mammal:'Long-lived mammal: diploid, 20 years per generation, so only 7 generations from 1880 to 2020; Ne 5,000, then a bottleneck to 200 after 1950 (Ne set per interval). Few generations limit power even under strong selection (s = 0.2).',
   human:'Human ancient DNA: diploid, 28 years per generation, six sampling dates from 7000 BCE (negative years) to the present; 50 ancient individuals per date at 2× depth and 100 present-day individuals at 20×; Ne 10,000; s = 0.005.',
   pathogen:'Bacterial pathogen: haploid, genomes from 1850 to 2020 with about 4 days per generation (0.01 years), so about 17,000 generations, simulated with rescaling; Ne 100,000; s = 0.0002.',

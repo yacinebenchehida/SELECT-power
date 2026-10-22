@@ -156,7 +156,7 @@ One-click starting points that show the range of designs SPOT covers. They are i
 
 | Scenario | Settings |
 |---|---|
-| **Museum bumblebee (default)** | Haplodiploid; sampling in 1935, 1955, 1975 and 2025 (20, 20, 20 and 40 females); one generation a year; 1,000 breeding females and 1,000 males; s = 0.05, p₀ = 0.01. Restores all the defaults listed above. |
+| **Bumblebees** | Haplodiploid; sampling in 1935, 1955, 1975 and 2025 (20, 20, 20 and 40 females); one generation a year; 1,000 breeding females and 1,000 males; s = 0.05, p₀ = 0.01. These are also the values the page opens with. |
 | **Long-lived mammal** | Diploid; 20 years per generation, so only 7 generations from 1880 to 2020; Ne 5,000, then a bottleneck to 200 after 1950 (Ne set per interval); s = 0.2. Few generations limit power even under strong selection. |
 | **Human ancient DNA** | Diploid; 28 years per generation; six sampling dates from 7000 BCE (entered as −7000) to 2000; 50 ancient individuals per date at 2× depth and 100 present-day individuals at 20×; Ne 10,000; s = 0.005. |
 | **Bacterial pathogen** | Haploid; genomes sampled from 1850 to 2020; 0.01 years (about 4 days) per generation, so about 17,000 generations, simulated with [rescaling](#very-long-series-rescaling); Ne 100,000; s = 0.0002. |
@@ -369,9 +369,9 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 
 ## How to cite
 
-Until the accompanying article is available, please cite the software and the version used (shown at the bottom of the page):
+Please cite the software and the version used (shown at the bottom of the page):
 
-> Benchehida, Y. (2026). SPOT: Selection Power Over Time, version 0.9.0 [Computer software]. https://github.com/yacinebenchehida/SPOT-simulator
+> Benchehida, Y. et al. (2026). SPOT: Selection Power Over Time, version 0.9.0. https://github.com/yacinebenchehida/SPOT-simulator
 
 GitHub's "Cite this repository" button (from `CITATION.cff`) gives the same reference in other formats.
 
