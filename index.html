@@ -102,6 +102,8 @@ button.primary{background:var(--ink);border-color:var(--ink);color:var(--bg);fon
 button.primary:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
+.img-btns{gap:4px}.img-btns button{padding:4px 10px;font-size:.72rem;font-family:var(--f-mono);color:var(--muted)}
+.cite{font-family:var(--f-mono);font-size:.78rem;background:var(--code);border-radius:8px;padding:10px 12px;border-left:3px solid var(--accent);word-break:break-word}
 /* readouts */
 .out{display:grid;gap:18px;min-width:0}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -168,12 +170,16 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
 <div class="bench">
 <aside class="params" aria-label="Parameters">
   <fieldset>
-    <legend>Presets</legend>
+    <legend>Example scenarios</legend>
     <div class="btns">
-      <button type="button" data-preset="defaults">Reset to defaults</button>
+      <button type="button" data-preset="defaults">Museum bumblebee (default)</button>
+      <button type="button" data-preset="mammal">Long-lived mammal</button>
+      <button type="button" data-preset="human">Human ancient DNA</button>
+      <button type="button" data-preset="pathogen">Bacterial pathogen</button>
+      <button type="button" data-preset="large">Large diploid population</button>
       <button type="button" data-preset="analytic">Analytic baseline</button>
     </div>
-    <p class="hint">The analytic baseline is diploid with no drift and perfect genotypes. Only sampling noise remains, as in a textbook deterministic power calculation.</p>
+    <p class="hint" id="preset-hint">Illustrative starting points, not estimates for real species. Every value can be changed afterwards.</p>
   </fieldset>
   <fieldset>
     <legend>Inheritance &amp; population</legend>
@@ -424,9 +430,16 @@ Sampled families, k > 1:       mother drawn from breeding females, father from b
 Heterozygosity retained:       H(last point) / H(first point) = Π_g (1 − 1 / 2Ne(g))</div>
     <p class="hint">Selection starts in the generation after the onset year, so a sample at the onset year sits exactly at p₀. Not modelled: population structure, linked selection, random fluctuation in population size, overlapping generations, and mapping reference bias.</p>
   </div>
+
+  <div class="panel" id="cite">
+    <h3>How to cite</h3>
+    <p style="font-size:.92rem">Until the accompanying article is available, please cite the software and the version used:</p>
+    <p class="cite">Benchehida, Y. (2026). SPOT: Selection Power Over Time, version <span class="spot-version"></span> [Computer software]. https://github.com/yacinebenchehida/SPOT-simulator</p>
+    <p class="hint">The version number is also written into saved settings files and the results CSV, so results can be traced to the version that produced them. Source code, documentation and validation: <a href="https://github.com/yacinebenchehida/SPOT-simulator">github.com/yacinebenchehida/SPOT-simulator</a>. Released under the MIT licence.</p>
+  </div>
 </section>
 
-<footer>Runs entirely in the browser. Results are Monte Carlo estimates: with 1,000 replicates under selection, a power of 0.80 carries a standard error of about ±0.013.</footer>
+<footer>SPOT version <span class="spot-version"></span> · Runs entirely in the browser. Results are Monte Carlo estimates: with 1,000 replicates under selection, a power of 0.80 carries a standard error of about ±0.013. · <a href="#cite">How to cite</a></footer>
 </div>
 
 <script id="spot-core">
@@ -732,9 +745,24 @@ const pct=x=>isNaN(x)?'–':(x*100).toFixed(x>=0.995||x<0.005?1:0)+'%';
 const MAXP=20, MAXG=1e7, MAXN=1000, MINGT=0.0001;
 const MAXNE=1e8;
 const DEFAULTS={system:'haplodiploid',neByBlock:false,neBlocks:null,genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:1000,seed:1};
+const VERSION='0.9.0';
+document.querySelectorAll('.spot-version').forEach(e=>e.textContent=VERSION);
+/* example scenarios: illustrative starting points, not estimates for real species */
 const PRESETS={
   defaults:DEFAULTS,
+  mammal:Object.assign({},DEFAULTS,{system:'diploid',genTime:20,Nf:2500,Nm:2500,neByBlock:true,neBlocks:[5000,200],p0:0.1,s:0.2,onset:1880,years:[1880,1950,2020],n:[20,20,40],depthEarly:4,depthLast:15}),
+  human:Object.assign({},DEFAULTS,{system:'diploid',genTime:28,Nf:5000,Nm:5000,p0:0.1,s:0.005,onset:-7000,years:[-7000,-5000,-3000,-1000,1000,2000],n:[50,50,50,50,50,100],depthEarly:2,depthLast:20,err:0.01,minDP:1}),
+  pathogen:Object.assign({},DEFAULTS,{system:'haploid',genTime:0.01,Nf:100000,Nm:100000,p0:0.05,s:0.0002,onset:1850,years:[1850,1900,1950,2000,2020],n:[10,10,15,20,40],depthEarly:10,depthLast:30}),
+  large:Object.assign({},DEFAULTS,{system:'diploid',genTime:1,Nf:1e6,Nm:1e6,p0:0.05,s:0.02,onset:1900,years:[1900,1950,2000,2020],n:[30,30,30,60]}),
   analytic:Object.assign({},DEFAULTS,{system:'diploid',noDrift:true,perfect:true,h:1})
+};
+const PRESET_INFO={
+  defaults:'Museum bumblebee (default): haplodiploid, four sampling dates from 1935 to 2025 (20, 20, 20 and 40 females), one generation a year, 1,000 breeding females and 1,000 males.',
+  mammal:'Long-lived mammal: diploid, 20 years per generation, so only 7 generations from 1880 to 2020; Ne 5,000, then a bottleneck to 200 after 1950 (Ne set per interval). Few generations limit power even under strong selection (s = 0.2).',
+  human:'Human ancient DNA: diploid, 28 years per generation, six sampling dates from 7000 BCE (negative years) to the present; 50 ancient individuals per date at 2× depth and 100 present-day individuals at 20×; Ne 10,000; s = 0.005.',
+  pathogen:'Bacterial pathogen: haploid, genomes from 1850 to 2020 with about 4 days per generation (0.01 years), so about 17,000 generations, simulated with rescaling; Ne 100,000; s = 0.0002.',
+  large:'Large diploid population: one generation a year, 1 million breeding females and males, so drift is weak and the naive test is almost right; s = 0.02.',
+  analytic:'Analytic baseline: diploid with no drift and perfect genotypes. Only sampling noise remains, as in a textbook deterministic power calculation.'
 };
 let st=JSON.parse(JSON.stringify(DEFAULTS));
 let stat='trend', lastRes=null; window.__simState=()=>st;
@@ -816,7 +844,7 @@ $('tp-add').onclick=()=>{ if(st.years.length>=MAXP) return; const K=st.years.len
 $('tx-hym').onclick=()=>{st.system='haplodiploid';writeUI();schedule()};
 $('tx-dip').onclick=()=>{st.system='diploid';writeUI();schedule()};
 $('tx-hap').onclick=()=>{st.system='haploid';writeUI();schedule()};
-document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{st=JSON.parse(JSON.stringify(PRESETS[b.dataset.preset]));writeUI();schedule()});
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{st=JSON.parse(JSON.stringify(PRESETS[b.dataset.preset]));$('preset-hint').textContent=PRESET_INFO[b.dataset.preset]+' Every value can be changed afterwards.';writeUI();schedule()});
 $('st-trend').onclick=()=>{stat='trend';$('st-trend').setAttribute('aria-pressed',true);$('st-two').setAttribute('aria-pressed',false);if(lastRes)drawDist(lastRes)};
 $('st-two').onclick=()=>{stat='two';$('st-two').setAttribute('aria-pressed',true);$('st-trend').setAttribute('aria-pressed',false);if(lastRes)drawDist(lastRes)};
 
@@ -988,11 +1016,11 @@ function applySettings(o){ // returns null if applied, or an error message
 }
 function download(name,text,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:type||'text/csv'})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove()},500);}
 const csvRow=a=>a.map(x=>{x=String(x); return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}).join(',');
-const setStr=()=>Object.keys(DEFAULTS).map(k=>[k,Array.isArray(st[k])?st[k].join(';'):st[k]===null?'':st[k]]);
+const setStr=()=>[['spot_version',VERSION],...Object.keys(DEFAULTS).map(k=>[k,Array.isArray(st[k])?st[k].join(';'):st[k]===null?'':st[k]])];
 $('share-link').onclick=()=>{ const url=location.href, msg=$('share-status');
   const show=()=>{msg.textContent='Copy this link: '+url};
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(()=>{msg.textContent='Link copied. Opening it reproduces the current settings.'},show); else show(); };
-$('save-settings').onclick=()=>{ download('spot-settings.json',JSON.stringify({tool:'SPOT (Selection Power Over Time)',version:1,settings:st},null,2),'application/json'); $('share-status').textContent='Settings saved as spot-settings.json.'; };
+$('save-settings').onclick=()=>{ download('spot-settings.json',JSON.stringify({tool:'SPOT (Selection Power Over Time)',version:1,spot_version:VERSION,settings:st},null,2),'application/json'); $('share-status').textContent='Settings saved as spot-settings.json.'; };
 $('load-settings').onclick=()=>$('load-file').click();
 $('load-file').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
   rd.onload=()=>{ let err; try{err=applySettings(JSON.parse(rd.result))}catch(x){err='The file could not be read as SPOT settings.'} $('share-status').textContent=err?'Not loaded: '+err:'Settings loaded from '+f.name+'.'; e.target.value=''; };
@@ -1181,6 +1209,50 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
   setTimeout(function(){runPlan(); started=true;},8500);
 })();
 
+/* ---------- download charts as images (PNG or SVG) ----------
+   Each chart is redrawn as a standalone SVG with its title and legend, always in the light colour scheme on white,
+   so it can go straight into a document. PNG is rendered at 3× for print. */
+(function(){
+  var LIGHT={'--accent':'#2B59D9','--modern':'#0E9F6E','--hist':'#C27A12','--heather':'#8B4FD6','--warn':'#D9363E','--neutral':'#9AA3B8',
+    '--ink':'#0F1730','--muted':'#5A6480','--line':'#E1E5EF','--surface':'#FFFFFF','--sunk':'#EEF1F7','--accent-soft':'#E6ECFD','--bg':'#FFFFFF'};
+  var col=function(s){return String(s).replace(/var\((--[\w-]+)\)/g,function(m,k){return LIGHT[k]||'#000'})};
+  var esc=function(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
+  function build(svg){
+    var sec=svg.closest('section'), vb=svg.viewBox.baseVal, W=vb.width, H=vb.height;
+    var title=(sec.querySelector('h3')||{}).textContent||'';
+    var items=[].slice.call(sec.querySelectorAll('.legend > span')).filter(function(s){return !s.closest('[hidden]')}).map(function(s){
+      var i=s.querySelector('i'); return {text:s.textContent.trim(), c:i?col(i.style.background||'var(--ink)'):null, dash:!!(i&&i.classList.contains('dash'))};});
+    var top=30, lh=18, x=0, rows=[[]];
+    items.forEach(function(it){var w=(it.c?24:0)+it.text.length*6.1+18; if(x+w>W-10&&rows[rows.length-1].length){rows.push([]);x=0} rows[rows.length-1].push({it:it,x:x}); x+=w;});
+    var legH=items.length?rows.length*lh+10:0, TH=top+H+legH, o='';
+    o+='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+TH+'" viewBox="0 0 '+W+' '+TH+'" font-family="Helvetica,Arial,sans-serif">';
+    o+='<rect width="'+W+'" height="'+TH+'" fill="#fff"/>';
+    o+='<text x="8" y="20" font-size="15" font-weight="600" fill="'+LIGHT['--ink']+'">'+esc(title)+'</text>';
+    o+='<g transform="translate(0,'+top+')">'+col(svg.innerHTML)+'</g>';
+    rows.forEach(function(r,ri){var y=top+H+8+ri*lh;
+      r.forEach(function(e){var it=e.it, xx=8+e.x;
+        if(it.c) o+=it.dash?'<line x1="'+xx+'" x2="'+(xx+16)+'" y1="'+(y+6)+'" y2="'+(y+6)+'" stroke="'+LIGHT['--ink']+'" stroke-width="2" stroke-dasharray="4 3"/>':'<rect x="'+xx+'" y="'+(y+4)+'" width="16" height="4" rx="2" fill="'+it.c+'"/>';
+        o+='<text x="'+(xx+(it.c?22:0))+'" y="'+(y+10)+'" font-size="11" fill="'+LIGHT['--muted']+'">'+esc(it.text)+'</text>';});});
+    return {svg:o+'</svg>', W:W, H:TH};
+  }
+  function save(name,blob){var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href); a.remove()},500);}
+  function exportChart(id,fmt){
+    var svg=document.getElementById(id); if(!svg||!svg.innerHTML.trim()) return;
+    var b=build(svg), name='spot_'+id.replace('ch-','')+'.'+fmt;
+    if(fmt==='svg'){save(name,new Blob([b.svg],{type:'image/svg+xml'})); return;}
+    var img=new Image(), url=URL.createObjectURL(new Blob([b.svg],{type:'image/svg+xml'})), k=3;
+    img.onload=function(){var c=document.createElement('canvas'); c.width=b.W*k; c.height=b.H*k; var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); c.toBlob(function(bl){save(name,bl)},'image/png');};
+    img.src=url;
+  }
+  ['ch-traj','ch-dist','ch-sweep','ch-plan','ch-sexs'].forEach(function(id){
+    var svg=document.getElementById(id), head=svg&&svg.closest('section').querySelector('.panel-head'); if(!head) return;
+    var d=document.createElement('div'); d.className='btns img-btns';
+    d.innerHTML='<button type="button" title="Download this chart as a PNG image">PNG</button><button type="button" title="Download this chart as an SVG vector image">SVG</button>';
+    d.children[0].onclick=function(){exportChart(id,'png')}; d.children[1].onclick=function(){exportChart(id,'svg')};
+    head.appendChild(d);
+  });
+  window.__exportChart=build;
+})();
 </script>
 </body>
 </html>

@@ -37,7 +37,7 @@ Why the threshold matters: a standard test that ignores drift sets the threshold
   - [Sampling design](#3-sampling-design)
   - [Sequencing and genotype calls](#4-sequencing-and-genotype-calls)
   - [Test and simulation](#5-test-and-simulation)
-  - [Presets](#presets)
+  - [Example scenarios](#example-scenarios)
 - [Choosing values that are unknown](#choosing-values-that-are-unknown)
 - [Outputs](#outputs)
 - [Saving, sharing and exporting](#saving-sharing-and-exporting)
@@ -45,6 +45,8 @@ Why the threshold matters: a standard test that ignores drift sets the threshold
 - [Model equations](#model-equations)
 - [Using the simulation core from JavaScript / Node](#using-the-simulation-core-from-javascript--node)
 - [Assumptions and limitations](#assumptions-and-limitations)
+- [How to cite](#how-to-cite)
+- [Licence](#licence)
 - [Files](#files)
 
 ---
@@ -148,10 +150,18 @@ Diploid genotypes are called by maximum likelihood among the three genotypes wit
 
 If α/m is so small that fewer than 10 neutral replicates are expected beyond the threshold, the threshold is taken from a **Gaussian fit** to the neutral Z values instead of the empirical quantile. The status line says when this happens, and hollow markers show it in the parameter power curve.
 
-### Presets
+### Example scenarios
 
-- **Reset to defaults** restores the neutral defaults listed above.
-- **Analytic baseline** is diploid, with no drift, perfect genotypes and a dominant allele. Only binomial sampling noise remains, which reproduces a classic deterministic power calculation. It is useful as a reference point.
+One-click starting points that show the range of designs SPOT covers. They are illustrative values, not estimates for real species; every value can be changed afterwards.
+
+| Scenario | Settings |
+|---|---|
+| **Museum bumblebee (default)** | Haplodiploid; sampling in 1935, 1955, 1975 and 2025 (20, 20, 20 and 40 females); one generation a year; 1,000 breeding females and 1,000 males; s = 0.05, p₀ = 0.01. Restores all the defaults listed above. |
+| **Long-lived mammal** | Diploid; 20 years per generation, so only 7 generations from 1880 to 2020; Ne 5,000, then a bottleneck to 200 after 1950 (Ne set per interval); s = 0.2. Few generations limit power even under strong selection. |
+| **Human ancient DNA** | Diploid; 28 years per generation; six sampling dates from 7000 BCE (entered as −7000) to 2000; 50 ancient individuals per date at 2× depth and 100 present-day individuals at 20×; Ne 10,000; s = 0.005. |
+| **Bacterial pathogen** | Haploid; genomes sampled from 1850 to 2020; 0.01 years (about 4 days) per generation, so about 17,000 generations, simulated with [rescaling](#very-long-series-rescaling); Ne 100,000; s = 0.0002. |
+| **Large diploid population** | Diploid; one generation a year; 1 million breeding females and males, so drift is weak and the naive test is almost right; s = 0.02. |
+| **Analytic baseline** | Diploid, with no drift, perfect genotypes and a dominant allele. Only binomial sampling noise remains, which reproduces a classic deterministic power calculation. It is useful as a reference point. |
 
 ---
 
@@ -213,6 +223,8 @@ The tile "Neutral heterozygosity lost from the first to the last point" shows th
 - **Save settings / Load settings.** Saves the current settings as a small file (`spot-settings.json`) and loads them back later. Files and links are checked when loaded; values outside the allowed ranges are adjusted, and invalid designs are rejected with a message.
 - **Download results (CSV).** Next to the status line: every parameter value plus the main outputs (both power values, thresholds, naive false-positive rate, expected final frequency, diversity lost, Ne, genotype-call accuracy) and the link to the settings.
 - **CSV buttons** in the parameter power curve and the sample-size planner download the values behind each chart, one row per setting.
+- **PNG and SVG buttons** on every chart download it as an image, with its title and legend, in the light colour scheme on a white background (PNG at three times screen resolution, for documents and slides; SVG for vector graphics).
+- **Version.** The SPOT version (shown at the bottom of the page) is written into saved settings files and the results CSV.
 
 The same seed always gives the same results, whatever the computer and its number of processor cores.
 
@@ -355,6 +367,20 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 
 ---
 
+## How to cite
+
+Until the accompanying article is available, please cite the software and the version used (shown at the bottom of the page):
+
+> Benchehida, Y. (2026). SPOT: Selection Power Over Time, version 0.9.0 [Computer software]. https://github.com/yacinebenchehida/SPOT-simulator
+
+GitHub's "Cite this repository" button (from `CITATION.cff`) gives the same reference in other formats.
+
+## Licence
+
+MIT licence; see [`LICENSE`](LICENSE).
+
+---
+
 ## Files
 
 | File | Content |
@@ -363,5 +389,8 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 | `sim.js` | Simulation core (pure functions), usable in Node or in the browser. |
 | `README.md` | This documentation. |
 | `SIMULATION_GUIDE.md` | Step-by-step explanation of the simulations, with worked examples. |
+| `LICENSE`, `CITATION.cff` | Licence (MIT) and citation information. |
 | `POSSIBLE_IMPROVEMENTS.md` | Ideas that are not implemented yet and may be added depending on feedback. |
 | `examples/` | Short R scripts (selection only, drift only, selection + drift with the power calculation) and a Node script that reproduces the numbers in the guide. |
+| `validation/` | Validation of rescaling against full simulations: scripts, results and figure. |
+| `paper/` | Working material for the accompanying article (to-do list, related literature). |

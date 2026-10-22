@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use SPOT, please cite it as below."
+title: "SPOT: Selection Power Over Time"
+version: 0.9.0
+date-released: 2026-10-22
+authors:
+  - family-names: Benchehida
+    given-names: Yacine
+repository-code: "https://github.com/yacinebenchehida/SPOT-simulator"
+url: "https://yacinebenchehida.github.io/SPOT-simulator/"
+license: MIT
+abstract: "Browser-based simulator of the power to detect selection at a candidate locus from allele frequencies sampled at two or more points in time, with genetic drift, haploid, diploid or haplodiploid inheritance, changing population size and low-coverage genotype calls."
+keywords:
+  - temporal population genomics
+  - natural selection
+  - statistical power
+  - historical DNA
+  - ancient DNA
+  - museum genomics
