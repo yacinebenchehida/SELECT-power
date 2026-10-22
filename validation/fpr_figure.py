@@ -8,7 +8,7 @@ rd = lambda f: list(csv.DictReader(open(f), delimiter='\t'))
 A_, B_, C_ = rd('validation/fpr_A.tsv'), rd('validation/fpr_B.tsv'), rd('validation/fpr_C.tsv')
 G_ = rd('validation/fpr_C_gaussian.tsv')   # same analysis with the earlier Gaussian-fit rule, for comparison
 fl = lambda r, k: float(r[k])
-F = Fig(1310, 470)
+F = Fig(1310, 490)
 SH = {'haploid': 'o', 'diploid': 's', 'haplodiploid': '^'}
 
 # (a) false-positive rate against Ne, trend test
@@ -63,8 +63,8 @@ for key, sh, _ in DS:
         c.line(al, ys, col, 1.2)
         c.points(al, ys, col, sh, 3.8)
 c.legend([(lab_, COL['muted'], sh) for _, sh, lab_ in DS] + [('earlier Gaussian fit', COL['grey'], 'dash')], c.X(0.0011), c.Y(700))
-F.text(75, 440, 'Trend test across all points. Each drift-aware value is the mean realised rate of 20 thresholds, each set by SPOT from its own neutral replicates (2,000 by default; c: up to 200,000) '
-       'and tested on 60,000 (c: up to 1,000,000) independent neutral replicates. Red: naive test.', 11, color=COL['muted'])
-F.text(75, 456, 'Reference design: haplodiploid, 1935/1955/1975/2025, 20/20/20/40 females, 10×/15× depth, p₀ = 0.1. a: Ne varied in each inheritance system. '
+F.text(75, 440, 'Trend test across all points. Each drift-aware value is the mean realised rate of 20 thresholds, each set by SPOT from its own neutral replicates', 11, color=COL['muted'])
+F.text(75, 456, '(2,000 by default; c: up to 200,000) and tested on 60,000 (c: up to 1,000,000) independent neutral replicates. Red: naive test.', 11, color=COL['muted'])
+F.text(75, 472, 'Reference design: haplodiploid, 1935/1955/1975/2025, 20/20/20/40 females, 10×/15× depth, p₀ = 0.1. a: Ne varied in each inheritance system. '
        'b: one factor changed at a time.', 11, color=COL['muted'])
 print('figure bytes', F.save('validation/false_positive_rate.svg'))
