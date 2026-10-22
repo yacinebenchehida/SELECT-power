@@ -145,10 +145,10 @@ Diploid genotypes are called by maximum likelihood among the three genotypes wit
 |---|---|---|---|
 | Significance level α | `alpha` | `0.05` | Per-study significance level. |
 | Candidate loci tested (Bonferroni m) | `m` | `1` | Number of candidate loci to be tested. Each is judged at α/m. |
-| Replicates under selection | `reps` | `1000` | Number of replicates with selection. Twice as many neutral replicates are run. More replicates give a more precise estimate, not a different answer. With 1,000 replicates, a power of 0.80 has a standard error of about ±0.013. |
+| Replicates under selection | `reps` | `1000` | Number of replicates with selection. At least twice as many neutral replicates are run (more when many loci are tested, see below). More replicates give a more precise estimate, not a different answer. With 1,000 replicates, power varies between runs by about ±0.02 (one standard deviation; see [`validation/monte_carlo_precision.md`](validation/monte_carlo_precision.md)). |
 | Random seed | `seed` | `1` | Makes a run exactly reproducible. |
 
-If α/m is so small that fewer than 10 neutral replicates are expected beyond the threshold, the threshold is taken from a **Gaussian fit** to the neutral Z values instead of the empirical quantile. The status line says when this happens, and hollow markers show it in the parameter power curve.
+**Many candidate loci.** The threshold is the empirical (1 − α/m) quantile of the neutral Z values, which needs about 10 neutral replicates beyond it. When α/m is small, SPOT therefore simulates more neutral replicates: 10/(α/m), up to 200,000 (for example 20,000 for m = 100 and 200,000 for m = 1,000 at α = 0.05). Runs with more than 20,000 neutral replicates are computed in the background so the page stays responsive, and a note under the number of loci says when a run may take 10–30 seconds. Only beyond 200,000 is the threshold taken from a **Gaussian fit** to the neutral Z values; the status line then says so. A Gaussian fit was used earlier for all small α/m, but it underestimates the upper tail of the neutral distribution when drift is strong or the allele is rare, giving 2–9 times the nominal false-positive rate ([`validation/false_positive_rate.md`](validation/false_positive_rate.md)). To stay fast, the parameter power curve, the planner and the sampling comparison use at most 20,000 neutral replicates per setting; hollow markers in the power curve show points where the Gaussian fit was needed.
 
 ### Example scenarios
 
@@ -270,7 +270,7 @@ migration          m'   = 1 − (1 − m)^λ
 sampling times     t'   = t / λ
 ```
 
-This keeps Ne·s and the total drift over the period unchanged; sampling, genotype calling and the test are not affected. λ is chosen automatically so that about 2,000 generations are simulated, but it is capped so that the rescaled selection stays at or below 0.025 and the rescaled breeding numbers at or above 200. These limits come from comparisons with full simulations (see [`validation/README.md`](validation/README.md)), in which rescaled and full power agreed within Monte Carlo error. The status line says when rescaling is used. If the caps would require simulating more than 10,000 generations, λ is raised anyway to keep the page fast, and a note marks the result as approximate.
+This keeps Ne·s and the total drift over the period unchanged; sampling, genotype calling and the test are not affected. λ is chosen automatically so that about 2,000 generations are simulated, but it is capped so that the rescaled selection stays at or below 0.025 and the rescaled breeding numbers at or above 200. These limits come from comparisons with full simulations (see [`validation/rescaling.md`](validation/rescaling.md)), in which rescaled and full power agreed within Monte Carlo error. The status line says when rescaling is used. If the caps would require simulating more than 10,000 generations, λ is raised anyway to keep the page fast, and a note marks the result as approximate.
 
 ---
 
@@ -343,7 +343,8 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 
 | Function | Returns |
 |---|---|
-| `runPower(params, {keep})` | `{ trend, two, alphaAdj, zNaive, sel, neu, trajS, trajN, hetAcc, hapAcc, missRate }`. `trend` and `two` each contain `crit`, `method` (`'empirical'` or `'gaussian'`), `powerEmp`, `powerNaive` and `fprNaive`. `sel` and `neu` hold the Z values. `keep` = number of trajectories to return. |
+| `runPower(params, {keep})` | `{ trend, two, alphaAdj, zNaive, sel, neu, nNeutral, trajS, trajN, hetAcc, hapAcc, missRate }`. `trend` and `two` each contain `crit`, `method` (`'empirical'` or `'gaussian'`), `powerEmp`, `powerNaive` and `fprNaive`. `sel` and `neu` hold the Z values; `nNeutral` is the number of neutral replicates used. `keep` = number of trajectories to return. An optional `params.neutralMax` lowers the cap on neutral replicates (default 200,000). |
+| `neutralReps(params)` | Number of neutral replicates `runPower` will use: max(2 × reps, min(cap, 10 / (α/m))). |
 | `deterministic(params, both)` | The deterministic female frequency trajectory, or `{f, m}` for both sexes if `both` is true. |
 | `neFor(params)` | Ne from `Nf`, `Nm` and `system` (`Nf` alone in the haploid system). |
 | `sizeFactor(params, gens, g)` | Multiplier applied to the breeding numbers in generation `g` (exponential change or per-interval Ne). |
@@ -371,7 +372,7 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 
 Please cite the software and the version used (shown at the bottom of the page):
 
-> Benchehida, Y. et al. (2026). SPOT: Selection Power Over Time, version 0.9.0. https://github.com/yacinebenchehida/SPOT-simulator
+> Benchehida, Y. et al. (2026). SPOT: Selection Power Over Time, version 0.9.1. https://github.com/yacinebenchehida/SPOT-simulator
 
 GitHub's "Cite this repository" button (from `CITATION.cff`) gives the same reference in other formats.
 
@@ -392,5 +393,5 @@ MIT licence; see [`LICENSE`](LICENSE).
 | `LICENSE`, `CITATION.cff` | Licence (MIT) and citation information. |
 | `POSSIBLE_IMPROVEMENTS.md` | Ideas that are not implemented yet and may be added depending on feedback. |
 | `examples/` | Short R scripts (selection only, drift only, selection + drift with the power calculation) and a Node script that reproduces the numbers in the guide. |
-| `validation/` | Validation of rescaling against full simulations: scripts, results and figure. |
+| `validation/` | Validation analyses (false-positive rate, agreement with theory, Monte Carlo precision, rescaling): scripts, results and figures; see [`validation/README.md`](validation/README.md). |
 | `paper/` | Working material for the accompanying article (to-do list, related literature). |

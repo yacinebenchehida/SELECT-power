@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use SPOT, please cite it as below."
 title: "SPOT: Selection Power Over Time"
-version: 0.9.0
+version: 0.9.1
 date-released: 2026-10-22
 authors:
   - family-names: Benchehida

@@ -183,8 +183,13 @@ function prep(P){
   return Q;
 }
 /* run R selected + 2R neutral replicates; compute power several ways */
+/* number of neutral replicates: twice the replicates under selection, raised when many loci are tested so that
+   about 10 neutral replicates fall beyond the per-locus threshold (alpha/m) and it can be read off directly;
+   capped at NEUTRAL_MAX, beyond which a Gaussian fit to the neutral values is used (see validation/false_positive_rate.md) */
+const NEUTRAL_MAX=200000;
+function neutralReps(P){const a=P.alpha/P.m; return Math.max(2*P.reps, Math.min(P.neutralMax||NEUTRAL_MAX, Math.ceil(10/a)));}
 function runPower(P0,opt={}){
-  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
+  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=neutralReps(P);
   const t=gensOf(P), K=t.length;
   const ALL=t.map((_,i)=>i), TWO=[0,K-1];
   const keepK=opt.keep||0;
@@ -193,7 +198,7 @@ function runPower(P0,opt={}){
   for(let r=0;r<reps;r++){const o=simulateRep(P,P.s,R,r<keepK);sel.trend[r]=trendZ(o.x,o.n,t,ALL);sel.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajS.push(o.traj);het+=o.hetTrue;hetOk+=o.hetCalled;miss+=o.missing;samp+=o.sampled;hT+=o.hapTot;hO+=o.hapOk}
   for(let r=0;r<nn;r++){const o=simulateRep(P,0,R,r<keepK);neu.trend[r]=trendZ(o.x,o.n,t,ALL);neu.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajN.push(o.traj)}
   const a=P.alpha/P.m, zc=qnorm(1-a);
-  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
+  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,nNeutral:nn,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
     hetAcc:P.perfect?1:(het?hetOk/het:NaN), missRate:P.perfect?0:miss/samp, hapAcc:hT?hO/hT:NaN};
   for(const k of ['trend','two']){
     const ns=Float64Array.from(neu[k]).sort();
@@ -221,4 +226,4 @@ function hetRetained(P){
 }
 /* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
 function neFor(P){return P.system==='haploid'? P.Nf : P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
-if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,sizeFactor,rescale,YEARS};
+if(typeof module!=='undefined') module.exports={runPower,neutralReps,NEUTRAL_MAX,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,sizeFactor,rescale,YEARS};

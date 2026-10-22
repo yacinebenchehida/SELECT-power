@@ -237,7 +237,8 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <label for="alpha">Significance level α
       <select id="alpha"><option value="0.05">0.05</option><option value="0.01">0.01</option><option value="0.001">0.001</option></select></label>
     <label for="m">Candidate loci tested (Bonferroni m)<input id="m" type="number" min="1" max="10000" step="1"></label>
-    <label for="reps">Replicates under selection (2× as many neutral)
+    <p class="hint" id="m-hint" hidden></p>
+    <label for="reps">Replicates under selection (at least 2× as many neutral)
       <select id="reps"><option>500</option><option>1000</option><option>2000</option><option>5000</option></select></label>
     <label for="seed">Random seed<input id="seed" type="number" min="1" max="999999" step="1"></label>
   </fieldset>
@@ -273,7 +274,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <h3 id="exp-h">What "power" means here</h3>
     <p><b>Power is the probability that a sampling design detects selection when selection is actually acting.</b> A power of 80% means that selection of the chosen strength is detected in 8 cases out of 10 and missed in 2.</p>
     <ol class="plain">
-      <li><b>Replay history many times.</b> The simulator replays the population's past on the computer: by default 1,000 times with the allele favoured by selection, and 2,000 times with no selection at all.</li>
+      <li><b>Replay history many times.</b> The simulator replays the population's past on the computer: by default 1,000 times with the allele favoured by selection, and 2,000 times with no selection at all (more when many loci are tested).</li>
       <li><b>Sample and sequence.</b> In every replay, specimens are drawn at each sampling date and "sequenced" with the same limits as real data: a limited number of specimens per date, and some genotypes read wrongly or not at all.</li>
       <li><b>Score each replay.</b> One number per replay says how clearly the allele became more common over time. A high score means a clear rise.</li>
       <li><b>Set the threshold with the no-selection replays.</b> Even without selection, allele frequencies wander up and down by chance (drift), a lot in small populations. The threshold is set so that only 5% of these chance-only replays clear it (5% is the significance level, adjustable in the settings).</li>
@@ -324,7 +325,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <p class="hint">Every value set in the parameter panel stays fixed except the parameter chosen here, which is stepped through a range of values. At each value the full power calculation is rerun from scratch (new replays with and without selection, new threshold), and the power of the whole design is plotted. Example: with "Individuals at the last point", the earlier points keep their current sample sizes while the last point takes 10, 20, 30 … 120 individuals; each dot is the power of that complete design. The vertical line marks the current value and the dashed line marks 80% power.</p>
     <svg id="ch-sweep" viewBox="0 0 720 280" role="img" aria-label="Power as a function of the chosen parameter"></svg>
     <div class="legend"><span><i style="background:var(--accent)"></i>trend across all points, drift-aware</span><span><i style="background:var(--modern)"></i>first vs last point, drift-aware</span><span><i style="background:var(--warn)"></i>naive false-positive rate</span><span>Hollow marker: threshold from a Gaussian fit, because α′ is too small for the number of neutral replicates</span></div>
-    <p class="status" id="sweep-status">All other parameters stay at their current values. Each point uses up to 1,000 replicates under selection and 2,000 neutral.</p>
+    <p class="status" id="sweep-status">All other parameters stay at their current values. Each point uses up to 1,000 replicates under selection and 2,000 neutral (up to 20,000 neutral when many loci are tested; beyond that the threshold comes from a Gaussian fit, shown by hollow markers).</p>
   </section>
 
   <section class="panel">
@@ -368,7 +369,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <div class="panel">
       <h3>This simulator: Monte Carlo with a drift-aware null</h3>
       <ol class="steps">
-        <li>Simulate R replicate populations <b>under selection</b> and 2R <b>without selection</b>. Both start at the same p₀ and have the same breeding numbers, so drift acts on both.</li>
+        <li>Simulate R replicate populations <b>under selection</b> and 2R <b>without selection</b> (more when many loci are tested, so that about 10 neutral replicates fall beyond the threshold). Both start at the same p₀ and have the same breeding numbers, so drift acts on both.</li>
         <li>At each sampling point, draw the chosen number of individuals. Females, and diploid males, carry two alleles. Haploid males carry one.</li>
         <li>Pass each individual through <b>sequencing</b>: depth ~ Poisson(mean), alt reads ~ Binomial(depth, expected allele fraction). Call the genotype by maximum likelihood. Individuals below the minimum depth are dropped.</li>
         <li>Compute the <b>test statistic</b> Z for each replicate from the called allele counts.</li>
@@ -439,7 +440,7 @@ Heterozygosity retained:       H(last point) / H(first point) = Π_g (1 − 1 / 
   </div>
 </section>
 
-<footer>SPOT version <span class="spot-version"></span> · Runs entirely in the browser. Results are Monte Carlo estimates: with 1,000 replicates under selection, a power of 0.80 carries a standard error of about ±0.013. · <a href="#cite">How to cite</a></footer>
+<footer>SPOT version <span class="spot-version"></span> · Runs entirely in the browser. Results are Monte Carlo estimates: with the default 1,000 replicates under selection, power varies between runs by about ±0.02 (one standard deviation); more replicates reduce this. · <a href="#cite">How to cite</a></footer>
 </div>
 
 <script id="spot-core">
@@ -628,8 +629,13 @@ function prep(P){
   return Q;
 }
 /* run R selected + 2R neutral replicates; compute power several ways */
+/* number of neutral replicates: twice the replicates under selection, raised when many loci are tested so that
+   about 10 neutral replicates fall beyond the per-locus threshold (alpha/m) and it can be read off directly;
+   capped at NEUTRAL_MAX, beyond which a Gaussian fit to the neutral values is used (see validation/false_positive_rate.md) */
+const NEUTRAL_MAX=200000;
+function neutralReps(P){const a=P.alpha/P.m; return Math.max(2*P.reps, Math.min(P.neutralMax||NEUTRAL_MAX, Math.ceil(10/a)));}
 function runPower(P0,opt={}){
-  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
+  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=neutralReps(P);
   const t=gensOf(P), K=t.length;
   const ALL=t.map((_,i)=>i), TWO=[0,K-1];
   const keepK=opt.keep||0;
@@ -638,7 +644,7 @@ function runPower(P0,opt={}){
   for(let r=0;r<reps;r++){const o=simulateRep(P,P.s,R,r<keepK);sel.trend[r]=trendZ(o.x,o.n,t,ALL);sel.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajS.push(o.traj);het+=o.hetTrue;hetOk+=o.hetCalled;miss+=o.missing;samp+=o.sampled;hT+=o.hapTot;hO+=o.hapOk}
   for(let r=0;r<nn;r++){const o=simulateRep(P,0,R,r<keepK);neu.trend[r]=trendZ(o.x,o.n,t,ALL);neu.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajN.push(o.traj)}
   const a=P.alpha/P.m, zc=qnorm(1-a);
-  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
+  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,nNeutral:nn,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
     hetAcc:P.perfect?1:(het?hetOk/het:NaN), missRate:P.perfect?0:miss/samp, hapAcc:hT?hO/hT:NaN};
   for(const k of ['trend','two']){
     const ns=Float64Array.from(neu[k]).sort();
@@ -680,7 +686,7 @@ const runMany=(function(){
   function init(){
     if(workers||failed) return;
     try{
-      const src=document.getElementById('spot-core').textContent+'\nconst slim='+slim.toString()+';\nself.onmessage=function(e){postMessage({id:e.data.id,r:slim(runPower(e.data.p))})};';
+      const src=document.getElementById('spot-core').textContent+'\nconst slim='+slim.toString()+';\nself.onmessage=function(e){postMessage({id:e.data.id,r:e.data.full?runPower(e.data.p,{keep:40}):slim(runPower(e.data.p))})};';
       const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
       workers=[];
       for(let i=0;i<nCores();i++){
@@ -702,7 +708,7 @@ const runMany=(function(){
     (function step(){
       const job=queue.shift();
       if(!job){serialOn=false; return}
-      if(gen[job.ch]===job.g) job.cb(slim(runPower(job.p)));
+      if(gen[job.ch]===job.g) job.cb(job.full?runPower(job.p,{keep:40}):slim(runPower(job.p)));
       setTimeout(step,0);
     })();
   }
@@ -712,19 +718,20 @@ const runMany=(function(){
       if(w.busy) continue;
       let job; while((job=queue.shift()) && gen[job.ch]!==job.g){} // skip cancelled jobs
       if(!job) return;
-      w.busy=job; inflight.set(job.id,job); w.postMessage({id:job.id,p:job.p});
+      w.busy=job; inflight.set(job.id,job); w.postMessage({id:job.id,p:job.p,full:!!job.full});
     }
   }
   /* run a list of parameter sets on channel ch; onResult(i, result) is called as each finishes.
-     Starting a new run on the same channel cancels the previous one. Resolves when all are done. */
-  function runMany(ch,list,onResult){
+     Starting a new run on the same channel cancels the previous one. Resolves when all are done.
+     opt.full: return the complete result (replicate statistics and 40 trajectories) instead of the summary. */
+  function runMany(ch,list,onResult,opt){
     init();
     const g=gen[ch]=(gen[ch]||0)+1;
     for(let i=queue.length-1;i>=0;i--) if(queue[i].ch===ch) queue.splice(i,1);
     return new Promise(resolve=>{
       let done=0;
       if(!list.length){resolve();return}
-      list.forEach((p,i)=>queue.push({id:nextId++,ch,g,p,cb:r=>{ if(gen[ch]!==g) return; onResult(i,r); if(++done===list.length) resolve(); }}));
+      list.forEach((p,i)=>queue.push({id:nextId++,ch,g,p,full:!!(opt&&opt.full),cb:r=>{ if(gen[ch]!==g) return; onResult(i,r); if(++done===list.length) resolve(); }}));
       pump();
     });
   }
@@ -745,7 +752,7 @@ const pct=x=>isNaN(x)?'–':(x*100).toFixed(x>=0.995||x<0.005?1:0)+'%';
 const MAXP=20, MAXG=1e7, MAXN=1000, MINGT=0.0001;
 const MAXNE=1e8;
 const DEFAULTS={system:'haplodiploid',neByBlock:false,neBlocks:null,genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:1000,seed:1};
-const VERSION='0.9.0';
+const VERSION='0.9.1';
 document.querySelectorAll('.spot-version').forEach(e=>e.textContent=VERSION);
 /* example scenarios: illustrative starting points, not estimates for real species */
 const PRESETS={
@@ -803,6 +810,10 @@ function labels(){
   $('o-dh').textContent=st.depthEarly+'×'; $('o-dm').textContent=st.depthLast+'×'; $('o-mindp').textContent=st.minDP+' reads';
   ['nf','nm'].forEach(k=>$(k).disabled=st.noDrift||st.neByBlock);
   ['dh','dm','err','mindp'].forEach(k=>$(k).disabled=st.perfect);
+  { const nn=neutralReps(st), a=st.alpha/st.m, mh=$('m-hint');
+    if(a*nn<10){mh.hidden=false; mh.textContent=`α/m = ${+a.toPrecision(2)} is very strict: even ${nn.toLocaleString()} neutral replicates (the maximum) leave too few beyond the threshold, so it is taken from a Gaussian fit and is approximate. Each run may take 10–30 seconds.`}
+    else if(nn>100000){mh.hidden=false; mh.textContent=`${nn.toLocaleString()} neutral replicates are needed to set the threshold for α/m = ${+a.toPrecision(2)}: each run may take 10–30 seconds.`}
+    else mh.hidden=true; }
   const ne=neFor(st), ne2=neFor({system:st.system,Nf:st.Nf*st.decline,Nm:st.Nm*st.decline});
   const form=st.system==='haploid'?'haploid: Ne = N':st.system==='haplodiploid'?'haplodiploid: 9NfNm/(4Nm+2Nf)':'diploid: 4NfNm/(Nf+Nm)';
   $('ne-hint').textContent=st.noDrift?'Drift switched off.':(st.neByBlock?`Ne set per interval in the sampling design: ${st.neBlocks.map(v=>fmtN(v)).join(' → ')}. ${nGen()} generations from ${st.years[0]} to ${last(st.years)}.`:`Effective size Ne ≈ ${fmtN(Math.round(ne))}${st.decline!==1?' at the first point → '+fmtN(Math.round(ne2))+' at the last':''} (${form}). ${nGen()} generations from ${st.years[0]} to ${last(st.years)}.`);
@@ -849,9 +860,16 @@ $('st-trend').onclick=()=>{stat='trend';$('st-trend').setAttribute('aria-pressed
 $('st-two').onclick=()=>{stat='two';$('st-two').setAttribute('aria-pressed',true);$('st-trend').setAttribute('aria-pressed',false);if(lastRes)drawDist(lastRes)};
 
 function run(){
-  const t0=performance.now();
-  const r=runPower(st,{keep:40}); lastRes=r;
-  const ms=Math.round(performance.now()-t0);
+  const t0=performance.now(), nn=neutralReps(st);
+  if(nn>20000){ // long run (many loci tested): compute in a background worker so the page stays responsive
+    $('status').textContent=`Running: ${st.reps.toLocaleString()} replicates under selection + ${nn.toLocaleString()} neutral…`;
+    runMany('main',[JSON.parse(JSON.stringify(st))],(i,r)=>render(r,Math.round(performance.now()-t0)),{full:true}); return;
+  }
+  runMany('main',[],()=>{}); // cancels a background run still in progress, so its result cannot overwrite this one
+  render(runPower(st,{keep:40}),Math.round(performance.now()-t0));
+}
+function render(r,ms){
+  lastRes=r;
   $('t-pe').textContent=pct(r.trend.powerEmp); $('t-p2').textContent=pct(r.two.powerEmp);
   $('t-fpr').textContent=pct(r.trend.fprNaive); $('t-pn').textContent=pct(r.trend.powerNaive);
   $('t-aadj').textContent='α′ = '+(+r.alphaAdj.toPrecision(2));
@@ -866,7 +884,7 @@ function run(){
   const onlyHap=isNaN(r.hetAcc)&&!isNaN(r.hapAcc);
   if(onlyHap) $('t-het').textContent=pct(r.hapAcc);
   $('t-het-lab').textContent=st.perfect?'Genotypes called correctly (perfect genotypes)':(onlyHap?`${HAPL()?'Haploid alleles':'Haploid male alleles'} called correctly; ${pct(r.missRate)} of specimens below minimum depth`:`Heterozygotes called correctly${!isNaN(r.hapAcc)?` (haploid males: ${pct(r.hapAcc)})`:''}; ${pct(r.missRate)} of specimens below minimum depth`);
-  $('status').textContent=`${st.reps.toLocaleString()} replicates under selection + ${(2*st.reps).toLocaleString()} neutral · ${ms} ms · threshold: ${r.trend.method==='empirical'?'empirical quantile of neutral replicates':'Gaussian fit to neutral replicates (α′ too small for an empirical quantile)'}${r.lambda>1?` · rescaled: ${r.genReal.toLocaleString()} generations simulated as ${r.genSim.toLocaleString()} (×${r.lambda})`:''}`;
+  $('status').textContent=`${st.reps.toLocaleString()} replicates under selection + ${r.nNeutral.toLocaleString()} neutral · ${ms} ms · threshold: ${r.trend.method==='empirical'?'empirical quantile of neutral replicates':'Gaussian fit to neutral replicates (α′ too small for an empirical quantile)'}${r.lambda>1?` · rescaled: ${r.genReal.toLocaleString()} generations simulated as ${r.genSim.toLocaleString()} (×${r.lambda})`:''}`;
   $('rescale-note').hidden=!r.rescaleOutside;
   if(r.rescaleOutside) $('rescale-note').innerHTML=`<b>Approximate result.</b> The sampling period spans ${r.genReal.toLocaleString()} generations. To keep the page fast, each simulated generation stands for ${r.lambda} real ones, which is beyond the range checked against full simulations (strong selection or small breeding numbers). Treat this power as indicative.`;
   const dn=$('drift-note');
@@ -941,7 +959,7 @@ $('sweep-run').onclick=()=>{
   const key=$('sweepvar').value, def=Object.assign({},SWEEPS[key]);
   if(def.valsFn) def.vals=def.valsFn(st);
   const reps=Math.min(st.reps,1000), t0=performance.now(), N=def.vals.length, out=new Array(N); let n=0;
-  const plist=def.vals.map(v=>{const p=JSON.parse(JSON.stringify(st)); p.reps=reps; def.apply(p,v); return p;});
+  const plist=def.vals.map(v=>{const p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.neutralMax=20000; def.apply(p,v); return p;});
   lastSweep=null; drawSweep(def,[]); $('sweep-status').textContent=`Running 0 / ${N}…`;
   runMany('sweep',plist,(i,r)=>{
     out[i]={v:def.vals[i],te:r.trend.powerEmp,tw:r.two.powerEmp,fp:r.trend.fprNaive,gauss:r.trend.method!=='empirical'};
@@ -969,7 +987,7 @@ function drawSweep(def,pts){
 $('sex-run').onclick=()=>{
   const reps=Math.min(st.reps,1000), n=st.n, t0=performance.now();
   const designs=[['Females only',{maleFrac:0}],['Males only, same individuals',{maleFrac:1}],['Males only, same alleles',{maleFrac:1,n:n.map(v=>v*2)}],['Half males, half females',{maleFrac:0.5}]];
-  const plist=designs.map(d=>Object.assign(JSON.parse(JSON.stringify(st)),{system:'haplodiploid',reps},d[1])), out=new Array(designs.length); let k=0;
+  const plist=designs.map(d=>Object.assign(JSON.parse(JSON.stringify(st)),{system:'haplodiploid',reps,neutralMax:20000},d[1])), out=new Array(designs.length); let k=0;
   $('sexs-status').textContent=`Running 0 / ${designs.length}…`;
   runMany('sex',plist,(i,r)=>{
     const p=plist[i]; out[i]={lab:designs[i][0],v:r.trend.powerEmp,acc:isNaN(r.hetAcc)?r.hapAcc:r.hetAcc,alleles:p.n.reduce((a,b)=>a+b,0)*(2-p.maleFrac)};
@@ -1187,7 +1205,7 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
     var key=$('plan-var').value, def=COLS[key], reps=Math.min(st.reps,500), grid=FACT.map(function(){return []});
     var jobs=[]; FACT.forEach(function(f,i){def.vals.forEach(function(v,j){jobs.push([i,j,f,v])})});
     var k=0, t0=performance.now(); draw(def,grid,st); window.__lastPlan=null;
-    var plist=jobs.map(function(J){var p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.n=scaleN(st.n,J[2]); def.apply(p,J[3]); return p;});
+    var plist=jobs.map(function(J){var p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.neutralMax=20000; p.n=scaleN(st.n,J[2]); def.apply(p,J[3]); return p;});
     $('plan-status').textContent='Running 0 / '+jobs.length+'…';
     runMany('plan',plist,function(i,r){
       var J=jobs[i]; grid[J[0]][J[1]]=r.trend.powerEmp; draw(def,grid,st); k++;

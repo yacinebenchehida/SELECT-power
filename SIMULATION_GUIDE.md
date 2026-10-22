@@ -461,11 +461,13 @@ In the simulator, the no-selection replays define the threshold. With real data,
 
 Testing m loci at 5% each would produce false alarms much more often than 5% overall. The Bonferroni correction tests each locus at 5% / m instead, which raises the threshold.
 
-**Example 17** (default settings): m = 1 → threshold 1.63, power 67%; m = 10 → threshold 2.86, power 50%; m = 100 → threshold 3.16, power 44%.
+**Example 17** (default settings): m = 1 → threshold 1.63, power 67%; m = 10 → threshold 2.86, power 50%; m = 100 → threshold 3.79, power 34%.
 
-### 11.4 The bell-curve shortcut (Gaussian fallback)
+### 11.4 Very strict cuts: more neutral replays
 
-With a very strict cut, too few neutral replays remain above it to place the threshold reliably (with 2,000 replays and α/m = 0.0005, only one would). The tool then fits a bell curve (normal distribution) to the 2,000 neutral scores and reads the threshold from the curve. The status line says when this happens, and the parameter power curve marks such points with hollow markers. In Example 17, m = 100 uses this shortcut.
+With a very strict cut, too few neutral replays remain above it to place the threshold reliably (with 2,000 replays and α/m = 0.0005, only one would). The tool then runs more neutral replays, enough for about 10 to land above the cut: 20,000 for α/m = 0.0005 (m = 100), up to a maximum of 200,000. In Example 17, m = 100 uses 20,000 neutral replays.
+
+Only beyond that maximum does the tool fall back on a shortcut: it fits a bell curve (normal distribution) to the neutral scores and reads the threshold from the curve. This shortcut is approximate. With strong drift or a rare allele, the real neutral scores have a longer upper tail than the bell curve, so the threshold comes out too low and false positives are more frequent than intended (see `validation/false_positive_rate.md`). The status line says when the shortcut is used, and the parameter power curve marks such points with hollow markers.
 
 ### 11.5 Effective population size Ne
 
