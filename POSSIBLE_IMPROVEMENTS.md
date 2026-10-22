@@ -4,7 +4,6 @@ Ideas that have been discussed but are not implemented yet. SPOT is meant to sta
 
 ## Model
 
-- **Historical DNA of bacteria, viruses and other organisms with very short generations (planned next).** A few centuries of pathogen samples can mean 10⁵ to 10⁶ generations, which takes from half a minute to several minutes per power estimate if every generation is simulated. The planned route is rescaling, as in SLiM: simulate at most about 2,000 generations, with selection made proportionally stronger and the population proportionally smaller, so that Ne·s and the total drift over the period stay the same. The page would choose the scaling factor automatically, keep it small enough for the approximation to hold (scaled s below about 0.1), say when rescaling is used, and accept generation times down to about one hour (0.0001 years). Rescaled results need to be checked against full simulations (for example at 20,000 generations) before release.
 - **More flexible demographic histories.** Ne can currently be constant, change exponentially between the first and last sampling points, or be set separately for each interval between sampling points. Possible additions: change points that do not coincide with sampling dates, gradual (rather than abrupt) recovery after a bottleneck, and random fluctuations in population size.
 - **Overlapping generations and age structure**, for long-lived species where individuals of different ages breed together.
 - **Selection that changes over time**, for example selection that stops, reverses or fluctuates.

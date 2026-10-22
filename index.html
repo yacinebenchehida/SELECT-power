@@ -182,8 +182,8 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
       <button type="button" id="tx-dip" aria-pressed="false">Diploid</button>
       <button type="button" id="tx-hap" aria-pressed="false">Haploid</button>
     </div>
-    <label for="gentime">Years per generation<input id="gentime" type="number" min="0.05" max="100" step="any"></label>
-    <p class="hint">Average age of parents when their offspring are born: for example 1 for one generation a year, 0.5 for two a year, around 25–30 for humans.</p>
+    <label for="gentime">Years per generation<input id="gentime" type="number" min="0.0001" max="100" step="any"></label>
+    <p class="hint">Average age of parents when their offspring are born: for example 1 for one generation a year, 0.5 for two a year, around 25–30 for humans, and down to 0.0001 (about one hour) for fast-reproducing microbes. Long series are simulated with rescaling (see README).</p>
     <label for="nf"><span class="row"><span id="lab-nf">Breeding females per generation</span><output id="o-nf"></output></span><input id="nf" type="range" min="0" max="100" step="1"></label>
     <label for="nm" id="row-nm"><span class="row"><span>Breeding males per generation</span><output id="o-nm"></output></span><input id="nm" type="range" min="0" max="100" step="1"></label>
     <p class="hint" id="ne-hint"></p>
@@ -198,7 +198,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
   <fieldset>
     <legend>Selection</legend>
     <label for="p0"><span class="row"><span>Allele frequency at the first point (p₀)</span><output id="o-p0"></output></span><input id="p0" type="range" min="0" max="100" step="1"></label>
-    <label for="s"><span class="row"><span>Selection coefficient s</span><output id="o-s"></output></span><input id="s" type="range" min="0" max="0.6" step="0.005"></label>
+    <label for="s"><span class="row"><span>Selection coefficient s</span><output id="o-s"></output></span><input id="s" type="range" min="0" max="100" step="1"></label>
     <label for="h" id="row-h">Dominance in diploid individuals
       <select id="h"><option value="1">Dominant (h = 1)</option><option value="0.75">Partly dominant (h = 0.75)</option><option value="0.5">Additive (h = 0.5)</option><option value="0.25">Partly recessive (h = 0.25)</option><option value="0">Recessive (h = 0)</option></select></label>
     <label for="smale" id="row-smale"><span class="row"><span>Selection in males (× s)</span><output id="o-smale"></output></span><input id="smale" type="range" min="0" max="1.5" step="0.05"></label>
@@ -260,6 +260,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <div class="tile"><b id="t-het">–</b><span class="lab" id="t-het-lab">Heterozygotes called correctly</span></div>
   </div>
   <div class="panel-head"><p class="status" id="status">Running…</p><button type="button" id="res-csv">Download results (CSV)</button></div>
+  <div class="note" id="rescale-note" hidden></div>
   <div class="note" id="drift-note" hidden></div>
 
   <section class="panel explainer" aria-labelledby="exp-h">
@@ -575,6 +576,38 @@ function qnorm(p){
   if(p<=1-pl){q=p-.5;r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1)}
   q=Math.sqrt(-2*Math.log(1-p));return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
+/* ---------- rescaling for very many generations ----------
+   When the sampling period spans more than SIM_TARGET generations, every simulated generation stands for
+   lambda real ones: selection becomes (1+s)^lambda - 1, breeding numbers (and Ne per interval) are divided by
+   lambda, migration becomes 1-(1-m)^lambda and sampling times are divided by lambda. This keeps Ne*s and the
+   total drift over the period unchanged (the standard rescaling used in forward simulators such as SLiM).
+   lambda is capped so that scaled selection stays <= MAX_SCALED_S and scaled breeding numbers >= MIN_SCALED_N
+   (limits set from validation/rescale_limits.js);
+   if those caps would leave more than SIM_HARD generations, lambda is raised anyway and flagged. */
+const SIM_TARGET=2000, SIM_HARD=10000, MAX_SCALED_S=0.025, MIN_SCALED_N=200;
+function rescale(P){
+  const g=gensOf(P), G=g[g.length-1];
+  if(P.noRescale||G<=SIM_TARGET) return {P,lambda:1,G,Gsim:G,outside:false};
+  const want=Math.ceil(G/SIM_TARGET), need=Math.ceil(G/SIM_HARD);
+  let lam=want;
+  const sAbs=Math.max(Math.abs(P.s||0),Math.abs((P.s||0)*(P.sMale==null?1:P.sMale)));
+  if(sAbs>0) lam=Math.min(lam,Math.max(1,Math.floor(Math.log(1+MAX_SCALED_S)/Math.log(1+sAbs))));
+  if(!P.noDrift){
+    const nMin=(P.system==='haploid'?P.Nf:Math.min(P.Nf,P.Nm))*(P.neByBlock&&P.neBlocks?Math.min(...P.neBlocks)/neFor(P):Math.min(1,P.decline));
+    lam=Math.min(lam,Math.max(1,Math.floor(nMin/MIN_SCALED_N)));
+  }
+  if(P.mig>0&&P.mig<1) lam=Math.min(lam,Math.max(1,Math.floor(Math.log(0.5)/Math.log(1-P.mig))));
+  let outside=false; if(lam<need){lam=need; outside=true;}
+  if(lam<=1) return {P,lambda:1,G,Gsim:G,outside:false};
+  const Q=Object.assign({},P); delete Q.volt;
+  Q.genTime=genTimeOf(P)*lam;
+  Q.s=Math.pow(1+P.s,lam)-1;
+  const sm=P.s*(P.sMale==null?1:P.sMale); Q.sMale=Q.s>0?(Math.pow(1+sm,lam)-1)/Q.s:P.sMale;
+  Q.Nf=P.Nf/lam; Q.Nm=P.Nm/lam; if(P.neBlocks) Q.neBlocks=P.neBlocks.map(v=>v/lam);
+  Q.mig=1-Math.pow(1-P.mig,lam);
+  const gs=gensOf(Q);
+  return {P:Q,lambda:lam,G,Gsim:gs[gs.length-1],outside};
+}
 function prep(P){
   const Q=Object.assign({},P);
   Q.lE=Math.log(Q.err); Q.l1E=Math.log(1-Q.err);
@@ -583,7 +616,7 @@ function prep(P){
 }
 /* run R selected + 2R neutral replicates; compute power several ways */
 function runPower(P0,opt={}){
-  const P=prep(P0), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
+  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
   const t=gensOf(P), K=t.length;
   const ALL=t.map((_,i)=>i), TWO=[0,K-1];
   const keepK=opt.keep||0;
@@ -592,7 +625,7 @@ function runPower(P0,opt={}){
   for(let r=0;r<reps;r++){const o=simulateRep(P,P.s,R,r<keepK);sel.trend[r]=trendZ(o.x,o.n,t,ALL);sel.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajS.push(o.traj);het+=o.hetTrue;hetOk+=o.hetCalled;miss+=o.missing;samp+=o.sampled;hT+=o.hapTot;hO+=o.hapOk}
   for(let r=0;r<nn;r++){const o=simulateRep(P,0,R,r<keepK);neu.trend[r]=trendZ(o.x,o.n,t,ALL);neu.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajN.push(o.traj)}
   const a=P.alpha/P.m, zc=qnorm(1-a);
-  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,
+  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
     hetAcc:P.perfect?1:(het?hetOk/het:NaN), missRate:P.perfect?0:miss/samp, hapAcc:hT?hO/hT:NaN};
   for(const k of ['trend','two']){
     const ns=Float64Array.from(neu[k]).sort();
@@ -606,15 +639,16 @@ function runPower(P0,opt={}){
   }
   return res;
 }
-function deterministic(P0,both){
-  const P=prep(Object.assign({},P0,{noDrift:true,perfect:true}));
+function deterministic(P0,both){ // exact up to 200,000 generations, rescaled beyond
+  const g=gensOf(P0), D=Object.assign({},P0,{noDrift:true,perfect:true});
+  const P=prep(g[g.length-1]>200000?rescale(D).P:D);
   const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:(P.years||YEARS).map(()=>0)}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
 }
 /* neutral diversity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)), or prod (1 - 1/N_g) for haploids */
 function hetRetained(P){
   if(P.noDrift) return 1;
-  const gens=gensOf(P), G=gens[gens.length-1]; let H=1;
-  for(let g=0;g<G;g++){const f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=P.system==='haploid'?1-1/ne:1-1/(2*ne)}
+  const gens=gensOf(P), G=gens[gens.length-1], step=Math.max(1,Math.ceil(G/100000)); let H=1;
+  for(let g=0;g<G;g+=step){const k=Math.min(step,G-g), f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=Math.pow(P.system==='haploid'?1-1/ne:1-1/(2*ne),k)}
   return H;
 }
 /* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
@@ -688,15 +722,15 @@ const runMany=(function(){
 const $=id=>document.getElementById(id);
 /* log-scale helpers for sliders */
 const logMap=(lo,hi)=>({to:v=>lo*Math.pow(hi/lo,v/100), from:x=>Math.round(100*Math.log(x/lo)/Math.log(hi/lo))});
-const NMAP=logMap(20,200000), PMAP=logMap(0.001,0.5), DMAP=logMap(0.01,10);
+const NMAP=logMap(20,1e8), PMAP=logMap(0.001,0.5), DMAP=logMap(0.01,10), SMAP=logMap(0.0001,0.6);
 const roundN=x=>{const e=Math.pow(10,Math.floor(Math.log10(x))-1);return Math.round(x/e)*e};
 const roundP=x=>x<0.01?+x.toFixed(4):x<0.1?+x.toFixed(3):+x.toFixed(2);
 const fmtN=x=>x>=1e4?(x/1000).toFixed(0)+'k':x>=1e3?(x/1000).toFixed(1).replace('.0','')+'k':String(x);
 const yearTicks=(a,b,k)=>{const span=b-a, raw=span/k, mag=Math.pow(10,Math.floor(Math.log10(raw))), st_=[1,2,2.5,5,10].map(x=>x*mag).find(x=>span/x<=k)||10*mag; const t=[]; for(let y=Math.ceil(a/st_)*st_;y<=b+1e-9;y+=st_) t.push(Math.round(y)); return t};
 const pct=x=>isNaN(x)?'–':(x*100).toFixed(x>=0.995||x<0.005?1:0)+'%';
 
-const MAXP=20, MAXG=5000, MAXN=1000;
-const MAXNE=1e7;
+const MAXP=20, MAXG=1e7, MAXN=1000, MINGT=0.0001;
+const MAXNE=1e8;
 const DEFAULTS={system:'haplodiploid',neByBlock:false,neBlocks:null,genTime:1,Nf:1000,Nm:1000,noDrift:false,p0:0.01,s:0.05,h:0.5,onset:1935,years:[1935,1955,1975,2025],n:[20,20,20,40],perfect:false,depthEarly:10,depthLast:15,err:0.005,minDP:3,alpha:0.05,m:1,sMale:1,decline:1,mig:0,pMig:-1,kSib:1,maleFrac:0,reps:1000,seed:1};
 const PRESETS={
   defaults:DEFAULTS,
@@ -721,7 +755,7 @@ function buildTP(){
 function writeUI(){
   $('tx-hym').setAttribute('aria-pressed',st.system==='haplodiploid'); $('tx-dip').setAttribute('aria-pressed',st.system==='diploid'); $('tx-hap').setAttribute('aria-pressed',st.system==='haploid'); $('neblock').checked=st.neByBlock;
   $('gentime').value=st.genTime; $('nf').value=NMAP.from(st.Nf); $('nm').value=NMAP.from(st.Nm); $('nodrift').checked=st.noDrift;
-  $('p0').value=PMAP.from(st.p0); $('s').value=st.s; $('h').value=String(st.h); $('onset').value=st.onset;
+  $('p0').value=PMAP.from(st.p0); $('s').value=SMAP.from(st.s); $('h').value=String(st.h); $('onset').value=st.onset;
   buildTP(); $('y-hint').textContent='';
   $('onset').min=st.years[0]; $('onset').max=last(st.years)-1;
   $('decline').value=DMAP.from(st.decline); $('mig').value=st.mig; $('pmig').value=String(st.pMig); $('smale').value=st.sMale; $('ksib').value=st.kSib; $('mfrac').value=st.maleFrac;
@@ -731,7 +765,7 @@ function writeUI(){
 }
 function labels(){
   $('o-nf').textContent=fmtN(st.Nf); $('o-nm').textContent=fmtN(st.Nm);
-  $('o-p0').textContent=st.p0; $('o-s').textContent=st.s.toFixed(3); $('o-onset').textContent=st.onset;
+  $('o-p0').textContent=st.p0; $('o-s').textContent=st.s<0.01?String(+st.s.toPrecision(2)):st.s.toFixed(3); $('o-onset').textContent=st.onset;
   $('o-decline').textContent=(st.decline*100<10?(st.decline*100).toFixed(1):Math.round(st.decline*100))+'%'; $('o-mig').textContent=(st.mig*100).toFixed(2).replace(/\.?0+$/,'')+'%'; $('o-smale').textContent=st.sMale.toFixed(2)+'×'; $('o-ksib').textContent=st.kSib; $('o-mfrac').textContent=Math.round(st.maleFrac*100)+'%';
   $('mfrac-hint').innerHTML=st.system==='haplodiploid'?'Haplodiploid: sampled males are haploid and contribute one allele each; females contribute two. 0% = females only.':'Diploid: both sexes carry two alleles. The male fraction only matters if selection in males differs from females.';
   $('decline').disabled=st.noDrift||st.neByBlock; $('neblock').disabled=st.noDrift;
@@ -751,7 +785,7 @@ function labels(){
 }
 function readUI(){
   {const a=+$('nf').value,b=+$('nm').value; if(a!==NMAP.from(st.Nf)) st.Nf=roundN(NMAP.to(a)); if(b!==NMAP.from(st.Nm)) st.Nm=roundN(NMAP.to(b));} st.noDrift=$('nodrift').checked;
-  {const a=+$('p0').value; if(a!==PMAP.from(st.p0)) st.p0=roundP(PMAP.to(a));} st.s=+$('s').value; st.h=+$('h').value;
+  {const a=+$('p0').value; if(a!==PMAP.from(st.p0)) st.p0=roundP(PMAP.to(a));} {const a=+$('s').value; if(a!==SMAP.from(st.s)) st.s=+SMAP.to(a).toPrecision(2);} st.h=+$('h').value;
   { const nb=$('neblock').checked; if(nb!==st.neByBlock){st.neByBlock=nb; ensureBlocks(); if(nb&&st.neBlocks.every(v=>v===st.neBlocks[0])) st.neBlocks=st.neBlocks.map(()=>Math.max(2,Math.round(neFor(st)))); buildTP();} }
   if(document.querySelectorAll('#tp-list .tp-row').length!==st.years.length) buildTP();
   if(st.neByBlock) st.neBlocks=st.neBlocks.map((v,i)=>{const x=Math.round(+($('ne'+i)||{}).value); return Number.isFinite(x)&&x>=2?Math.min(MAXNE,x):v});
@@ -759,7 +793,7 @@ function readUI(){
   st.n=st.n.map((_,i)=>Math.max(i===0||i===K-1?1:0,Math.min(MAXN,Math.round(+$('n'+i).value||0))));
   { const y=st.years.map((_,i)=>Math.round(+$('y'+i).value)), gt=+$('gentime').value;
     let msg='';
-    if(!(gt>=0.05&&gt<=100)) msg='Years per generation must be between 0.05 and 100. Using the last valid value.';
+    if(!(gt>=MINGT&&gt<=100)) msg='Years per generation must be between 0.0001 (about one hour) and 100. Using the last valid value.';
     else if(!y.every(Number.isFinite)||y.some((v,i)=>i&&v<=y[i-1])) msg='Years must increase from one point to the next. Using the last valid years.';
     else if(Math.round((last(y)-y[0])/gt)<1) msg='The first and last points must be at least one generation apart. Using the last valid years.';
     else if((last(y)-y[0])/gt>MAXG) msg=`The sampling period spans ${Math.round((last(y)-y[0])/gt).toLocaleString()} generations; the maximum is ${MAXG.toLocaleString()}. Using the last valid values.`;
@@ -804,7 +838,9 @@ function run(){
   const onlyHap=isNaN(r.hetAcc)&&!isNaN(r.hapAcc);
   if(onlyHap) $('t-het').textContent=pct(r.hapAcc);
   $('t-het-lab').textContent=st.perfect?'Genotypes called correctly (perfect genotypes)':(onlyHap?`${HAPL()?'Haploid alleles':'Haploid male alleles'} called correctly; ${pct(r.missRate)} of specimens below minimum depth`:`Heterozygotes called correctly${!isNaN(r.hapAcc)?` (haploid males: ${pct(r.hapAcc)})`:''}; ${pct(r.missRate)} of specimens below minimum depth`);
-  $('status').textContent=`${st.reps.toLocaleString()} replicates under selection + ${(2*st.reps).toLocaleString()} neutral · ${ms} ms · threshold: ${r.trend.method==='empirical'?'empirical quantile of neutral replicates':'Gaussian fit to neutral replicates (α′ too small for an empirical quantile)'}`;
+  $('status').textContent=`${st.reps.toLocaleString()} replicates under selection + ${(2*st.reps).toLocaleString()} neutral · ${ms} ms · threshold: ${r.trend.method==='empirical'?'empirical quantile of neutral replicates':'Gaussian fit to neutral replicates (α′ too small for an empirical quantile)'}${r.lambda>1?` · rescaled: ${r.genReal.toLocaleString()} generations simulated as ${r.genSim.toLocaleString()} (×${r.lambda})`:''}`;
+  $('rescale-note').hidden=!r.rescaleOutside;
+  if(r.rescaleOutside) $('rescale-note').innerHTML=`<b>Approximate result.</b> The sampling period spans ${r.genReal.toLocaleString()} generations. To keep the page fast, each simulated generation stands for ${r.lambda} real ones, which is beyond the range checked against full simulations (strong selection or small breeding numbers). Treat this power as indicative.`;
   const dn=$('drift-note');
   if(inflated){dn.hidden=false;dn.innerHTML=`<b>Drift inflates false positives.</b> A test that treats sampling noise as the only source of variation would call ${pct(r.trend.fprNaive)} of neutral loci "selected" at a nominal α′ = ${+r.alphaAdj.toPrecision(2)}. The power it reports (${pct(r.trend.powerNaive)}) is therefore misleading. The drift-aware power (${pct(r.trend.powerEmp)}) is the realistic figure.`}
   else dn.hidden=true;
@@ -825,7 +861,7 @@ function drawTraj(r,det){
   for(let k=0;k<=4;k++){const p=ym*k/4;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(p)}" y2="${Y(p)}" stroke="var(--line)"/><text x="${L-8}" y="${Y(p)+4}" text-anchor="end" font-size="10.5" fill="var(--muted)">${+p.toFixed(3)}</text>`}
   yearTicks(Y0,last(st.years),7).forEach(y=>s+=`<text x="${X((y-Y0)/gt)}" y="${B+16}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${y}</text>`);
   if(st.onset>Y0){const xo=X((st.onset-Y0)/gt);s+=`<line x1="${xo}" x2="${xo}" y1="${T}" y2="${B}" stroke="var(--accent)" stroke-dasharray="2 3"/><text x="${xo>W-130?xo-4:xo+4}" y="${T+10}" font-size="10" fill="var(--accent)"${xo>W-130?' text-anchor="end"':''}>selection starts</text>`}
-  const path=t=>t.map((p,g)=>(g?'L':'M')+X(g).toFixed(1)+' '+Y(Math.min(p,ym)).toFixed(1)).join('');
+  const path=t=>{const L=t.length-1, st_=Math.max(1,Math.floor(L/800)); let d=''; for(let i=0;i<=L;i+=st_) d+=(i?'L':'M')+X(i/L*Gt).toFixed(1)+' '+Y(Math.min(t[i],ym)).toFixed(1); if(L%st_) d+='L'+X(Gt).toFixed(1)+' '+Y(Math.min(t[L],ym)).toFixed(1); return d;}; // trajectories may be rescaled: positions by fraction of the period
   r.trajN.forEach(t=>s+=`<path d="${path(t)}" fill="none" stroke="var(--neutral)" stroke-opacity=".45" stroke-width="1"/>`);
   r.trajS.forEach(t=>s+=`<path d="${path(t)}" fill="none" stroke="var(--accent)" stroke-opacity=".5" stroke-width="1.1"/>`);
   s+=`<path d="${path(det)}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 4"/>`;
@@ -859,10 +895,10 @@ const SWEEPS={
   nHist:{label:'individuals at each earlier point',vals:[5,10,15,20,30,40,60],apply:(p,v)=>{const K=p.n.length;p.n=p.n.map((x,i)=>i===K-1?x:(i>0&&x===0?0:v))},cur:p=>p.n[0]},
   nMod:{label:'individuals at the last point',vals:[10,20,30,40,60,80,120],apply:(p,v)=>{p.n[p.n.length-1]=v},cur:p=>last(p.n)},
   N:{label:'breeding females = breeding males (per generation)',vals:[100,300,1000,3000,10000,30000,100000],log:true,apply:(p,v)=>{p.Nf=v;p.Nm=v;p.noDrift=false;p.neByBlock=false},cur:p=>p.Nf},
-  genTime:{label:'years per generation',log:true,valsFn:p=>{const span=last(p.years)-p.years[0];return [0.1,0.25,0.5,1,2,5,10,20,30,50].filter(v=>span/v<=MAXG&&Math.round(span/v)>=2)},vals:[],apply:(p,v)=>{p.genTime=v},cur:p=>p.genTime},
+  genTime:{label:'years per generation',log:true,valsFn:p=>{const span=last(p.years)-p.years[0];return [0.001,0.01,0.1,0.25,0.5,1,2,5,10,20,30,50].filter(v=>span/v<=MAXG&&Math.round(span/v)>=2)},vals:[],apply:(p,v)=>{p.genTime=v},cur:p=>p.genTime},
   depth:{label:'mean depth (×), all points',vals:[2,3,4,6,8,10,13,20,30],apply:(p,v)=>{p.depthEarly=v;p.depthLast=v;p.perfect=false},cur:p=>p.depthEarly},
   onset:{label:'year selection starts',year:true,valsFn:p=>{const a=p.years[0],b=last(p.years);return [...new Set([0,1,2,3,4,5,6,7].map(i=>Math.round(a+(b-a)*i/8)))]},vals:[],apply:(p,v)=>{p.onset=v},cur:p=>p.onset},
-  s:{label:'selection coefficient s',vals:[0.005,0.01,0.02,0.03,0.05,0.08,0.12,0.2],apply:(p,v)=>{p.s=v},cur:p=>p.s},
+  s:{label:'selection coefficient s',log:true,vals:[0.0001,0.0003,0.001,0.003,0.01,0.03,0.1,0.3],apply:(p,v)=>{p.s=v},cur:p=>p.s},
   p0:{label:'allele frequency at the first point (p₀)',vals:[0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.4],log:true,apply:(p,v)=>{p.p0=v},cur:p=>p.p0},
   h:{label:'dominance h (in females)',vals:[0,0.25,0.5,0.75,1],apply:(p,v)=>{p.h=v},cur:p=>p.h},
   sMale:{label:'selection in males (× s)',vals:[0,0.25,0.5,0.75,1,1.25,1.5],apply:(p,v)=>{p.sMale=v},cur:p=>p.sMale},
@@ -925,7 +961,7 @@ function drawSexS(out,N){
 }
 /* ---------- save, load and share settings; export results ---------- */
 const SNAP={h:[0,0.25,0.5,0.75,1],err:[0.001,0.005,0.01,0.02,0.05],alpha:[0.05,0.01,0.001],pMig:[-1,0,0.5,1],reps:[500,1000,2000,5000]};
-const RANGE={Nf:[2,1e7],Nm:[2,1e7],p0:[0.001,0.5],s:[0,0.6],sMale:[0,1.5],decline:[0.01,10],mig:[0,0.1],maleFrac:[0,1],kSib:[1,10],depthEarly:[1,30],depthLast:[1,30],minDP:[1,10],m:[1,10000],seed:[1,999999],genTime:[0.05,100]};
+const RANGE={Nf:[2,1e8],Nm:[2,1e8],p0:[0.001,0.5],s:[0.0001,0.6],sMale:[0,1.5],decline:[0.01,10],mig:[0,0.1],maleFrac:[0,1],kSib:[1,10],depthEarly:[1,30],depthLast:[1,30],minDP:[1,10],m:[1,10000],seed:[1,999999],genTime:[0.0001,100]};
 function encodeSettings(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodeSettings(x){x=x.replace(/-/g,'+').replace(/_/g,'/'); while(x.length%4) x+='='; return JSON.parse(decodeURIComponent(escape(atob(x))))}
 function applySettings(o){ // returns null if applied, or an error message

@@ -4,7 +4,7 @@ This guide explains, step by step and with real numbers, what SPOT (Selection Po
 
 Every number in this guide was produced with the simulator's own code (`sim.js`) or with the short R scripts mentioned at the end. Settings are given with each example so that it can be reproduced.
 
-The examples use the default design: four sampling points (1935, 1955, 1975 and 2025) and one generation per year. The simulator itself accepts 2 to 20 sampling points, any generation time from 0.05 to 100 years, haploid, diploid or haplodiploid inheritance, and an Ne set separately for each interval between sampling points; the logic explained here is the same for any design.
+The examples use the default design: four sampling points (1935, 1955, 1975 and 2025) and one generation per year. The simulator itself accepts 2 to 20 sampling points, any generation time from 0.0001 (about one hour) to 100 years (long series are simulated with rescaling, see the README), haploid, diploid or haplodiploid inheritance, and an Ne set separately for each interval between sampling points; the logic explained here is the same for any design.
 
 ---
 

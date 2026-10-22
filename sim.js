@@ -144,6 +144,38 @@ function qnorm(p){
   if(p<=1-pl){q=p-.5;r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1)}
   q=Math.sqrt(-2*Math.log(1-p));return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
+/* ---------- rescaling for very many generations ----------
+   When the sampling period spans more than SIM_TARGET generations, every simulated generation stands for
+   lambda real ones: selection becomes (1+s)^lambda - 1, breeding numbers (and Ne per interval) are divided by
+   lambda, migration becomes 1-(1-m)^lambda and sampling times are divided by lambda. This keeps Ne*s and the
+   total drift over the period unchanged (the standard rescaling used in forward simulators such as SLiM).
+   lambda is capped so that scaled selection stays <= MAX_SCALED_S and scaled breeding numbers >= MIN_SCALED_N
+   (limits set from validation/rescale_limits.js);
+   if those caps would leave more than SIM_HARD generations, lambda is raised anyway and flagged. */
+const SIM_TARGET=2000, SIM_HARD=10000, MAX_SCALED_S=0.025, MIN_SCALED_N=200;
+function rescale(P){
+  const g=gensOf(P), G=g[g.length-1];
+  if(P.noRescale||G<=SIM_TARGET) return {P,lambda:1,G,Gsim:G,outside:false};
+  const want=Math.ceil(G/SIM_TARGET), need=Math.ceil(G/SIM_HARD);
+  let lam=want;
+  const sAbs=Math.max(Math.abs(P.s||0),Math.abs((P.s||0)*(P.sMale==null?1:P.sMale)));
+  if(sAbs>0) lam=Math.min(lam,Math.max(1,Math.floor(Math.log(1+MAX_SCALED_S)/Math.log(1+sAbs))));
+  if(!P.noDrift){
+    const nMin=(P.system==='haploid'?P.Nf:Math.min(P.Nf,P.Nm))*(P.neByBlock&&P.neBlocks?Math.min(...P.neBlocks)/neFor(P):Math.min(1,P.decline));
+    lam=Math.min(lam,Math.max(1,Math.floor(nMin/MIN_SCALED_N)));
+  }
+  if(P.mig>0&&P.mig<1) lam=Math.min(lam,Math.max(1,Math.floor(Math.log(0.5)/Math.log(1-P.mig))));
+  let outside=false; if(lam<need){lam=need; outside=true;}
+  if(lam<=1) return {P,lambda:1,G,Gsim:G,outside:false};
+  const Q=Object.assign({},P); delete Q.volt;
+  Q.genTime=genTimeOf(P)*lam;
+  Q.s=Math.pow(1+P.s,lam)-1;
+  const sm=P.s*(P.sMale==null?1:P.sMale); Q.sMale=Q.s>0?(Math.pow(1+sm,lam)-1)/Q.s:P.sMale;
+  Q.Nf=P.Nf/lam; Q.Nm=P.Nm/lam; if(P.neBlocks) Q.neBlocks=P.neBlocks.map(v=>v/lam);
+  Q.mig=1-Math.pow(1-P.mig,lam);
+  const gs=gensOf(Q);
+  return {P:Q,lambda:lam,G,Gsim:gs[gs.length-1],outside};
+}
 function prep(P){
   const Q=Object.assign({},P);
   Q.lE=Math.log(Q.err); Q.l1E=Math.log(1-Q.err);
@@ -152,7 +184,7 @@ function prep(P){
 }
 /* run R selected + 2R neutral replicates; compute power several ways */
 function runPower(P0,opt={}){
-  const P=prep(P0), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
+  const sc=rescale(P0), P=prep(sc.P), R=makeRng(P.seed), reps=P.reps, nn=reps*2;
   const t=gensOf(P), K=t.length;
   const ALL=t.map((_,i)=>i), TWO=[0,K-1];
   const keepK=opt.keep||0;
@@ -161,7 +193,7 @@ function runPower(P0,opt={}){
   for(let r=0;r<reps;r++){const o=simulateRep(P,P.s,R,r<keepK);sel.trend[r]=trendZ(o.x,o.n,t,ALL);sel.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajS.push(o.traj);het+=o.hetTrue;hetOk+=o.hetCalled;miss+=o.missing;samp+=o.sampled;hT+=o.hapTot;hO+=o.hapOk}
   for(let r=0;r<nn;r++){const o=simulateRep(P,0,R,r<keepK);neu.trend[r]=trendZ(o.x,o.n,t,ALL);neu.two[r]=trendZ(o.x,o.n,t,TWO);if(o.traj)trajN.push(o.traj)}
   const a=P.alpha/P.m, zc=qnorm(1-a);
-  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,
+  const res={alphaAdj:a,zNaive:zc,trajS,trajN,sel,neu,lambda:sc.lambda,genReal:sc.G,genSim:sc.Gsim,rescaleOutside:sc.outside,
     hetAcc:P.perfect?1:(het?hetOk/het:NaN), missRate:P.perfect?0:miss/samp, hapAcc:hT?hO/hT:NaN};
   for(const k of ['trend','two']){
     const ns=Float64Array.from(neu[k]).sort();
@@ -175,17 +207,18 @@ function runPower(P0,opt={}){
   }
   return res;
 }
-function deterministic(P0,both){
-  const P=prep(Object.assign({},P0,{noDrift:true,perfect:true}));
+function deterministic(P0,both){ // exact up to 200,000 generations, rescaled beyond
+  const g=gensOf(P0), D=Object.assign({},P0,{noDrift:true,perfect:true});
+  const P=prep(g[g.length-1]>200000?rescale(D).P:D);
   const R=makeRng(1); const o=simulateRep(Object.assign(P,{n:(P.years||YEARS).map(()=>0)}),P.s,R,true); return both?{f:o.traj,m:o.trajM}:o.traj;
 }
 /* neutral diversity retained between first and last sampling point: prod (1 - 1/(2 Ne_g)), or prod (1 - 1/N_g) for haploids */
 function hetRetained(P){
   if(P.noDrift) return 1;
-  const gens=gensOf(P), G=gens[gens.length-1]; let H=1;
-  for(let g=0;g<G;g++){const f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=P.system==='haploid'?1-1/ne:1-1/(2*ne)}
+  const gens=gensOf(P), G=gens[gens.length-1], step=Math.max(1,Math.ceil(G/100000)); let H=1;
+  for(let g=0;g<G;g+=step){const k=Math.min(step,G-g), f=sizeFactor(P,gens,g), ne=neFor({system:P.system,Nf:Math.max(2,P.Nf*f),Nm:Math.max(2,P.Nm*f)}); H*=Math.pow(P.system==='haploid'?1-1/ne:1-1/(2*ne),k)}
   return H;
 }
 /* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
 function neFor(P){return P.system==='haploid'? P.Nf : P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
-if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,sizeFactor,YEARS};
+if(typeof module!=='undefined') module.exports={runPower,deterministic,neFor,hetRetained,simulateRep,makeRng,prep,qnorm,gensOf,genTimeOf,sizeFactor,rescale,YEARS};

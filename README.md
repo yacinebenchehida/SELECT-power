@@ -90,7 +90,7 @@ Each entry gives the label used in the interface, the key in the JavaScript para
 | Interface label | Key | Default | Meaning |
 |---|---|---|---|
 | Haplodiploid / Diploid / Haploid | `system` | `'haplodiploid'` | Inheritance system. **Haplodiploid**: females are diploid and males are haploid, developing from unfertilised eggs, so a son inherits only his mother's allele. **Diploid**: both sexes are diploid. **Haploid**: every individual carries one copy of the locus (for example haploid organisms or a haploid life stage); there are no sexes, no dominance and no families, so the settings for males, dominance and siblings are hidden. |
-| Years per generation | `genTime` | `1` | Generation time in years (between 0.05 and 100). The number of generations simulated is (last year − first year) / this value, rounded. Use 0.5 for two generations a year, 1 for one, and the average parental age for long-lived species (around 25–30 for humans). Older parameter sets that use `volt` (generations per year) are still accepted. |
+| Years per generation | `genTime` | `1` | Generation time in years (between 0.0001, about one hour, and 100). The number of generations between the first and last points is (last year − first year) / this value, rounded. Periods longer than 2,000 generations are simulated with rescaling (see [Very long series](#very-long-series-rescaling)). Use 0.5 for two generations a year, 1 for one, and the average parental age for long-lived species (around 25–30 for humans). Older parameter sets that use `volt` (generations per year) are still accepted. |
 | Breeding females per generation (haploid: breeding individuals) | `Nf` | `1000` | Number of females that actually reproduce each generation. This is **not** a census count of all individuals, and it is not Ne itself (see below). In social insects this is roughly the number of successful reproductive females, not the number of workers. |
 | Breeding males per generation | `Nm` | `1000` | Number of males that actually reproduce each generation. Raise it relative to `Nf` to approximate multiple mating by females. Not used in the haploid system. |
 | No drift (infinite population) | `noDrift` | `false` | Switches drift off. Only useful to reproduce a deterministic calculation. Leave it off for realistic power. |
@@ -111,7 +111,7 @@ For most purposes **Ne is the only thing that matters**. If the sex-specific num
 | Interface label | Key | Default | Meaning |
 |---|---|---|---|
 | Allele frequency at the first point (p₀) | `p0` | `0.01` | Frequency of the favoured allele at the first sampling year. Low values (≤ 0.01) represent a rare variant, and values around 0.1 represent common standing variation. |
-| Selection coefficient s | `s` | `0.05` | Relative fitness advantage per generation. In diploids the genotype fitnesses are 1+s (AA), 1+hs (Aa) and 1 (aa). Values of 0.01–0.05 are common for natural selection. Strong selection, such as insecticide resistance, can be an order of magnitude higher. |
+| Selection coefficient s | `s` | `0.05` | Relative fitness advantage per generation. In diploids the genotype fitnesses are 1+s (AA), 1+hs (Aa) and 1 (aa). Values of 0.01–0.05 are common for natural selection. Strong selection, such as insecticide resistance, can be an order of magnitude higher. Organisms with very short generations (for example bacteria or viruses sampled over centuries) typically need much smaller values per generation (0.0001–0.001). The slider is logarithmic, from 0.0001 to 0.6. |
 | Dominance in diploid individuals | `h` | `0.5` | Effect of the allele in heterozygotes: 1 = dominant, 0.5 = additive, 0 = recessive. It applies to all diploid individuals. Haploid males have no heterozygotes. If unknown, keep 0.5 and check 0 and 1 with the parameter power curve. |
 | Selection in males (× s) | `sMale` | `1` | Selection strength in males as a multiple of `s`. In haplodiploids, haploid males with the allele have fitness 1 + s·sMale. **Keep it at 1** when the trait is expressed in both sexes. Set 0 if the trait is not expressed in males, or values above 1 if the effect is stronger in males. |
 | Selection starts in year | `onset` | year 1 | Calendar year when selection begins. Before it, the allele only drifts. Selection acts from the generation after this year. |
@@ -232,7 +232,7 @@ This is the one-sided Cochran–Armitage trend test on allele counts. The two-po
 **Why a drift-aware threshold?** With binomial sampling noise only, Z ~ N(0, 1) under the null. Drift adds variance between generations, so the real neutral distribution of Z is wider. A test using z₁₋α would then flag too many neutral loci as selected. The simulator therefore takes the threshold from neutral replicates, which experience the same drift, sampling and genotyping error:
 
 ```
-critical value  c = quantile_{1 − α/m}( Z_neutral )
+threshold       c = quantile_{1 − α/m}( Z_neutral )
 power           = P( Z_selection > c )
 naive FPR       = P( Z_neutral > z_{1 − α/m} )
 ```
@@ -246,6 +246,19 @@ Power = Σₓ Σᵧ Bin(x; n₁, p₀) · Bin(y; n₂, pₜ) · 1[ test(x, y) re
 ```
 
 The "Analytic baseline" preset reproduces this setting within Monte Carlo error.
+
+### Very long series: rescaling
+
+Historical DNA of organisms with short generations (for example bacteria or viruses sampled over decades to centuries) can span 10⁵–10⁷ generations. Simulating each one would take minutes, so SPOT uses the standard rescaling of forward population-genetic simulators (as in SLiM): when the period spans more than 2,000 generations, each simulated generation stands for λ real ones, with
+
+```
+selection          s'   = (1 + s)^λ − 1          (same for selection in males)
+breeding numbers   N'   = N / λ                   (also Ne per interval)
+migration          m'   = 1 − (1 − m)^λ
+sampling times     t'   = t / λ
+```
+
+This keeps Ne·s and the total drift over the period unchanged; sampling, genotype calling and the test are not affected. λ is chosen automatically so that about 2,000 generations are simulated, but it is capped so that the rescaled selection stays at or below 0.025 and the rescaled breeding numbers at or above 200. These limits come from comparisons with full simulations (see `validation/`), in which rescaled and full power agreed within Monte Carlo error. The status line says when rescaling is used. If the caps would require simulating more than 10,000 generations, λ is raised anyway to keep the page fast, and a note marks the result as approximate.
 
 ---
 
@@ -336,6 +349,7 @@ console.log(1 - S.hetRetained(params)); // neutral heterozygosity lost
 - Population size is constant or changes exponentially. There is no random fluctuation.
 - Families (`kSib > 1`) use one mother and one father, so there is no multiple paternity within a family.
 - Genotype calling uses a simple per-read error model and a flat prior. Reference bias, mapping quality and damage patterns are not modelled explicitly, beyond the single error rate.
+- Periods longer than 2,000 generations are simulated with rescaling (see above): accurate within the validated limits, approximate beyond them (flagged on the page).
 - Population size is either constant or changes exponentially between the first and last points. More complex histories, such as a bottleneck followed by recovery, need a dedicated forward simulator such as SLiM or simuPOP.
 - Single-locus power only. Genome-wide scans would need a much stricter threshold. The Bonferroni m approximates testing several candidates.
 
