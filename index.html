@@ -933,7 +933,7 @@ function drawDist(r){
   s+=`<line x1="${X(res.crit)}" x2="${X(res.crit)}" y1="${T}" y2="${B}" stroke="var(--ink)" stroke-width="2"/><text x="${X(res.crit)+5}" y="${T+10}" font-size="10.5" fill="var(--ink)">drift-aware ${res.crit.toFixed(2)}</text>`;
   s+=`<line x1="${X(r.zNaive)}" x2="${X(r.zNaive)}" y1="${T+18}" y2="${B}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${X(r.zNaive)+5}" y="${T+30}" font-size="10.5" fill="var(--muted)">naive ${r.zNaive.toFixed(2)}</text>`;
   svg.innerHTML=s;
-  $('dist-hint').innerHTML=`Power is the darker amber area to the right of the solid line: <b>${pct(res.powerEmp)}</b> of replicates under selection exceed the ${(100*(1-r.alphaAdj)).toFixed(r.alphaAdj<0.01?2:1)}th percentile of the neutral replicates. The neutral histogram is wider than N(0, 1) when drift matters, which is why the solid line sits to the right of the dashed one.`;
+  $('dist-hint').innerHTML=`Power is the blue area to the right of the solid line: <b>${pct(res.powerEmp)}</b> of replicates under selection exceed the ${(100*(1-r.alphaAdj)).toFixed(r.alphaAdj<0.01?2:1)}th percentile of the neutral replicates. The neutral histogram is wider than N(0, 1) when drift matters, which is why the solid line sits to the right of the dashed one.`;
 }
 
 /* ---------- sweep ---------- */
