@@ -393,6 +393,5 @@ MIT licence; see [`LICENSE`](LICENSE).
 | `LICENSE`, `CITATION.cff` | Licence (MIT) and citation information. |
 | `POSSIBLE_IMPROVEMENTS.md` | Ideas that are not implemented yet and may be added depending on feedback. |
 | `examples/` | Short R scripts (selection only, drift only, selection + drift with the power calculation) and a Node script that reproduces the numbers in the guide. |
-| `validation/` | Validation analyses (false-positive rate, agreement with theory, Monte Carlo precision, rescaling): scripts, results and figures; see [`validation/README.md`](validation/README.md). |
+| `validation/` | Validation analyses (false-positive rate, agreement with theory, comparison with SLiM, Monte Carlo precision, rescaling): scripts, results and figures; see [`validation/README.md`](validation/README.md). |
 | `worked_examples/` | Worked examples for the paper (museum bumblebees, long-lived mammal, bacterial pathogen): scripts, results, figures and interpretation; see [`worked_examples/README.md`](worked_examples/README.md). |
-| `paper/` | Working material for the accompanying article (to-do list, related literature). |
