@@ -24,13 +24,9 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 
 ## 3. Worked examples (application section)
 
-- [ ] **Main example: museum bumblebee design.** Four decades (1930s, 1950s, 1970s, 2020s, entered as one representative year each), females only, haplodiploid.
-  - Ne anchored on the heterozygosity loss observed between the first and last samples.
-  - Plausible ranges of s and starting frequency.
-  - Planner and power curves: for example, whether adding historical specimens helps more than enlarging the modern sample; below which Ne no sample size reaches 80% power.
-  - One clear take-home message (for example: "s ≥ 0.05 on a common allele is detectable; rare alleles are not, whatever the sample size").
-- [ ] **Short contrasting example**: a diploid long-lived species (long generation time) or a bottleneck between two sampling dates using Ne per interval.
-- [ ] Optional: a pathogen example (haploid, many generations), now possible with rescaling.
+- [x] **Main example: museum bumblebee design**: done, see [`worked_examples/README.md`](../worked_examples/README.md). Detectable s by starting frequency; Ne anchored on heterozygosity loss and power against Ne; naive test false positives; where to add sampling effort, with a contrast between strong drift (Ne = 1,500) and weak drift (Ne = 100,000).
+- [x] **Short contrasting example**: done (long-lived mammal, 7 generations, with and without a bottleneck, using Ne per interval).
+- [x] Optional pathogen example (haploid, 17,000 generations, rescaled): done.
 
 ## 4. Introduction and statement of the gap
 
