@@ -6,7 +6,7 @@ A browser-based tool for estimating the **statistical power to detect selection 
 
 It simulates populations forward in time with **genetic drift**, **haploid, diploid or haplodiploid inheritance**, **sex-specific breeding numbers and selection**, then samples individuals and passes them through a **low-coverage sequencing and genotype-calling** step. Power is computed against a **drift-aware null**: the test threshold comes from simulated neutral replicates, not from the textbook N(0, 1) distribution.
 
-Everything runs locally in the browser. A typical run (1,000 replicates under selection plus 2,000 neutral replicates) takes about 0.1–0.4 s.
+Everything runs locally in the browser. A typical run (1,000 replicates under selection plus 2,000 neutral replicates) takes about 0.1–0.4 s. The parameter power curve, the sample-size planner and the sampling comparison run their settings in parallel on the computer's processor cores; results are identical to running them one after another.
 
 **New to the method?** [SIMULATION_GUIDE.md](SIMULATION_GUIDE.md) explains step by step, with worked numerical examples, how drift, selection and sampling are simulated and how a power value is obtained.
 
@@ -40,6 +40,7 @@ Why the threshold matters: a standard test that ignores drift sets the threshold
   - [Presets](#presets)
 - [Choosing values that are unknown](#choosing-values-that-are-unknown)
 - [Outputs](#outputs)
+- [Saving, sharing and exporting](#saving-sharing-and-exporting)
 - [How power is computed](#how-power-is-computed)
 - [Model equations](#model-equations)
 - [Using the simulation core from JavaScript / Node](#using-the-simulation-core-from-javascript--node)
@@ -203,6 +204,17 @@ The tile "Neutral heterozygosity lost from the first to the last point" shows th
 - **Parameter power curve:** shows how the overall power changes when one parameter changes. All values set by the user stay fixed except the chosen parameter, which is stepped through a range of values (for example 10, 20, 30 … 120 individuals at the last point). At each value the whole power calculation is rerun from scratch: new replays with and without selection, a new threshold, and the power of the complete design. Changing the sample size at the last point therefore gives the power of the design 20 / 20 / 20 / 10, then 20 / 20 / 20 / 20, and so on, with the earlier points kept at their current values. Blue: trend test across all points. Green: two-point test. Red: false-positive rate of the naive test. The vertical line marks the current value and the dashed line marks 80% power.
 - **Sample-size planner:** a grid of power (trend test across all points, drift-aware) with rows that scale the whole sampling design (×0.5, ×1, ×2, ×4) and columns that vary one parameter (s, h, Ne or p₀). Cells reaching 80% are outlined. Each cell uses up to 500 replicates under selection and 1,000 neutral.
 - **Sampling haploid males vs diploid females:** power for four sampling designs under haplodiploidy, with genotype-call accuracy shown on hover. Shown only when the haplodiploid system is selected (in a diploid, both sexes carry two alleles, so the sex of sampled individuals does not matter).
+
+---
+
+## Saving, sharing and exporting
+
+- **Shareable link.** The page address always contains the current settings (after `#s=`). **Copy link** puts it on the clipboard; opening the link reopens SPOT with exactly the same design, which makes any result reproducible, for example in a paper or a report.
+- **Save settings / Load settings.** Saves the current settings as a small file (`spot-settings.json`) and loads them back later. Files and links are checked when loaded; values outside the allowed ranges are adjusted, and invalid designs are rejected with a message.
+- **Download results (CSV).** Next to the status line: every parameter value plus the main outputs (both power values, thresholds, naive false-positive rate, expected final frequency, diversity lost, Ne, genotype-call accuracy) and the link to the settings.
+- **CSV buttons** in the parameter power curve and the sample-size planner download the values behind each chart, one row per setting.
+
+The same seed always gives the same results, whatever the computer and its number of processor cores.
 
 ---
 

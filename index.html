@@ -235,6 +235,17 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
       <select id="reps"><option>500</option><option>1000</option><option>2000</option><option>5000</option></select></label>
     <label for="seed">Random seed<input id="seed" type="number" min="1" max="999999" step="1"></label>
   </fieldset>
+  <fieldset>
+    <legend>Save &amp; share</legend>
+    <div class="btns">
+      <button type="button" id="share-link">Copy link</button>
+      <button type="button" id="save-settings">Save settings</button>
+      <button type="button" id="load-settings">Load settings</button>
+      <input type="file" id="load-file" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint">The page address always contains the current settings, so the copied link reopens SPOT with exactly this design. Settings can also be saved to a small file and loaded later.</p>
+    <p class="hint" id="share-status" style="word-break:break-all"></p>
+  </fieldset>
 </aside>
 
 <div class="out">
@@ -248,7 +259,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
     <div class="tile"><b id="t-ne">–</b><span class="lab" id="t-ne-lab">Effective population size Ne</span></div>
     <div class="tile"><b id="t-het">–</b><span class="lab" id="t-het-lab">Heterozygotes called correctly</span></div>
   </div>
-  <p class="status" id="status">Running…</p>
+  <div class="panel-head"><p class="status" id="status">Running…</p><button type="button" id="res-csv">Download results (CSV)</button></div>
   <div class="note" id="drift-note" hidden></div>
 
   <section class="panel explainer" aria-labelledby="exp-h">
@@ -301,6 +312,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
             <option value="m">Candidate loci m</option>
           </select></label>
         <button type="button" class="primary" id="sweep-run">Draw curve</button>
+        <button type="button" id="sweep-csv">CSV</button>
       </div></div>
     <p class="hint">Every value set in the parameter panel stays fixed except the parameter chosen here, which is stepped through a range of values. At each value the full power calculation is rerun from scratch (new replays with and without selection, new threshold), and the power of the whole design is plotted. Example: with "Individuals at the last point", the earlier points keep their current sample sizes while the last point takes 10, 20, 30 … 120 individuals; each dot is the power of that complete design. The vertical line marks the current value and the dashed line marks 80% power.</p>
     <svg id="ch-sweep" viewBox="0 0 720 280" role="img" aria-label="Power as a function of the chosen parameter"></svg>
@@ -319,6 +331,7 @@ ol.plain li::marker{color:var(--accent);font-weight:700}
             <option value="p0">Starting frequency p₀</option>
           </select></label>
         <button type="button" class="primary" id="plan-run">Run planner</button>
+        <button type="button" id="plan-csv">CSV</button>
       </div></div>
     <div class="scroll-x"><svg id="ch-plan" viewBox="0 0 720 280" role="img" aria-label="Power of the trend test for several sample sizes (rows) and values of the chosen parameter (columns)" style="min-width:560px"></svg></div>
     <p class="hint">Rows scale the current sampling design (all points together) and columns vary one parameter. Every other setting stays at its current value. Each cell is the power of the trend test across all points, with the drift-aware threshold. Outlined cells reach 80%.</p>
@@ -415,7 +428,7 @@ Heterozygosity retained:       H(last point) / H(first point) = Π_g (1 − 1 / 
 <footer>Runs entirely in the browser. Results are Monte Carlo estimates: with 1,000 replicates under selection, a power of 0.80 carries a standard error of about ±0.013.</footer>
 </div>
 
-<script>
+<script id="spot-core">
 /* ===== SPOT (Selection Power Over Time): core (pure functions, no DOM) =====
    Usable in the browser or in Node (module.exports at the bottom). See README.md. */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -606,6 +619,71 @@ function hetRetained(P){
 }
 /* Ne: diploid 4NfNm/(Nf+Nm); haplodiploid 9NfNm/(4Nm+2Nf); haploid N (= Nf, number of breeding individuals) */
 function neFor(P){return P.system==='haploid'? P.Nf : P.system==='haplodiploid'? 9*P.Nf*P.Nm/(4*P.Nm+2*P.Nf) : 4*P.Nf*P.Nm/(P.Nf+P.Nm)}
+</script>
+<script>
+/* ---------- parallel runner: independent power calculations on all processor cores (Web Workers) ----------
+   Each job is one complete runPower() call with its own parameters and seed, so results are identical
+   to running the jobs one after another. Falls back to the main thread if workers are unavailable. */
+const runMany=(function(){
+  let workers=null, failed=false, nextId=1;
+  const queue=[], inflight=new Map(), gen={};
+  const nCores=()=>Math.max(1,Math.min(8,(navigator.hardwareConcurrency||2)-1));
+  const slim=r=>({trend:{powerEmp:r.trend.powerEmp,powerNaive:r.trend.powerNaive,fprNaive:r.trend.fprNaive,method:r.trend.method,crit:r.trend.crit},
+    two:{powerEmp:r.two.powerEmp,method:r.two.method,crit:r.two.crit},hetAcc:r.hetAcc,hapAcc:r.hapAcc,missRate:r.missRate});
+  function init(){
+    if(workers||failed) return;
+    try{
+      const src=document.getElementById('spot-core').textContent+'\nconst slim='+slim.toString()+';\nself.onmessage=function(e){postMessage({id:e.data.id,r:slim(runPower(e.data.p))})};';
+      const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
+      workers=[];
+      for(let i=0;i<nCores();i++){
+        const w=new Worker(url); w.busy=null;
+        w.onmessage=e=>{const job=w.busy; w.busy=null; inflight.delete(e.data.id); if(job) job.cb(e.data.r); pump();};
+        w.onerror=()=>fallback();
+        workers.push(w);
+      }
+    }catch(err){ fallback(); }
+  }
+  function fallback(){ // workers unavailable: put running jobs back in the queue and continue on the main thread
+    failed=true;
+    if(workers) workers.forEach(w=>{ if(w.busy) queue.unshift(w.busy); try{w.terminate()}catch(e){} });
+    workers=null; inflight.clear(); serial();
+  }
+  let serialOn=false;
+  function serial(){
+    if(serialOn) return; serialOn=true;
+    (function step(){
+      const job=queue.shift();
+      if(!job){serialOn=false; return}
+      if(gen[job.ch]===job.g) job.cb(slim(runPower(job.p)));
+      setTimeout(step,0);
+    })();
+  }
+  function pump(){
+    if(!workers){ serial(); return; }
+    for(const w of workers){
+      if(w.busy) continue;
+      let job; while((job=queue.shift()) && gen[job.ch]!==job.g){} // skip cancelled jobs
+      if(!job) return;
+      w.busy=job; inflight.set(job.id,job); w.postMessage({id:job.id,p:job.p});
+    }
+  }
+  /* run a list of parameter sets on channel ch; onResult(i, result) is called as each finishes.
+     Starting a new run on the same channel cancels the previous one. Resolves when all are done. */
+  function runMany(ch,list,onResult){
+    init();
+    const g=gen[ch]=(gen[ch]||0)+1;
+    for(let i=queue.length-1;i>=0;i--) if(queue[i].ch===ch) queue.splice(i,1);
+    return new Promise(resolve=>{
+      let done=0;
+      if(!list.length){resolve();return}
+      list.forEach((p,i)=>queue.push({id:nextId++,ch,g,p,cb:r=>{ if(gen[ch]!==g) return; onResult(i,r); if(++done===list.length) resolve(); }}));
+      pump();
+    });
+  }
+  runMany.cores=()=>{init(); return workers?workers.length:1};
+  return runMany;
+})();
 (function(){
 const $=id=>document.getElementById(id);
 /* log-scale helpers for sliders */
@@ -696,7 +774,7 @@ function readUI(){
 let tmr=null;
 let ranOnce=false;
 function schedule(){clearTimeout(tmr);$('status').textContent='Running…';tmr=setTimeout(run,180);if(ranOnce){$('sweep-status').textContent='Parameters changed. Press Draw curve to update this chart.';$('sexs-status').textContent='Parameters changed. Press Compare sampling designs to update.'}}
-document.querySelector('.params').addEventListener('input',e=>{if(e.target.matches('input,select')){readUI();schedule()}});
+document.querySelector('.params').addEventListener('input',e=>{if(e.target.matches('input,select')&&e.target.type!=='file'){readUI();schedule()}});
 $('tp-list').addEventListener('click',e=>{const b=e.target.closest('[data-del]'); if(!b||st.years.length<=2) return; const i=+b.dataset.del, K0=st.years.length; ensureBlocks(); st.neBlocks.splice(i===0?0:(i===K0-1?K0-2:i),1); st.years.splice(i,1); st.n.splice(i,1); fixEnds(); writeUI(); schedule();});
 $('tp-add').onclick=()=>{ if(st.years.length>=MAXP) return; const K=st.years.length, gap=Math.max(1,st.years[K-1]-st.years[K-2]); const y=st.years[K-1]+gap;
   if((y-st.years[0])/st.genTime>MAXG){$('y-hint').textContent=`Adding a point at ${y} would exceed ${MAXG.toLocaleString()} generations. Edit the years first.`;return}
@@ -731,6 +809,7 @@ function run(){
   if(inflated){dn.hidden=false;dn.innerHTML=`<b>Drift inflates false positives.</b> A test that treats sampling noise as the only source of variation would call ${pct(r.trend.fprNaive)} of neutral loci "selected" at a nominal α′ = ${+r.alphaAdj.toPrecision(2)}. The power it reports (${pct(r.trend.powerNaive)}) is therefore misleading. The drift-aware power (${pct(r.trend.powerEmp)}) is the realistic figure.`}
   else dn.hidden=true;
   drawTraj(r,det); drawDist(r);
+  try{ history.replaceState(null,'',location.pathname+location.search+'#s='+encodeSettings(st)); }catch(e){}
 }
 
 /* ---------- charts ---------- */
@@ -793,19 +872,20 @@ const SWEEPS={
   kSib:{label:'sampled individuals per family (siblings)',vals:[1,2,3,4,5,6,8,10],apply:(p,v)=>{p.kSib=v},cur:p=>p.kSib},
   m:{label:'candidate loci tested (Bonferroni)',vals:[1,2,5,10,20,50,100,500],log:true,apply:(p,v)=>{p.m=v},cur:p=>p.m}
 };
-let sweepToken=0;
+let lastSweep=null;
 $('sweep-run').onclick=()=>{
-  const key=$('sweepvar').value, def=Object.assign({},SWEEPS[key]), token=++sweepToken, out=[];
+  const key=$('sweepvar').value, def=Object.assign({},SWEEPS[key]);
   if(def.valsFn) def.vals=def.valsFn(st);
-  const reps=Math.min(st.reps,1000); let i=0; const t0=performance.now();
-  const stepFn=()=>{
-    if(token!==sweepToken) return;
-    if(i>=def.vals.length){$('sweep-status').textContent=`Power curve for ${def.label}: ${def.vals.length} settings × ${reps.toLocaleString()} + ${(2*reps).toLocaleString()} replicates in ${Math.round(performance.now()-t0)} ms. All other parameters held at their current values.`;return}
-    const p=JSON.parse(JSON.stringify(st)); p.reps=reps; def.apply(p,def.vals[i]);
-    const r=runPower(p); out.push({v:def.vals[i],te:r.trend.powerEmp,tw:r.two.powerEmp,fp:r.trend.fprNaive,gauss:r.trend.method!=='empirical'});
-    drawSweep(def,out); $('sweep-status').textContent=`Running ${i+1} / ${def.vals.length}…`; i++; setTimeout(stepFn,0);
-  };
-  stepFn();
+  const reps=Math.min(st.reps,1000), t0=performance.now(), N=def.vals.length, out=new Array(N); let n=0;
+  const plist=def.vals.map(v=>{const p=JSON.parse(JSON.stringify(st)); p.reps=reps; def.apply(p,v); return p;});
+  lastSweep=null; drawSweep(def,[]); $('sweep-status').textContent=`Running 0 / ${N}…`;
+  runMany('sweep',plist,(i,r)=>{
+    out[i]={v:def.vals[i],te:r.trend.powerEmp,tw:r.two.powerEmp,fp:r.trend.fprNaive,gauss:r.trend.method!=='empirical'};
+    n++; drawSweep(def,out.filter(Boolean)); $('sweep-status').textContent=`Running ${n} / ${N}…`;
+  }).then(()=>{
+    lastSweep={key,label:def.label,pts:out};
+    $('sweep-status').textContent=`Power curve for ${def.label}: ${N} settings × ${reps.toLocaleString()} + ${(2*reps).toLocaleString()} replicates in ${Math.round(performance.now()-t0)} ms on ${runMany.cores()} processor core${runMany.cores()>1?'s':''}. All other parameters held at their current values.`;
+  });
 };
 function drawSweep(def,pts){
   const svg=$('ch-sweep'),W=720,L=48,R=20,T=14,B=228, vals=def.vals;
@@ -822,17 +902,17 @@ function drawSweep(def,pts){
   svg.innerHTML=s;
 }
 
-let sexTok=0;
 $('sex-run').onclick=()=>{
-  const tok=++sexTok, reps=Math.min(st.reps,1000), n=st.n;
+  const reps=Math.min(st.reps,1000), n=st.n, t0=performance.now();
   const designs=[['Females only',{maleFrac:0}],['Males only, same individuals',{maleFrac:1}],['Males only, same alleles',{maleFrac:1,n:n.map(v=>v*2)}],['Half males, half females',{maleFrac:0.5}]];
-  const out=[]; let i=0; const t0=performance.now();
-  const step=()=>{ if(tok!==sexTok) return;
-    if(i>=designs.length){$('sexs-status').textContent=`${designs.length} designs × ${reps.toLocaleString()} + ${(2*reps).toLocaleString()} replicates in ${Math.round(performance.now()-t0)} ms. Mean depth ${st.perfect?'n/a (perfect genotypes)':st.depthEarly+'× (earlier points) / '+st.depthLast+'× (last point)'}.`;return}
-    const p=Object.assign(JSON.parse(JSON.stringify(st)),{system:'haplodiploid',reps},designs[i][1]);
-    const r=runPower(p); out.push({lab:designs[i][0],v:r.trend.powerEmp,acc:isNaN(r.hetAcc)?r.hapAcc:r.hetAcc,alleles:p.n.reduce((a,b)=>a+b,0)*(2-p.maleFrac)});
-    drawSexS(out,designs.length); $('sexs-status').textContent=`Running ${i+1} / ${designs.length}…`; i++; setTimeout(step,0);
-  }; step();
+  const plist=designs.map(d=>Object.assign(JSON.parse(JSON.stringify(st)),{system:'haplodiploid',reps},d[1])), out=new Array(designs.length); let k=0;
+  $('sexs-status').textContent=`Running 0 / ${designs.length}…`;
+  runMany('sex',plist,(i,r)=>{
+    const p=plist[i]; out[i]={lab:designs[i][0],v:r.trend.powerEmp,acc:isNaN(r.hetAcc)?r.hapAcc:r.hetAcc,alleles:p.n.reduce((a,b)=>a+b,0)*(2-p.maleFrac)};
+    k++; drawSexS(out.filter(Boolean),designs.length); $('sexs-status').textContent=`Running ${k} / ${designs.length}…`;
+  }).then(()=>{ drawSexS(out,designs.length);
+    $('sexs-status').textContent=`${designs.length} designs × ${reps.toLocaleString()} + ${(2*reps).toLocaleString()} replicates in ${Math.round(performance.now()-t0)} ms. Mean depth ${st.perfect?'n/a (perfect genotypes)':st.depthEarly+'× (earlier points) / '+st.depthLast+'× (last point)'}.`;
+  });
 };
 function drawSexS(out,N){
   const svg=$('ch-sexs'),W=720,L=230,R=70,T=8,rh=46; let s='';
@@ -843,7 +923,62 @@ function drawSexS(out,N){
     s+=`<rect x="${L}" y="${y}" width="${X(o.v)-L}" height="28" rx="3" fill="${i===0?'var(--accent)':'var(--heather)'}"><title>${o.lab}: power ${(o.v*100).toFixed(1)}%, genotype-call accuracy ${(o.acc*100).toFixed(1)}%</title></rect><text x="${X(o.v)+6}" y="${y+18}" font-size="11" fill="var(--ink)">${(o.v*100).toFixed(0)}%</text>`;});
   svg.innerHTML=s;
 }
-writeUI(); run();
+/* ---------- save, load and share settings; export results ---------- */
+const SNAP={h:[0,0.25,0.5,0.75,1],err:[0.001,0.005,0.01,0.02,0.05],alpha:[0.05,0.01,0.001],pMig:[-1,0,0.5,1],reps:[500,1000,2000,5000]};
+const RANGE={Nf:[2,1e7],Nm:[2,1e7],p0:[0.001,0.5],s:[0,0.6],sMale:[0,1.5],decline:[0.01,10],mig:[0,0.1],maleFrac:[0,1],kSib:[1,10],depthEarly:[1,30],depthLast:[1,30],minDP:[1,10],m:[1,10000],seed:[1,999999],genTime:[0.05,100]};
+function encodeSettings(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function decodeSettings(x){x=x.replace(/-/g,'+').replace(/_/g,'/'); while(x.length%4) x+='='; return JSON.parse(decodeURIComponent(escape(atob(x))))}
+function applySettings(o){ // returns null if applied, or an error message
+  if(o&&o.settings) o=o.settings;
+  if(!o||typeof o!=='object') return 'This is not a SPOT settings file.';
+  const s=JSON.parse(JSON.stringify(DEFAULTS)), num=v=>typeof v==='number'&&isFinite(v), nums=v=>Array.isArray(v)&&v.every(num);
+  for(const k in DEFAULTS){ if(!(k in o)) continue; const d=DEFAULTS[k], v=o[k];
+    if(k==='neBlocks'){ if(v===null||(nums(v)&&v.every(x=>x>=2))) s[k]=v&&v.map(x=>Math.min(MAXNE,Math.round(x))); }
+    else if(Array.isArray(d)){ if(nums(v)) s[k]=v.slice(); }
+    else if(typeof d===typeof v&&(typeof v!=='number'||isFinite(v))) s[k]=v; }
+  if(!('genTime' in o)&&num(o.volt)&&o.volt>0) s.genTime=1/o.volt;  // older files used generations per year
+  if(!['haplodiploid','diploid','haploid'].includes(s.system)) return 'Unknown inheritance system.';
+  const K=s.years.length;
+  if(K<2||K>MAXP||s.n.length!==K) return `Need between 2 and ${MAXP} time points, with one sample size per year.`;
+  s.years=s.years.map(Math.round); if(s.years.some((v,i)=>i&&v<=s.years[i-1])) return 'Years must increase from one point to the next.';
+  for(const k in RANGE) s[k]=Math.min(RANGE[k][1],Math.max(RANGE[k][0],s[k]));
+  for(const k in SNAP) s[k]=SNAP[k].reduce((a,b)=>Math.abs(b-s[k])<Math.abs(a-s[k])?b:a);
+  s.kSib=Math.round(s.kSib); s.minDP=Math.round(s.minDP); s.m=Math.round(s.m); s.seed=Math.round(s.seed);
+  const G=(s.years[K-1]-s.years[0])/s.genTime; if(Math.round(G)<1||G>MAXG) return `The sampling period must span 1 to ${MAXG.toLocaleString()} generations.`;
+  s.n=s.n.map((v,i)=>Math.max(i===0||i===K-1?1:0,Math.min(MAXN,Math.round(v))));
+  if(s.neBlocks&&s.neBlocks.length!==K-1) s.neBlocks=null; if(!s.neBlocks) s.neByBlock=false;
+  s.onset=Math.min(Math.max(Math.round(s.onset),s.years[0]),s.years[K-1]-1);
+  st=s; writeUI(); schedule(); return null;
+}
+function download(name,text,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:type||'text/csv'})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove()},500);}
+const csvRow=a=>a.map(x=>{x=String(x); return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}).join(',');
+const setStr=()=>Object.keys(DEFAULTS).map(k=>[k,Array.isArray(st[k])?st[k].join(';'):st[k]===null?'':st[k]]);
+$('share-link').onclick=()=>{ const url=location.href, msg=$('share-status');
+  const show=()=>{msg.textContent='Copy this link: '+url};
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(()=>{msg.textContent='Link copied. Opening it reproduces the current settings.'},show); else show(); };
+$('save-settings').onclick=()=>{ download('spot-settings.json',JSON.stringify({tool:'SPOT (Selection Power Over Time)',version:1,settings:st},null,2),'application/json'); $('share-status').textContent='Settings saved as spot-settings.json.'; };
+$('load-settings').onclick=()=>$('load-file').click();
+$('load-file').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload=()=>{ let err; try{err=applySettings(JSON.parse(rd.result))}catch(x){err='The file could not be read as SPOT settings.'} $('share-status').textContent=err?'Not loaded: '+err:'Settings loaded from '+f.name+'.'; e.target.value=''; };
+  rd.readAsText(f); };
+$('res-csv').onclick=()=>{ if(!lastRes) return; const r=lastRes, det=deterministic(st);
+  const rows=[['item','value'],...setStr(),
+    ['power_trend_drift_aware',r.trend.powerEmp],['power_two_point_drift_aware',r.two.powerEmp],
+    ['threshold_trend',r.trend.crit],['threshold_trend_method',r.trend.method],['threshold_two_point',r.two.crit],
+    ['naive_false_positive_rate',r.trend.fprNaive],['naive_power',r.trend.powerNaive],['alpha_per_locus',r.alphaAdj],
+    ['expected_frequency_last_point_no_drift',det[det.length-1]],['neutral_diversity_lost',1-hetRetained(st)],['Ne_first_point',st.noDrift?'infinite':neFor(st)],
+    ['heterozygote_call_accuracy',isNaN(r.hetAcc)?'':r.hetAcc],['haploid_call_accuracy',isNaN(r.hapAcc)?'':r.hapAcc],['share_below_min_depth',r.missRate],['link',location.href]];
+  download('spot_results.csv',rows.map(csvRow).join('\n')+'\n'); };
+$('sweep-csv').onclick=()=>{ if(!lastSweep){$('sweep-status').textContent='Draw the curve first, then download it.';return}
+  const rows=[[lastSweep.key,'power_trend_drift_aware','power_two_point_drift_aware','naive_false_positive_rate','threshold_from_gaussian_fit'],...lastSweep.pts.map(p=>[p.v,p.te,p.tw,p.fp,p.gauss])];
+  download('spot_power_curve_'+lastSweep.key+'.csv',rows.map(csvRow).join('\n')+'\n'); };
+$('plan-csv').onclick=()=>{ const P=window.__lastPlan; if(!P){$('plan-status').textContent='Run the planner first, then download it.';return}
+  const rows=[['design_factor','individuals_per_point',P.key,'power_trend_drift_aware']];
+  P.rows.forEach((r,i)=>P.vals.forEach((v,j)=>rows.push([r.factor,r.n.join(';'),v,P.grid[i][j]])));
+  download('spot_planner_'+P.key+'.csv',rows.map(csvRow).join('\n')+'\n'); };
+{ const m=location.hash.match(/^#s=([A-Za-z0-9_-]+)$/); if(m){ let err; try{ err=applySettings(decodeSettings(m[1])) }catch(x){ err='The link could not be read.' }
+  if(err){ writeUI(); $('share-status').textContent='Settings in the link were not loaded: '+err; } else $('share-status').textContent='Settings loaded from the link.'; } else writeUI(); }
+run();
 setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranOnce=true},2600)},300);
 })();
 /* ---------- decoration: power ring, slider fill, hero illustration (no effect on the simulation) ---------- */
@@ -982,18 +1117,21 @@ setTimeout(()=>{$('sweep-run').click();setTimeout(()=>{$('sex-run').click();ranO
     svg.setAttribute('viewBox','0 0 '+W+' '+(T+FACT.length*rh+8));
     svg.innerHTML=s;
   }
+  window.__lastPlan=null;
   function runPlan(){
     var st=getSt(); if(!st) return;
-    var key=$('plan-var').value, def=COLS[key], my=++tok, reps=Math.min(st.reps,500), grid=FACT.map(function(){return []});
+    var key=$('plan-var').value, def=COLS[key], reps=Math.min(st.reps,500), grid=FACT.map(function(){return []});
     var jobs=[]; FACT.forEach(function(f,i){def.vals.forEach(function(v,j){jobs.push([i,j,f,v])})});
-    var k=0, t0=performance.now(); draw(def,grid,st);
-    (function step(){
-      if(my!==tok) return;
-      if(k>=jobs.length){$('plan-status').textContent=jobs.length+' settings × '+reps.toLocaleString()+' + '+(2*reps).toLocaleString()+' replicates in '+Math.round(performance.now()-t0)+' ms. '+({haplodiploid:'Haplodiploid',diploid:'Diploid',haploid:'Haploid'}[st.system])+' model; all other parameters at their current values.';return}
-      var J=jobs[k], p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.n=scaleN(st.n,J[2]); def.apply(p,J[3]);
-      grid[J[0]][J[1]]=runPower(p).trend.powerEmp; draw(def,grid,st);
-      $('plan-status').textContent='Running '+(k+1)+' / '+jobs.length+'…'; k++; setTimeout(step,0);
-    })();
+    var k=0, t0=performance.now(); draw(def,grid,st); window.__lastPlan=null;
+    var plist=jobs.map(function(J){var p=JSON.parse(JSON.stringify(st)); p.reps=reps; p.n=scaleN(st.n,J[2]); def.apply(p,J[3]); return p;});
+    $('plan-status').textContent='Running 0 / '+jobs.length+'…';
+    runMany('plan',plist,function(i,r){
+      var J=jobs[i]; grid[J[0]][J[1]]=r.trend.powerEmp; draw(def,grid,st); k++;
+      $('plan-status').textContent='Running '+k+' / '+jobs.length+'…';
+    }).then(function(){
+      window.__lastPlan={key:key,label:def.label,vals:def.vals,rows:FACT.map(function(f){return {factor:f,n:scaleN(st.n,f)}}),grid:grid};
+      $('plan-status').textContent=jobs.length+' settings × '+reps.toLocaleString()+' + '+(2*reps).toLocaleString()+' replicates in '+Math.round(performance.now()-t0)+' ms on '+runMany.cores()+' processor core'+(runMany.cores()>1?'s':'')+'. '+({haplodiploid:'Haplodiploid',diploid:'Diploid',haploid:'Haploid'}[st.system])+' model; all other parameters at their current values.';
+    });
   }
   $('plan-run').addEventListener('click',runPlan);
   $('plan-var').addEventListener('change',runPlan);

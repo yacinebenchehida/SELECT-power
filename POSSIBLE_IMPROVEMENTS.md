@@ -16,11 +16,8 @@ Ideas that have been discussed but are not implemented yet. SPOT is meant to sta
 ## Statistics
 
 - Other test statistics (for example likelihood-based tests of selection from time series) next to the trend test.
-- A false discovery rate correction as an alternative to Bonferroni.
 
 ## Software
 
 - **Command-line and HPC use**: a small `run.js` wrapper that reads parameters from a JSON file and writes results, so that thousands of settings can be run as an array job on a cluster (for example with SLURM).
 - **Python or R package**: a port of the simulation core, if wider use or new features require a full rewrite.
-- **Using all processor cores (Web Workers)**: run the replicates, the parameter power curve and the sample-size planner in parallel background threads of the browser, for a speed-up of roughly 4 to 8 times on a typical laptop without changing the model. The number of threads would be chosen automatically from the number of cores, and each block of replicates would get its own fixed random seed, so results stay identical whatever the number of threads.
-- Saving and loading parameter sets from the web page, and exporting results as a table.
