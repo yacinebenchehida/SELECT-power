@@ -1,0 +1,33 @@
+label	statistic	system	Ne	p0	points	generations	alpha_per_locus	threshold_method	fpr_drift_aware_mean	fpr_drift_aware_sd	fpr_drift_aware_min	fpr_drift_aware_max	fpr_naive	n_test	threshold_mean	threshold_naive	share_Z_zero
+C haplodiploid Ne=300 m=1	trend	haplodiploid	300	0.1	4	90	0.05	empirical	4.9247e-2	3.127e-3	4.370e-2	5.523e-2	1.8219e-1	120000	3.589	1.645	0.0019
+C haplodiploid Ne=300 m=1	two	haplodiploid	300	0.1	4	90	0.05	empirical	5.0241e-2	4.170e-3	4.310e-2	5.715e-2	1.6322e-1	120000	2.983	1.645	0.0353
+C haplodiploid Ne=300 m=10	trend	haplodiploid	300	0.1	4	90	0.005	empirical	4.9271e-3	9.608e-4	3.342e-3	7.150e-3	1.0459e-1	120000	5.825	2.576	0.0019
+C haplodiploid Ne=300 m=10	two	haplodiploid	300	0.1	4	90	0.005	empirical	5.1338e-3	1.601e-3	1.958e-3	9.667e-3	7.4633e-2	120000	4.794	2.576	0.0353
+C haplodiploid Ne=300 m=100	trend	haplodiploid	300	0.1	4	90	0.0005	empirical	5.5625e-4	1.693e-4	2.910e-4	8.360e-4	6.2386e-2	1000002	7.391	3.291	0.0019
+C haplodiploid Ne=300 m=100	two	haplodiploid	300	0.1	4	90	0.0005	empirical	5.2330e-4	1.486e-4	3.050e-4	8.910e-4	3.5203e-2	1000002	6.160	3.291	0.0353
+C haplodiploid Ne=300 m=1000	trend	haplodiploid	300	0.1	4	90	0.00005	empirical	5.2900e-5	1.305e-5	3.300e-5	7.700e-5	3.8130e-2	1000002	8.534	3.891	0.0019
+C haplodiploid Ne=300 m=1000	two	haplodiploid	300	0.1	4	90	0.00005	empirical	5.4150e-5	1.466e-5	2.600e-5	8.700e-5	1.7343e-2	1000002	7.310	3.891	0.0353
+C haplodiploid Ne=1500 m=1	trend	haplodiploid	1500	0.1	4	90	0.05	empirical	5.0136e-2	4.715e-3	3.985e-2	6.252e-2	1.0344e-1	120000	2.187	1.645	0.0035
+C haplodiploid Ne=1500 m=1	two	haplodiploid	1500	0.1	4	90	0.05	empirical	4.9629e-2	5.372e-3	4.147e-2	5.623e-2	8.1475e-2	120000	1.948	1.645	0.0620
+C haplodiploid Ne=1500 m=10	trend	haplodiploid	1500	0.1	4	90	0.005	empirical	6.2321e-3	2.039e-3	3.250e-3	1.027e-2	2.7575e-2	120000	3.399	2.576	0.0035
+C haplodiploid Ne=1500 m=10	two	haplodiploid	1500	0.1	4	90	0.005	empirical	5.8383e-3	1.783e-3	2.592e-3	8.492e-3	1.3142e-2	120000	2.870	2.576	0.0620
+C haplodiploid Ne=1500 m=100	trend	haplodiploid	1500	0.1	4	90	0.0005	empirical	5.9380e-4	2.410e-4	2.090e-4	1.238e-3	7.2440e-3	1000002	4.383	3.291	0.0033
+C haplodiploid Ne=1500 m=100	two	haplodiploid	1500	0.1	4	90	0.0005	empirical	5.2650e-4	9.926e-5	3.050e-4	6.860e-4	1.4850e-3	1000002	3.600	3.291	0.0614
+C haplodiploid Ne=1500 m=1000	trend	haplodiploid	1500	0.1	4	90	0.00005	empirical	5.2550e-5	1.530e-5	3.400e-5	8.500e-5	1.9530e-3	1000002	5.211	3.891	0.0033
+C haplodiploid Ne=1500 m=1000	two	haplodiploid	1500	0.1	4	90	0.00005	empirical	5.1650e-5	1.125e-5	3.400e-5	6.700e-5	1.9800e-4	1000002	4.206	3.891	0.0614
+C haplodiploid Ne=100000 m=1	trend	haplodiploid	100000	0.1	4	90	0.05	empirical	5.1687e-2	4.334e-3	4.385e-2	6.196e-2	4.8392e-2	120000	1.612	1.645	0.0046
+C haplodiploid Ne=100000 m=1	two	haplodiploid	100000	0.1	4	90	0.05	empirical	5.0077e-2	7.242e-3	3.853e-2	5.936e-2	3.8533e-2	120000	1.566	1.645	0.0801
+C haplodiploid Ne=100000 m=10	trend	haplodiploid	100000	0.1	4	90	0.005	empirical	5.9817e-3	1.788e-3	3.325e-3	8.808e-3	4.3333e-3	120000	2.487	2.576	0.0046
+C haplodiploid Ne=100000 m=10	two	haplodiploid	100000	0.1	4	90	0.005	empirical	4.6296e-3	1.447e-3	2.450e-3	6.108e-3	1.8417e-3	120000	2.305	2.576	0.0801
+C haplodiploid Ne=100000 m=100	trend	haplodiploid	100000	0.1	4	90	0.0005	empirical	5.6090e-4	1.939e-4	2.940e-4	9.040e-4	3.7900e-4	1000002	3.202	3.291	0.0050
+C haplodiploid Ne=100000 m=100	two	haplodiploid	100000	0.1	4	90	0.0005	empirical	4.5000e-4	1.457e-4	2.060e-4	5.920e-4	2.0000e-6	1000002	2.748	3.291	0.0798
+C haplodiploid Ne=100000 m=1000	trend	haplodiploid	100000	0.1	4	90	0.00005	empirical	4.8950e-5	1.349e-5	1.600e-5	7.400e-5	2.0000e-5	1000002	3.755	3.891	0.0050
+C haplodiploid Ne=100000 m=1000	two	haplodiploid	100000	0.1	4	90	0.00005	empirical	3.3300e-5	1.239e-5	1.100e-5	8.200e-5	0.0000e+0	1000002	3.044	3.891	0.0798
+C haplodiploid Ne=1500, p0=0.01 m=1	trend	haplodiploid	1500	0.01	4	90	0.05	empirical	4.5379e-2	3.883e-3	3.873e-2	5.511e-2	4.4717e-2	120000	1.660	1.645	0.1867
+C haplodiploid Ne=1500, p0=0.01 m=1	two	haplodiploid	1500	0.01	4	90	0.05	empirical	4.2605e-2	8.711e-3	2.967e-2	4.843e-2	1.6867e-2	120000	1.305	1.645	0.4029
+C haplodiploid Ne=1500, p0=0.01 m=10	trend	haplodiploid	1500	0.01	4	90	0.005	empirical	5.1642e-3	1.736e-3	2.242e-3	7.608e-3	9.8417e-3	120000	2.835	2.576	0.1867
+C haplodiploid Ne=1500, p0=0.01 m=10	two	haplodiploid	1500	0.01	4	90	0.005	empirical	4.8425e-3	1.672e-3	2.108e-3	6.300e-3	6.9167e-4	120000	2.018	2.576	0.4029
+C haplodiploid Ne=1500, p0=0.01 m=100	trend	haplodiploid	1500	0.01	4	90	0.0005	empirical	4.9220e-4	1.247e-4	3.500e-4	7.240e-4	1.6840e-3	1000002	3.691	3.291	0.1861
+C haplodiploid Ne=1500, p0=0.01 m=100	two	haplodiploid	1500	0.01	4	90	0.0005	empirical	4.2900e-4	1.124e-4	2.430e-4	7.190e-4	1.0000e-5	1000002	2.582	3.291	0.4030
+C haplodiploid Ne=1500, p0=0.01 m=1000	trend	haplodiploid	1500	0.01	4	90	0.00005	empirical	5.1950e-5	1.182e-5	2.800e-5	7.300e-5	3.1400e-4	1000002	4.391	3.891	0.1861
+C haplodiploid Ne=1500, p0=0.01 m=1000	two	haplodiploid	1500	0.01	4	90	0.00005	empirical	4.2100e-5	1.262e-5	3.800e-5	7.900e-5	1.0000e-6	1000002	3.027	3.891	0.4030

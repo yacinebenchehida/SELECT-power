@@ -1,0 +1,49 @@
+design	statistic	alpha_per_locus	method	fpr_mean	fpr_sd	ratio_to_alpha	n_neutral_for_threshold
+haplodiploid Ne=300	trend	0.0005	gaussian	1.331e-3	2.64e-4	2.66	2000
+haplodiploid Ne=300	trend	0.0005	exp_tail	1.684e-4	1.18e-4	0.34	2000
+haplodiploid Ne=300	trend	0.0005	empirical_N	6.026e-4	1.10e-4	1.21	20000
+haplodiploid Ne=300	trend	0.00005	gaussian	1.364e-4	4.16e-5	2.73	2000
+haplodiploid Ne=300	trend	0.00005	exp_tail	6.500e-7	9.33e-7	0.01	2000
+haplodiploid Ne=300	trend	0.00005	empirical_N	5.320e-5	1.86e-5	1.06	200000
+haplodiploid Ne=300	two	0.0005	gaussian	3.700e-4	7.32e-5	0.74	2000
+haplodiploid Ne=300	two	0.0005	exp_tail	2.108e-4	1.22e-4	0.42	2000
+haplodiploid Ne=300	two	0.0005	empirical_N	6.270e-4	9.63e-5	1.25	20000
+haplodiploid Ne=300	two	0.00005	gaussian	2.285e-5	5.99e-6	0.46	2000
+haplodiploid Ne=300	two	0.00005	exp_tail	3.400e-6	3.68e-6	0.07	2000
+haplodiploid Ne=300	two	0.00005	empirical_N	4.960e-5	2.43e-5	0.99	200000
+haplodiploid Ne=1500	trend	0.0005	gaussian	4.436e-4	1.02e-4	0.89	2000
+haplodiploid Ne=1500	trend	0.0005	exp_tail	1.351e-4	8.59e-5	0.27	2000
+haplodiploid Ne=1500	trend	0.0005	empirical_N	5.530e-4	1.91e-4	1.11	20000
+haplodiploid Ne=1500	trend	0.00005	gaussian	3.510e-5	9.75e-6	0.70	2000
+haplodiploid Ne=1500	trend	0.00005	exp_tail	8.000e-7	8.94e-7	0.02	2000
+haplodiploid Ne=1500	trend	0.00005	empirical_N	5.220e-5	1.59e-5	1.04	200000
+haplodiploid Ne=1500	two	0.0005	gaussian	3.205e-5	1.22e-5	0.06	2000
+haplodiploid Ne=1500	two	0.0005	exp_tail	1.031e-4	5.46e-5	0.21	2000
+haplodiploid Ne=1500	two	0.0005	empirical_N	5.084e-4	1.77e-4	1.02	20000
+haplodiploid Ne=1500	two	0.00005	gaussian	7.000e-7	4.70e-7	0.01	2000
+haplodiploid Ne=1500	two	0.00005	exp_tail	8.000e-7	8.94e-7	0.02	2000
+haplodiploid Ne=1500	two	0.00005	empirical_N	4.620e-5	1.23e-5	0.92	200000
+haplodiploid Ne=100000	trend	0.0005	gaussian	3.718e-4	7.99e-5	0.74	2000
+haplodiploid Ne=100000	trend	0.0005	exp_tail	1.444e-4	7.30e-5	0.29	2000
+haplodiploid Ne=100000	trend	0.0005	empirical_N	5.802e-4	7.53e-5	1.16	20000
+haplodiploid Ne=100000	trend	0.00005	gaussian	2.545e-5	8.20e-6	0.51	2000
+haplodiploid Ne=100000	trend	0.00005	exp_tail	1.050e-6	1.23e-6	0.02	2000
+haplodiploid Ne=100000	trend	0.00005	empirical_N	5.740e-5	1.97e-5	1.15	200000
+haplodiploid Ne=100000	two	0.0005	gaussian	2.200e-6	6.16e-7	0.00	2000
+haplodiploid Ne=100000	two	0.0005	exp_tail	3.325e-5	5.28e-5	0.07	2000
+haplodiploid Ne=100000	two	0.0005	empirical_N	4.676e-4	1.26e-4	0.94	20000
+haplodiploid Ne=100000	two	0.00005	gaussian	0.000e+0	0.00e+0	0.00	2000
+haplodiploid Ne=100000	two	0.00005	exp_tail	5.000e-8	2.24e-7	0.00	2000
+haplodiploid Ne=100000	two	0.00005	empirical_N	3.500e-5	0.00e+0	0.70	200000
+haplodiploid Ne=1500, p0=0.01	trend	0.0005	gaussian	2.510e-3	5.93e-4	5.02	2000
+haplodiploid Ne=1500, p0=0.01	trend	0.0005	exp_tail	1.226e-4	1.41e-4	0.25	2000
+haplodiploid Ne=1500, p0=0.01	trend	0.0005	empirical_N	6.720e-4	2.00e-4	1.34	20000
+haplodiploid Ne=1500, p0=0.01	trend	0.00005	gaussian	4.373e-4	1.19e-4	8.75	2000
+haplodiploid Ne=1500, p0=0.01	trend	0.00005	exp_tail	2.500e-6	2.52e-6	0.05	2000
+haplodiploid Ne=1500, p0=0.01	trend	0.00005	empirical_N	5.360e-5	1.28e-5	1.07	200000
+haplodiploid Ne=1500, p0=0.01	two	0.0005	gaussian	5.205e-5	1.84e-5	0.10	2000
+haplodiploid Ne=1500, p0=0.01	two	0.0005	exp_tail	5.895e-5	5.89e-5	0.12	2000
+haplodiploid Ne=1500, p0=0.01	two	0.0005	empirical_N	4.374e-4	1.64e-4	0.87	20000
+haplodiploid Ne=1500, p0=0.01	two	0.00005	gaussian	3.500e-6	1.28e-6	0.07	2000
+haplodiploid Ne=1500, p0=0.01	two	0.00005	exp_tail	1.750e-6	1.45e-6	0.03	2000
+haplodiploid Ne=1500, p0=0.01	two	0.00005	empirical_N	4.360e-5	1.70e-5	0.87	200000

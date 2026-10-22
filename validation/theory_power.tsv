@@ -1,0 +1,241 @@
+system	h	p0	s	design	statistic	threshold	power_exact_at_spot_threshold	power_spot	z	crit_exact	crit_spot	size_at_exact_crit	size_at_spot_crit	power_at_exact_crit
+haploid	0.5	0.05	0.005	4 points	trend	naive z(0.95)	0.1220	0.1232	0.25	1.647	1.647	0.0441	0.0441	0.1121
+haploid	0.5	0.05	0.005	4 points	trend	neutral 95% quantile	0.1121	0.1138	0.39	1.647	1.647	0.0441	0.0441	0.1121
+haploid	0.5	0.05	0.005	4 points	two	naive z(0.95)	0.0677	0.0716	1.10	1.343	1.464	0.0498	0.0175	0.1341
+haploid	0.5	0.05	0.005	4 points	two	neutral 95% quantile	0.0703	0.0750	1.29	1.343	1.464	0.0498	0.0175	0.1341
+haploid	0.5	0.05	0.005	2 points	trend	naive z(0.95)	0.0677	0.0658	-0.53	1.343	1.343	0.0498	0.0498	0.1341
+haploid	0.5	0.05	0.005	2 points	trend	neutral 95% quantile	0.1341	0.1276	-1.34	1.343	1.343	0.0498	0.0498	0.1341
+haploid	0.5	0.05	0.01	4 points	trend	naive z(0.95)	0.2596	0.2552	-0.70	1.647	1.647	0.0441	0.0441	0.2536
+haploid	0.5	0.05	0.01	4 points	trend	neutral 95% quantile	0.2536	0.2506	-0.49	1.647	1.647	0.0441	0.0441	0.2536
+haploid	0.5	0.05	0.01	4 points	two	naive z(0.95)	0.1875	0.1892	0.31	1.343	1.257	0.0498	0.0508	0.2778
+haploid	0.5	0.05	0.01	4 points	two	neutral 95% quantile	0.3104	0.3118	0.22	1.343	1.257	0.0498	0.0508	0.2778
+haploid	0.5	0.05	0.01	2 points	trend	naive z(0.95)	0.1875	0.1886	0.20	1.343	1.257	0.0498	0.0508	0.2778
+haploid	0.5	0.05	0.01	2 points	trend	neutral 95% quantile	0.3104	0.3160	0.86	1.343	1.257	0.0498	0.0508	0.2778
+haploid	0.5	0.05	0.02	4 points	trend	naive z(0.95)	0.7683	0.7714	0.52	1.647	1.647	0.0441	0.0441	0.7682
+haploid	0.5	0.05	0.02	4 points	trend	neutral 95% quantile	0.7682	0.7710	0.47	1.647	1.647	0.0441	0.0441	0.7682
+haploid	0.5	0.05	0.02	4 points	two	naive z(0.95)	0.6361	0.6310	-0.75	1.343	1.464	0.0498	0.0175	0.7477
+haploid	0.5	0.05	0.02	4 points	two	neutral 95% quantile	0.7111	0.7072	-0.61	1.343	1.464	0.0498	0.0175	0.7477
+haploid	0.5	0.05	0.02	2 points	trend	naive z(0.95)	0.6361	0.6338	-0.33	1.343	1.464	0.0498	0.0175	0.7477
+haploid	0.5	0.05	0.02	2 points	trend	neutral 95% quantile	0.7111	0.7134	0.36	1.343	1.464	0.0498	0.0175	0.7477
+haploid	0.5	0.05	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.00	1.647	1.647	0.0441	0.0441	1.0000
+haploid	0.5	0.05	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.00	1.647	1.647	0.0441	0.0441	1.0000
+haploid	0.5	0.05	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.01	1.343	1.257	0.0498	0.0508	1.0000
+haploid	0.5	0.05	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.00	1.343	1.257	0.0498	0.0508	1.0000
+haploid	0.5	0.05	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.01	1.343	1.343	0.0498	0.0498	1.0000
+haploid	0.5	0.05	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.00	1.343	1.343	0.0498	0.0498	1.0000
+haploid	0.5	0.2	0.005	4 points	trend	naive z(0.95)	0.1952	0.2020	1.21	1.657	1.626	0.0498	0.0534	0.1929
+haploid	0.5	0.2	0.005	4 points	trend	neutral 95% quantile	0.2010	0.2082	1.27	1.657	1.626	0.0498	0.0534	0.1929
+haploid	0.5	0.2	0.005	4 points	two	naive z(0.95)	0.1575	0.1570	-0.10	1.621	1.551	0.0479	0.0503	0.1575
+haploid	0.5	0.2	0.005	4 points	two	neutral 95% quantile	0.1748	0.1782	0.63	1.621	1.551	0.0479	0.0503	0.1575
+haploid	0.5	0.2	0.005	2 points	trend	naive z(0.95)	0.1575	0.1618	0.83	1.621	1.621	0.0479	0.0479	0.1575
+haploid	0.5	0.2	0.005	2 points	trend	neutral 95% quantile	0.1575	0.1618	0.83	1.621	1.621	0.0479	0.0479	0.1575
+haploid	0.5	0.2	0.01	4 points	trend	naive z(0.95)	0.5018	0.4906	-1.59	1.657	1.664	0.0498	0.0485	0.5004
+haploid	0.5	0.2	0.01	4 points	trend	neutral 95% quantile	0.4958	0.4844	-1.61	1.657	1.664	0.0498	0.0485	0.5004
+haploid	0.5	0.2	0.01	4 points	two	naive z(0.95)	0.4115	0.4068	-0.67	1.621	1.621	0.0479	0.0479	0.4118
+haploid	0.5	0.2	0.01	4 points	two	neutral 95% quantile	0.4118	0.4068	-0.72	1.621	1.621	0.0479	0.0479	0.4118
+haploid	0.5	0.2	0.01	2 points	trend	naive z(0.95)	0.4115	0.4234	1.71	1.621	1.715	0.0479	0.0390	0.4118
+haploid	0.5	0.2	0.01	2 points	trend	neutral 95% quantile	0.3977	0.4094	1.68	1.621	1.715	0.0479	0.0390	0.4118
+haploid	0.5	0.2	0.02	4 points	trend	naive z(0.95)	0.9668	0.9708	1.59	1.657	1.642	0.0498	0.0512	0.9665
+haploid	0.5	0.2	0.02	4 points	trend	neutral 95% quantile	0.9670	0.9708	1.50	1.657	1.642	0.0498	0.0512	0.9665
+haploid	0.5	0.2	0.02	4 points	two	naive z(0.95)	0.9304	0.9376	2.00	1.621	1.621	0.0479	0.0479	0.9370
+haploid	0.5	0.2	0.02	4 points	two	neutral 95% quantile	0.9370	0.9436	1.92	1.621	1.621	0.0479	0.0479	0.9370
+haploid	0.5	0.2	0.02	2 points	trend	naive z(0.95)	0.9304	0.9326	0.61	1.621	1.715	0.0479	0.0390	0.9370
+haploid	0.5	0.2	0.02	2 points	trend	neutral 95% quantile	0.9118	0.9142	0.60	1.621	1.715	0.0479	0.0390	0.9370
+haploid	0.5	0.2	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.00	1.657	1.643	0.0498	0.0509	1.0000
+haploid	0.5	0.2	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.00	1.657	1.643	0.0498	0.0509	1.0000
+haploid	0.5	0.2	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.02	1.621	1.621	0.0479	0.0479	1.0000
+haploid	0.5	0.2	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.02	1.621	1.621	0.0479	0.0479	1.0000
+haploid	0.5	0.2	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.02	1.621	1.715	0.0479	0.0390	1.0000
+haploid	0.5	0.2	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.03	1.621	1.715	0.0479	0.0390	1.0000
+diploid	0.5	0.05	0.005	4 points	trend	naive z(0.95)	0.0897	0.0904	0.18	1.653	1.631	0.0498	0.0520	0.0887
+diploid	0.5	0.05	0.005	4 points	trend	neutral 95% quantile	0.0916	0.0926	0.25	1.653	1.631	0.0498	0.0520	0.0887
+diploid	0.5	0.05	0.005	4 points	two	naive z(0.95)	0.0553	0.0554	0.02	1.615	1.615	0.0321	0.0321	0.0643
+diploid	0.5	0.05	0.005	4 points	two	neutral 95% quantile	0.0643	0.0650	0.22	1.615	1.615	0.0321	0.0321	0.0643
+diploid	0.5	0.05	0.005	2 points	trend	naive z(0.95)	0.0553	0.0550	-0.10	1.615	1.615	0.0321	0.0321	0.0643
+diploid	0.5	0.05	0.005	2 points	trend	neutral 95% quantile	0.0643	0.0632	-0.30	1.615	1.615	0.0321	0.0321	0.0643
+diploid	0.5	0.05	0.01	4 points	trend	naive z(0.95)	0.1563	0.1598	0.69	1.653	1.687	0.0498	0.0474	0.1544
+diploid	0.5	0.05	0.01	4 points	trend	neutral 95% quantile	0.1481	0.1522	0.81	1.653	1.687	0.0498	0.0474	0.1544
+diploid	0.5	0.05	0.01	4 points	two	naive z(0.95)	0.0983	0.0970	-0.32	1.615	1.615	0.0321	0.0321	0.1180
+diploid	0.5	0.05	0.01	4 points	two	neutral 95% quantile	0.1180	0.1152	-0.61	1.615	1.615	0.0321	0.0321	0.1180
+diploid	0.5	0.05	0.01	2 points	trend	naive z(0.95)	0.0983	0.0930	-1.27	1.615	1.615	0.0321	0.0321	0.1180
+diploid	0.5	0.05	0.01	2 points	trend	neutral 95% quantile	0.1180	0.1108	-1.57	1.615	1.615	0.0321	0.0321	0.1180
+diploid	0.5	0.05	0.02	4 points	trend	naive z(0.95)	0.4033	0.4026	-0.10	1.653	1.639	0.0498	0.0501	0.4008
+diploid	0.5	0.05	0.02	4 points	trend	neutral 95% quantile	0.4033	0.4026	-0.10	1.653	1.639	0.0498	0.0501	0.4008
+diploid	0.5	0.05	0.02	4 points	two	naive z(0.95)	0.2698	0.2718	0.32	1.615	1.615	0.0321	0.0321	0.3110
+diploid	0.5	0.05	0.02	4 points	two	neutral 95% quantile	0.3110	0.3116	0.10	1.615	1.615	0.0321	0.0321	0.3110
+diploid	0.5	0.05	0.02	2 points	trend	naive z(0.95)	0.2698	0.2710	0.19	1.615	1.615	0.0321	0.0321	0.3110
+diploid	0.5	0.05	0.02	2 points	trend	neutral 95% quantile	0.3110	0.3124	0.22	1.615	1.615	0.0321	0.0321	0.3110
+diploid	0.5	0.05	0.05	4 points	trend	naive z(0.95)	0.9983	0.9976	-1.24	1.653	1.639	0.0498	0.0501	0.9983
+diploid	0.5	0.05	0.05	4 points	trend	neutral 95% quantile	0.9983	0.9976	-1.25	1.653	1.639	0.0498	0.0501	0.9983
+diploid	0.5	0.05	0.05	4 points	two	naive z(0.95)	0.9904	0.9904	-0.02	1.615	1.615	0.0321	0.0321	0.9909
+diploid	0.5	0.05	0.05	4 points	two	neutral 95% quantile	0.9909	0.9906	-0.22	1.615	1.615	0.0321	0.0321	0.9909
+diploid	0.5	0.05	0.05	2 points	trend	naive z(0.95)	0.9904	0.9894	-0.74	1.615	1.615	0.0321	0.0321	0.9909
+diploid	0.5	0.05	0.05	2 points	trend	neutral 95% quantile	0.9909	0.9912	0.23	1.615	1.615	0.0321	0.0321	0.9909
+diploid	0.5	0.2	0.005	4 points	trend	naive z(0.95)	0.1351	0.1260	-1.89	1.650	1.661	0.0500	0.0490	0.1335
+diploid	0.5	0.2	0.005	4 points	trend	neutral 95% quantile	0.1307	0.1220	-1.83	1.650	1.661	0.0500	0.0490	0.1335
+diploid	0.5	0.2	0.005	4 points	two	naive z(0.95)	0.1185	0.1146	-0.86	1.627	1.609	0.0487	0.0509	0.1185
+diploid	0.5	0.2	0.005	4 points	two	neutral 95% quantile	0.1199	0.1164	-0.76	1.627	1.609	0.0487	0.0509	0.1185
+diploid	0.5	0.2	0.005	2 points	trend	naive z(0.95)	0.1185	0.1148	-0.82	1.627	1.589	0.0487	0.0522	0.1185
+diploid	0.5	0.2	0.005	2 points	trend	neutral 95% quantile	0.1247	0.1212	-0.74	1.627	1.589	0.0487	0.0522	0.1185
+diploid	0.5	0.2	0.01	4 points	trend	naive z(0.95)	0.2981	0.2958	-0.36	1.650	1.634	0.0500	0.0516	0.2932
+diploid	0.5	0.2	0.01	4 points	trend	neutral 95% quantile	0.2991	0.2970	-0.32	1.650	1.634	0.0500	0.0516	0.2932
+diploid	0.5	0.2	0.01	4 points	two	naive z(0.95)	0.2484	0.2492	0.13	1.627	1.589	0.0487	0.0522	0.2484
+diploid	0.5	0.2	0.01	4 points	two	neutral 95% quantile	0.2616	0.2616	-0.01	1.627	1.589	0.0487	0.0522	0.2484
+diploid	0.5	0.2	0.01	2 points	trend	naive z(0.95)	0.2484	0.2516	0.53	1.627	1.659	0.0487	0.0465	0.2484
+diploid	0.5	0.2	0.01	2 points	trend	neutral 95% quantile	0.2338	0.2372	0.57	1.627	1.659	0.0487	0.0465	0.2484
+diploid	0.5	0.2	0.02	4 points	trend	naive z(0.95)	0.7554	0.7644	1.48	1.650	1.689	0.0500	0.0461	0.7464
+diploid	0.5	0.2	0.02	4 points	trend	neutral 95% quantile	0.7366	0.7418	0.83	1.650	1.689	0.0500	0.0461	0.7464
+diploid	0.5	0.2	0.02	4 points	two	naive z(0.95)	0.6565	0.6570	0.07	1.627	1.668	0.0487	0.0422	0.6565
+diploid	0.5	0.2	0.02	4 points	two	neutral 95% quantile	0.6410	0.6458	0.71	1.627	1.668	0.0487	0.0422	0.6565
+diploid	0.5	0.2	0.02	2 points	trend	naive z(0.95)	0.6565	0.6428	-2.04	1.627	1.627	0.0487	0.0487	0.6565
+diploid	0.5	0.2	0.02	2 points	trend	neutral 95% quantile	0.6565	0.6428	-2.04	1.627	1.627	0.0487	0.0487	0.6565
+diploid	0.5	0.2	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.14	1.650	1.625	0.0500	0.0526	1.0000
+diploid	0.5	0.2	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.13	1.650	1.625	0.0500	0.0526	1.0000
+diploid	0.5	0.2	0.05	4 points	two	naive z(0.95)	0.9999	1.0000	0.53	1.627	1.627	0.0487	0.0487	0.9999
+diploid	0.5	0.2	0.05	4 points	two	neutral 95% quantile	0.9999	1.0000	0.53	1.627	1.627	0.0487	0.0487	0.9999
+diploid	0.5	0.2	0.05	2 points	trend	naive z(0.95)	0.9999	0.9998	-1.35	1.627	1.659	0.0487	0.0465	0.9999
+diploid	0.5	0.2	0.05	2 points	trend	neutral 95% quantile	0.9999	0.9998	-1.35	1.627	1.659	0.0487	0.0465	0.9999
+diploid	0	0.05	0.005	4 points	trend	naive z(0.95)	0.0532	0.0492	-1.27	1.653	1.695	0.0498	0.0461	0.0528
+diploid	0	0.05	0.005	4 points	trend	neutral 95% quantile	0.0489	0.0458	-1.00	1.653	1.695	0.0498	0.0461	0.0528
+diploid	0	0.05	0.005	4 points	two	naive z(0.95)	0.0310	0.0334	0.98	1.615	1.615	0.0321	0.0321	0.0346
+diploid	0	0.05	0.005	4 points	two	neutral 95% quantile	0.0346	0.0372	1.01	1.615	1.615	0.0321	0.0321	0.0346
+diploid	0	0.05	0.005	2 points	trend	naive z(0.95)	0.0310	0.0296	-0.57	1.615	1.615	0.0321	0.0321	0.0346
+diploid	0	0.05	0.005	2 points	trend	neutral 95% quantile	0.0346	0.0324	-0.85	1.615	1.615	0.0321	0.0321	0.0346
+diploid	0	0.05	0.01	4 points	trend	naive z(0.95)	0.0566	0.0572	0.19	1.653	1.687	0.0498	0.0474	0.0561
+diploid	0	0.05	0.01	4 points	trend	neutral 95% quantile	0.0535	0.0546	0.36	1.653	1.687	0.0498	0.0474	0.0561
+diploid	0	0.05	0.01	4 points	two	naive z(0.95)	0.0332	0.0328	-0.18	1.615	1.615	0.0321	0.0321	0.0373
+diploid	0	0.05	0.01	4 points	two	neutral 95% quantile	0.0373	0.0370	-0.10	1.615	1.615	0.0321	0.0321	0.0373
+diploid	0	0.05	0.01	2 points	trend	naive z(0.95)	0.0332	0.0296	-1.44	1.615	1.615	0.0321	0.0321	0.0373
+diploid	0	0.05	0.01	2 points	trend	neutral 95% quantile	0.0373	0.0344	-1.07	1.615	1.615	0.0321	0.0321	0.0373
+diploid	0	0.05	0.02	4 points	trend	naive z(0.95)	0.0642	0.0632	-0.29	1.653	1.662	0.0498	0.0486	0.0636
+diploid	0	0.05	0.02	4 points	trend	neutral 95% quantile	0.0621	0.0616	-0.14	1.653	1.662	0.0498	0.0486	0.0636
+diploid	0	0.05	0.02	4 points	two	naive z(0.95)	0.0383	0.0360	-0.86	1.615	1.615	0.0321	0.0321	0.0434
+diploid	0	0.05	0.02	4 points	two	neutral 95% quantile	0.0434	0.0402	-1.11	1.615	1.615	0.0321	0.0321	0.0434
+diploid	0	0.05	0.02	2 points	trend	naive z(0.95)	0.0383	0.0400	0.61	1.615	1.615	0.0321	0.0321	0.0434
+diploid	0	0.05	0.02	2 points	trend	neutral 95% quantile	0.0434	0.0436	0.07	1.615	1.615	0.0321	0.0321	0.0434
+diploid	0	0.05	0.05	4 points	trend	naive z(0.95)	0.0972	0.0990	0.43	1.653	1.661	0.0498	0.0494	0.0961
+diploid	0	0.05	0.05	4 points	trend	neutral 95% quantile	0.0953	0.0980	0.66	1.653	1.661	0.0498	0.0494	0.0961
+diploid	0	0.05	0.05	4 points	two	naive z(0.95)	0.0596	0.0630	1.00	1.615	1.615	0.0321	0.0321	0.0696
+diploid	0	0.05	0.05	4 points	two	neutral 95% quantile	0.0696	0.0738	1.16	1.615	1.615	0.0321	0.0321	0.0696
+diploid	0	0.05	0.05	2 points	trend	naive z(0.95)	0.0596	0.0592	-0.13	1.615	1.615	0.0321	0.0321	0.0696
+diploid	0	0.05	0.05	2 points	trend	neutral 95% quantile	0.0696	0.0712	0.44	1.615	1.615	0.0321	0.0321	0.0696
+diploid	0	0.2	0.005	4 points	trend	naive z(0.95)	0.0778	0.0744	-0.91	1.650	1.625	0.0500	0.0525	0.0769
+diploid	0	0.2	0.005	4 points	trend	neutral 95% quantile	0.0803	0.0776	-0.71	1.650	1.625	0.0500	0.0525	0.0769
+diploid	0	0.2	0.005	4 points	two	naive z(0.95)	0.0717	0.0668	-1.33	1.627	1.589	0.0487	0.0522	0.0717
+diploid	0	0.2	0.005	4 points	two	neutral 95% quantile	0.0758	0.0702	-1.49	1.627	1.589	0.0487	0.0522	0.0717
+diploid	0	0.2	0.005	2 points	trend	naive z(0.95)	0.0717	0.0688	-0.79	1.627	1.589	0.0487	0.0522	0.0717
+diploid	0	0.2	0.005	2 points	trend	neutral 95% quantile	0.0758	0.0730	-0.74	1.627	1.589	0.0487	0.0522	0.0717
+diploid	0	0.2	0.01	4 points	trend	naive z(0.95)	0.1201	0.1248	1.02	1.650	1.644	0.0500	0.0506	0.1187
+diploid	0	0.2	0.01	4 points	trend	neutral 95% quantile	0.1201	0.1248	1.02	1.650	1.644	0.0500	0.0506	0.1187
+diploid	0	0.2	0.01	4 points	two	naive z(0.95)	0.1058	0.1114	1.28	1.627	1.659	0.0487	0.0465	0.1058
+diploid	0	0.2	0.01	4 points	two	neutral 95% quantile	0.0992	0.1044	1.24	1.627	1.659	0.0487	0.0465	0.1058
+diploid	0	0.2	0.01	2 points	trend	naive z(0.95)	0.1058	0.1026	-0.74	1.627	1.627	0.0487	0.0487	0.1058
+diploid	0	0.2	0.01	2 points	trend	neutral 95% quantile	0.1058	0.1026	-0.75	1.627	1.627	0.0487	0.0487	0.1058
+diploid	0	0.2	0.02	4 points	trend	naive z(0.95)	0.2784	0.2756	-0.44	1.650	1.629	0.0500	0.0523	0.2742
+diploid	0	0.2	0.02	4 points	trend	neutral 95% quantile	0.2810	0.2782	-0.44	1.650	1.629	0.0500	0.0523	0.2742
+diploid	0	0.2	0.02	4 points	two	naive z(0.95)	0.2284	0.2254	-0.51	1.627	1.589	0.0487	0.0522	0.2284
+diploid	0	0.2	0.02	4 points	two	neutral 95% quantile	0.2407	0.2368	-0.64	1.627	1.589	0.0487	0.0522	0.2284
+diploid	0	0.2	0.02	2 points	trend	naive z(0.95)	0.2284	0.2244	-0.68	1.627	1.627	0.0487	0.0487	0.2284
+diploid	0	0.2	0.02	2 points	trend	neutral 95% quantile	0.2284	0.2244	-0.68	1.627	1.627	0.0487	0.0487	0.2284
+diploid	0	0.2	0.05	4 points	trend	naive z(0.95)	0.9903	0.9906	0.19	1.650	1.618	0.0500	0.0535	0.9900
+diploid	0	0.2	0.05	4 points	trend	neutral 95% quantile	0.9908	0.9914	0.47	1.650	1.618	0.0500	0.0535	0.9900
+diploid	0	0.2	0.05	4 points	two	naive z(0.95)	0.9610	0.9618	0.30	1.627	1.659	0.0487	0.0465	0.9610
+diploid	0	0.2	0.05	4 points	two	neutral 95% quantile	0.9602	0.9606	0.15	1.627	1.659	0.0487	0.0465	0.9610
+diploid	0	0.2	0.05	2 points	trend	naive z(0.95)	0.9610	0.9654	1.62	1.627	1.589	0.0487	0.0522	0.9610
+diploid	0	0.2	0.05	2 points	trend	neutral 95% quantile	0.9648	0.9684	1.37	1.627	1.589	0.0487	0.0522	0.9610
+diploid	1	0.05	0.005	4 points	trend	naive z(0.95)	0.1461	0.1506	0.91	1.653	1.653	0.0498	0.0498	0.1444
+diploid	1	0.05	0.005	4 points	trend	neutral 95% quantile	0.1444	0.1494	1.02	1.653	1.653	0.0498	0.0498	0.1444
+diploid	1	0.05	0.005	4 points	two	naive z(0.95)	0.0919	0.0974	1.34	1.615	1.615	0.0321	0.0321	0.1100
+diploid	1	0.05	0.005	4 points	two	neutral 95% quantile	0.1100	0.1168	1.54	1.615	1.615	0.0321	0.0321	0.1100
+diploid	1	0.05	0.005	2 points	trend	naive z(0.95)	0.0919	0.0952	0.80	1.615	1.615	0.0321	0.0321	0.1100
+diploid	1	0.05	0.005	2 points	trend	neutral 95% quantile	0.1100	0.1164	1.45	1.615	1.615	0.0321	0.0321	0.1100
+diploid	1	0.05	0.01	4 points	trend	naive z(0.95)	0.3544	0.3546	0.03	1.653	1.714	0.0498	0.0445	0.3518
+diploid	1	0.05	0.01	4 points	trend	neutral 95% quantile	0.3246	0.3246	-0.01	1.653	1.714	0.0498	0.0445	0.3518
+diploid	1	0.05	0.01	4 points	two	naive z(0.95)	0.2342	0.2374	0.54	1.615	1.615	0.0321	0.0321	0.2739
+diploid	1	0.05	0.01	4 points	two	neutral 95% quantile	0.2739	0.2796	0.91	1.615	1.615	0.0321	0.0321	0.2739
+diploid	1	0.05	0.01	2 points	trend	naive z(0.95)	0.2342	0.2382	0.67	1.615	1.615	0.0321	0.0321	0.2739
+diploid	1	0.05	0.01	2 points	trend	neutral 95% quantile	0.2739	0.2758	0.30	1.615	1.615	0.0321	0.0321	0.2739
+diploid	1	0.05	0.02	4 points	trend	naive z(0.95)	0.8866	0.8850	-0.37	1.653	1.598	0.0498	0.0561	0.8859
+diploid	1	0.05	0.02	4 points	trend	neutral 95% quantile	0.8946	0.8934	-0.28	1.653	1.598	0.0498	0.0561	0.8859
+diploid	1	0.05	0.02	4 points	two	naive z(0.95)	0.7728	0.7768	0.67	1.615	1.470	0.0321	0.0529	0.7962
+diploid	1	0.05	0.02	4 points	two	neutral 95% quantile	0.8420	0.8422	0.04	1.615	1.470	0.0321	0.0529	0.7962
+diploid	1	0.05	0.02	2 points	trend	naive z(0.95)	0.7728	0.7760	0.54	1.615	1.615	0.0321	0.0321	0.7962
+diploid	1	0.05	0.02	2 points	trend	neutral 95% quantile	0.7962	0.8026	1.12	1.615	1.615	0.0321	0.0321	0.7962
+diploid	1	0.05	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.01	1.653	1.663	0.0498	0.0486	1.0000
+diploid	1	0.05	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.01	1.653	1.663	0.0498	0.0486	1.0000
+diploid	1	0.05	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.03	1.615	1.615	0.0321	0.0321	1.0000
+diploid	1	0.05	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.03	1.615	1.615	0.0321	0.0321	1.0000
+diploid	1	0.05	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.03	1.615	1.615	0.0321	0.0321	1.0000
+diploid	1	0.05	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.03	1.615	1.615	0.0321	0.0321	1.0000
+diploid	1	0.2	0.005	4 points	trend	naive z(0.95)	0.2117	0.2128	0.20	1.650	1.621	0.0500	0.0532	0.2086
+diploid	1	0.2	0.005	4 points	trend	neutral 95% quantile	0.2163	0.2166	0.05	1.650	1.621	0.0500	0.0532	0.2086
+diploid	1	0.2	0.005	4 points	two	naive z(0.95)	0.1803	0.1768	-0.64	1.627	1.589	0.0487	0.0522	0.1803
+diploid	1	0.2	0.005	4 points	two	neutral 95% quantile	0.1899	0.1864	-0.62	1.627	1.589	0.0487	0.0522	0.1803
+diploid	1	0.2	0.005	2 points	trend	naive z(0.95)	0.1803	0.1834	0.57	1.627	1.659	0.0487	0.0465	0.1803
+diploid	1	0.2	0.005	2 points	trend	neutral 95% quantile	0.1686	0.1724	0.71	1.627	1.659	0.0487	0.0465	0.1803
+diploid	1	0.2	0.01	4 points	trend	naive z(0.95)	0.5119	0.5120	0.02	1.650	1.657	0.0500	0.0494	0.5021
+diploid	1	0.2	0.01	4 points	trend	neutral 95% quantile	0.4984	0.4984	0.00	1.650	1.657	0.0500	0.0494	0.5021
+diploid	1	0.2	0.01	4 points	two	naive z(0.95)	0.4311	0.4276	-0.50	1.627	1.627	0.0487	0.0487	0.4311
+diploid	1	0.2	0.01	4 points	two	neutral 95% quantile	0.4311	0.4276	-0.50	1.627	1.627	0.0487	0.0487	0.4311
+diploid	1	0.2	0.01	2 points	trend	naive z(0.95)	0.4311	0.4352	0.59	1.627	1.589	0.0487	0.0522	0.4311
+diploid	1	0.2	0.01	2 points	trend	neutral 95% quantile	0.4501	0.4540	0.55	1.627	1.589	0.0487	0.0522	0.4311
+diploid	1	0.2	0.02	4 points	trend	naive z(0.95)	0.9355	0.9390	1.02	1.650	1.664	0.0500	0.0487	0.9335
+diploid	1	0.2	0.02	4 points	trend	neutral 95% quantile	0.9311	0.9354	1.20	1.650	1.664	0.0500	0.0487	0.9335
+diploid	1	0.2	0.02	4 points	two	naive z(0.95)	0.8836	0.8928	2.02	1.627	1.627	0.0487	0.0487	0.8836
+diploid	1	0.2	0.02	4 points	two	neutral 95% quantile	0.8836	0.8928	2.02	1.627	1.627	0.0487	0.0487	0.8836
+diploid	1	0.2	0.02	2 points	trend	naive z(0.95)	0.8836	0.8898	1.36	1.627	1.627	0.0487	0.0487	0.8836
+diploid	1	0.2	0.02	2 points	trend	neutral 95% quantile	0.8836	0.8898	1.36	1.627	1.627	0.0487	0.0487	0.8836
+diploid	1	0.2	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.20	1.650	1.639	0.0500	0.0510	1.0000
+diploid	1	0.2	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.20	1.650	1.639	0.0500	0.0510	1.0000
+diploid	1	0.2	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.41	1.627	1.589	0.0487	0.0522	1.0000
+diploid	1	0.2	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.40	1.627	1.589	0.0487	0.0522	1.0000
+diploid	1	0.2	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.41	1.627	1.609	0.0487	0.0509	1.0000
+diploid	1	0.2	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.41	1.627	1.609	0.0487	0.0509	1.0000
+haplodiploid	0.5	0.05	0.005	4 points	trend	naive z(0.95)	0.1083	0.1116	0.76	1.653	1.662	0.0498	0.0486	0.1070
+haplodiploid	0.5	0.05	0.005	4 points	trend	neutral 95% quantile	0.1043	0.1078	0.80	1.653	1.662	0.0498	0.0486	0.1070
+haplodiploid	0.5	0.05	0.005	4 points	two	naive z(0.95)	0.0674	0.0722	1.36	1.615	1.615	0.0321	0.0321	0.0793
+haplodiploid	0.5	0.05	0.005	4 points	two	neutral 95% quantile	0.0793	0.0848	1.44	1.615	1.615	0.0321	0.0321	0.0793
+haplodiploid	0.5	0.05	0.005	2 points	trend	naive z(0.95)	0.0674	0.0664	-0.28	1.615	1.615	0.0321	0.0321	0.0793
+haplodiploid	0.5	0.05	0.005	2 points	trend	neutral 95% quantile	0.0793	0.0760	-0.86	1.615	1.615	0.0321	0.0321	0.0793
+haplodiploid	0.5	0.05	0.01	4 points	trend	naive z(0.95)	0.2203	0.2116	-1.48	1.653	1.689	0.0498	0.0471	0.2179
+haplodiploid	0.5	0.05	0.01	4 points	trend	neutral 95% quantile	0.2068	0.2002	-1.15	1.653	1.689	0.0498	0.0471	0.2179
+haplodiploid	0.5	0.05	0.01	4 points	two	naive z(0.95)	0.1398	0.1356	-0.85	1.615	1.615	0.0321	0.0321	0.1683
+haplodiploid	0.5	0.05	0.01	4 points	two	neutral 95% quantile	0.1683	0.1646	-0.71	1.615	1.615	0.0321	0.0321	0.1683
+haplodiploid	0.5	0.05	0.01	2 points	trend	naive z(0.95)	0.1398	0.1354	-0.89	1.615	1.615	0.0321	0.0321	0.1683
+haplodiploid	0.5	0.05	0.01	2 points	trend	neutral 95% quantile	0.1683	0.1600	-1.58	1.615	1.615	0.0321	0.0321	0.1683
+haplodiploid	0.5	0.05	0.02	4 points	trend	naive z(0.95)	0.6339	0.6410	1.05	1.653	1.653	0.0498	0.0498	0.6324
+haplodiploid	0.5	0.05	0.02	4 points	trend	neutral 95% quantile	0.6324	0.6386	0.90	1.653	1.653	0.0498	0.0498	0.6324
+haplodiploid	0.5	0.05	0.02	4 points	two	naive z(0.95)	0.4686	0.4592	-1.33	1.615	1.615	0.0321	0.0321	0.5066
+haplodiploid	0.5	0.05	0.02	4 points	two	neutral 95% quantile	0.5066	0.4984	-1.16	1.615	1.615	0.0321	0.0321	0.5066
+haplodiploid	0.5	0.05	0.02	2 points	trend	naive z(0.95)	0.4686	0.4704	0.25	1.615	1.615	0.0321	0.0321	0.5066
+haplodiploid	0.5	0.05	0.02	2 points	trend	neutral 95% quantile	0.5066	0.5044	-0.31	1.615	1.615	0.0321	0.0321	0.5066
+haplodiploid	0.5	0.05	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.03	1.653	1.662	0.0498	0.0486	1.0000
+haplodiploid	0.5	0.05	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.03	1.653	1.662	0.0498	0.0486	1.0000
+haplodiploid	0.5	0.05	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.18	1.615	1.615	0.0321	0.0321	1.0000
+haplodiploid	0.5	0.05	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.17	1.615	1.615	0.0321	0.0321	1.0000
+haplodiploid	0.5	0.05	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.18	1.615	1.615	0.0321	0.0321	1.0000
+haplodiploid	0.5	0.05	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.17	1.615	1.615	0.0321	0.0321	1.0000
+haplodiploid	0.5	0.2	0.005	4 points	trend	naive z(0.95)	0.1798	0.1812	0.25	1.650	1.648	0.0500	0.0504	0.1775
+haplodiploid	0.5	0.2	0.005	4 points	trend	neutral 95% quantile	0.1784	0.1800	0.30	1.650	1.648	0.0500	0.0504	0.1775
+haplodiploid	0.5	0.2	0.005	4 points	two	naive z(0.95)	0.1541	0.1542	0.01	1.627	1.627	0.0487	0.0487	0.1541
+haplodiploid	0.5	0.2	0.005	4 points	two	neutral 95% quantile	0.1541	0.1542	0.01	1.627	1.627	0.0487	0.0487	0.1541
+haplodiploid	0.5	0.2	0.005	2 points	trend	naive z(0.95)	0.1541	0.1488	-1.04	1.627	1.668	0.0487	0.0422	0.1541
+haplodiploid	0.5	0.2	0.005	2 points	trend	neutral 95% quantile	0.1397	0.1322	-1.53	1.627	1.668	0.0487	0.0422	0.1541
+haplodiploid	0.5	0.2	0.01	4 points	trend	naive z(0.95)	0.4473	0.4520	0.67	1.650	1.647	0.0500	0.0504	0.4389
+haplodiploid	0.5	0.2	0.01	4 points	trend	neutral 95% quantile	0.4431	0.4476	0.64	1.650	1.647	0.0500	0.0504	0.4389
+haplodiploid	0.5	0.2	0.01	4 points	two	naive z(0.95)	0.3706	0.3694	-0.18	1.627	1.659	0.0487	0.0465	0.3706
+haplodiploid	0.5	0.2	0.01	4 points	two	neutral 95% quantile	0.3535	0.3514	-0.31	1.627	1.659	0.0487	0.0465	0.3706
+haplodiploid	0.5	0.2	0.01	2 points	trend	naive z(0.95)	0.3706	0.3650	-0.82	1.627	1.606	0.0487	0.0514	0.3706
+haplodiploid	0.5	0.2	0.01	2 points	trend	neutral 95% quantile	0.3732	0.3668	-0.93	1.627	1.606	0.0487	0.0514	0.3706
+haplodiploid	0.5	0.2	0.02	4 points	trend	naive z(0.95)	0.9380	0.9344	-1.06	1.650	1.644	0.0500	0.0506	0.9358
+haplodiploid	0.5	0.2	0.02	4 points	trend	neutral 95% quantile	0.9380	0.9344	-1.06	1.650	1.644	0.0500	0.0506	0.9358
+haplodiploid	0.5	0.2	0.02	4 points	two	naive z(0.95)	0.8766	0.8678	-1.90	1.627	1.609	0.0487	0.0509	0.8766
+haplodiploid	0.5	0.2	0.02	4 points	two	neutral 95% quantile	0.8831	0.8740	-2.00	1.627	1.609	0.0487	0.0509	0.8766
+haplodiploid	0.5	0.2	0.02	2 points	trend	naive z(0.95)	0.8766	0.8684	-1.77	1.627	1.609	0.0487	0.0509	0.8766
+haplodiploid	0.5	0.2	0.02	2 points	trend	neutral 95% quantile	0.8831	0.8740	-2.00	1.627	1.609	0.0487	0.0509	0.8766
+haplodiploid	0.5	0.2	0.05	4 points	trend	naive z(0.95)	1.0000	1.0000	0.00	1.650	1.614	0.0500	0.0539	1.0000
+haplodiploid	0.5	0.2	0.05	4 points	trend	neutral 95% quantile	1.0000	1.0000	0.00	1.650	1.614	0.0500	0.0539	1.0000
+haplodiploid	0.5	0.2	0.05	4 points	two	naive z(0.95)	1.0000	1.0000	0.01	1.627	1.589	0.0487	0.0522	1.0000
+haplodiploid	0.5	0.2	0.05	4 points	two	neutral 95% quantile	1.0000	1.0000	0.01	1.627	1.589	0.0487	0.0522	1.0000
+haplodiploid	0.5	0.2	0.05	2 points	trend	naive z(0.95)	1.0000	1.0000	0.01	1.627	1.627	0.0487	0.0487	1.0000
+haplodiploid	0.5	0.2	0.05	2 points	trend	neutral 95% quantile	1.0000	1.0000	0.01	1.627	1.627	0.0487	0.0487	1.0000
