@@ -4,7 +4,7 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 
 ## 1. Software before submission
 
-- [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations in `validation/` (results table there; `make_figure.py` draws the figure).
+- [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations; summary and figure in [`validation/README.md`](../validation/README.md).
 - [x] **Use all processor cores (Web Workers)**: done for the power curve, planner and sampling comparison; results identical to serial runs.
 - [x] **Save, load and share settings; export results as CSV**: done (shareable link, settings file, CSV downloads). Useful for the paper: each figure can come with a link that reproduces it.
 - [ ] Optional: **replicate populations (1 to 100)**, evidence combined across replicates.
@@ -23,7 +23,8 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
   - Haploid deterministic trajectory against p(1+s)^t / (1 − p + p(1+s)^t).
   - Table or scatter plot of SPOT against theory (points on the diagonal).
 - [ ] **Monte Carlo precision.** Repeat runs with different seeds: power varies by about ±1–2 points with the default number of replicates. This justifies the defaults.
-- [ ] If rescaling is added: rescaled against full simulations across s, Ne and number of generations.
+- [x] **Rescaling against full simulations** across s, Ne, ploidy and number of generations: done, see [`validation/README.md`](../validation/README.md) (methods, results, figure and caveats, ready to adapt as a results subsection or supplement).
+- [ ] Spot-check a few designs (full and rescaled) against an independent simulator such as SLiM.
 
 ## 3. Worked examples (application section)
 
@@ -33,7 +34,7 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
   - Planner and power curves: for example, whether adding historical specimens helps more than enlarging the modern sample; below which Ne no sample size reaches 80% power.
   - One clear take-home message (for example: "s ≥ 0.05 on a common allele is detectable; rare alleles are not, whatever the sample size").
 - [ ] **Short contrasting example**: a diploid long-lived species (long generation time) or a bottleneck between two sampling dates using Ne per interval.
-- [ ] Optional: a pathogen example (haploid, many generations) if rescaling is ready.
+- [ ] Optional: a pathogen example (haploid, many generations), now possible with rescaling.
 
 ## 4. Introduction and statement of the gap
 
@@ -61,3 +62,4 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
   3. *Ecology and Evolution* (open-access fallback).
 - [ ] Check each journal's current author guidelines (article type, word limit, fees) before writing.
 - [ ] Keep it short: software description, validation, worked example.
+- [ ] Show the paper, README and app to colleagues and ask them to review before submission.
