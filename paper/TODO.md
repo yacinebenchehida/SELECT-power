@@ -7,11 +7,11 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 - [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations; summary and figure in [`validation/README.md`](../validation/README.md).
 - [x] **Use all processor cores (Web Workers)**: done for the power curve, planner and sampling comparison; results identical to serial runs.
 - [x] **Save, load and share settings; export results as CSV**: done (shareable link, settings file, CSV downloads). Useful for the paper: each figure can come with a link that reproduces it.
-- [ ] Optional: **replicate populations (1 to 100)**, evidence combined across replicates.
 - [ ] Final pass on the page, README and guide after these changes; check every number quoted in the guide.
 - [ ] Organism-specific advice in the README ("Choosing settings for your organism": insects, long-lived vertebrates, plants, pathogens).
-- [ ] Freeze a version for the paper (GitHub release with a version number; archive it on Zenodo to get a DOI).
-- [ ] Choose and add a licence before publication (for example MIT).
+- [ ] Freeze a version for the paper (currently 0.9.0; release 1.0.0 on GitHub and archive it on Zenodo to get a DOI, which the journal requires).
+- [x] **Licence**: MIT (`LICENSE`), with `CITATION.cff` for GitHub's "Cite this repository" button.
+- [x] **Example scenarios** in the page (museum bumblebee, long-lived mammal, human ancient DNA, bacterial pathogen, large diploid population, analytic baseline), version number and "How to cite", and PNG/SVG download of every chart.
 
 ## 2. Validation (main results section)
 
