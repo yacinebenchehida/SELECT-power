@@ -26,7 +26,7 @@ Historical DNA of organisms with short generations (for example bacteria or viru
 
 ## Caveats
 
-- **SPOT against itself.** This shows that rescaling reproduces SPOT's own full simulation. Whether the full simulation is correct is checked separately (agreement with theory; see `paper/TODO.md`). A spot-check of a few designs against an independent simulator such as SLiM would strengthen this.
+- **SPOT against itself.** This shows that rescaling reproduces SPOT's own full simulation. Whether the full simulation is correct is checked separately, against theory ([`theory.md`](theory.md)) and against the independent simulator SLiM ([`slim.md`](slim.md)).
 - **Weak selection only.** The tested range (s ≤ 0.002) is the realistic one over thousands of generations. With stronger selection over very long periods the caps are exceeded and the page flags the result as approximate; in those cases the allele usually fixes early and power is close to 0 or 1 anyway.
 - **Timing resolution.** With rescaling, the onset of selection and changes in Ne happen in steps of λ generations rather than every generation. This is negligible over thousands of generations.
 

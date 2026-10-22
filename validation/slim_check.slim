@@ -1,0 +1,135 @@
+// =====================================================================================================
+// SLiM model used to check SPOT against an independent, individual-based simulator.
+// Write-up: validation/slim.md. Run through validation/slim_runs.sh (which sets the parameters below).
+//
+// What it simulates
+//   One locus with two alleles, Wright-Fisher population of fixed size, no mutation, no migration.
+//   R independent replicate populations are simulated side by side, one per subpopulation (p1 ... pR),
+//   so that a single SLiM run gives all replicates of a scenario.
+//   Generation 0 starts with the selected allele at frequency P0 (exactly) in each sex.
+//   Selection acts from generation 1 onwards (as in SPOT when selection starts at the first sampling date).
+//
+// Inheritance systems (SYSTEM)
+//   "diploid"      : NF females + NM males, both diploid; fitness 1, 1+H*S, 1+S for 0, 1, 2 copies (both sexes).
+//   "haploid"      : NF haploid individuals, clonal reproduction; fitness 1 or 1+S.
+//   "haplodiploid" : NF diploid females + NM haploid males. SLiM's built-in diploid machinery is used, with
+//                    one trick: every male carries two identical copies of his single (maternal) haplosome.
+//                    A father then always transmits his only genome to daughters, a son's genome comes only
+//                    from his mother, and male fitness is 1 or 1+S (a "homozygote" for his one allele).
+//                    The copy is restored at the end of every generation (see the late() event).
+//   (In SLiM 5 each copy of the genome is called a "haplosome"; an individual's two copies are
+//    haploidGenome1, inherited from the mother, and haploidGenome2, inherited from the father.)
+//
+// Parameters (all given on the command line with -d, see slim_runs.sh)
+//   SYSTEM      "diploid", "haploid" or "haplodiploid"
+//   NF, NM      breeding females and males per generation (haploid: NF individuals, NM ignored)
+//   P0          starting frequency of the selected allele
+//   S, H        selection coefficient and dominance (H ignored for haploids and haploid males)
+//   R           number of replicate populations
+//   GENS        generations at which the population is sampled, e.g. c(0, 20, 40, 90)
+//   NSAMP       number of females (haploid: individuals) sampled at each of these generations
+//   OUT         output file (one line per replicate and sampling generation)
+//
+// What is recorded (to compare with SPOT, which records the same two quantities)
+//   pfs : allele frequency among breeding females after selection, i.e. weighted by each female's fitness
+//         (haploid: among all individuals). This is the frequency from which SPOT draws its samples.
+//   x   : number of copies of the allele among NSAMP sampled females, drawn with probability proportional
+//         to fitness (perfect genotypes, no sequencing error), out of nall = 2 * NSAMP alleles (haploid: NSAMP).
+//
+// Timing in SLiM's Wright-Fisher tick cycle: individuals of generation g exist during the early() event of
+// tick g + 2, with their fitness already computed (cachedFitness). They are recorded there, before they
+// reproduce. Tick 1 creates the populations; generation 0 is the set of individuals present at the end of tick 1.
+// =====================================================================================================
+
+initialize() {
+	if (SYSTEM != "haploid") initializeSex();
+	// m1: the selected allele. Its selection coefficient is 0 at first and set to S from generation 1 on.
+	initializeMutationType("m1", H, "f", 0.0);
+	m1.convertToSubstitution = F;          // keep counting it even if it fixes in every replicate
+	initializeGenomicElementType("g1", m1, 1.0);
+	// a single base pair: one locus, no recombination, no new mutations
+	initializeChromosome(1, 1, type = (SYSTEM == "haploid") ? "H" else "A");
+	initializeGenomicElement(g1, 0, 0);
+	initializeMutationRate(0.0);
+	initializeRecombinationRate(0.0);
+}
+
+// tick 1, early: create the R replicate populations (initially without the allele)
+1 early() {
+	for (i in 1:R) {
+		if (SYSTEM == "haploid") {
+			sp = sim.addSubpop(i, NF);
+			sp.setCloningRate(1.0);           // haploids reproduce clonally: one parent chosen by fitness
+		} else
+			sp = sim.addSubpop(i, NF + NM, sexRatio = NM / (NF + NM));
+	}
+}
+
+// tick 1, late: the individuals present now are generation 0; give the allele to exactly P0 of the
+// copies carried by each sex in each replicate
+1 late() {
+	mut = NULL;
+	for (sp in sim.subpopulations) {
+		if (SYSTEM == "haploid") {
+			targets = sample(sp.haplosomes, asInteger(round(P0 * NF)));
+		} else {
+			females = sp.subsetIndividuals(sex = "F");
+			males = sp.subsetIndividuals(sex = "M");
+			targetsF = sample(c(females.haploidGenome1, females.haploidGenome2), asInteger(round(P0 * 2 * NF)));
+			if (SYSTEM == "diploid")
+				targetsM = sample(c(males.haploidGenome1, males.haploidGenome2), asInteger(round(P0 * 2 * NM)));
+			else {                              // haplodiploid: chosen males get the allele on both (identical) copies
+				carriers = sample(males, asInteger(round(P0 * NM)));
+				targetsM = c(carriers.haploidGenome1, carriers.haploidGenome2);
+			}
+			targets = c(targetsF, targetsM);
+		}
+		if (isNULL(mut)) mut = targets[0].addNewDrawnMutation(m1, 0);   // one allele object shared by all replicates
+		targets.addMutations(mut);
+	}
+	defineGlobal("MUT", mut);
+}
+
+// record generation g (called in the early() event of tick g + 2)
+function (void)record(integer$ g) {
+	ploidy = (SYSTEM == "haploid") ? 1 else 2;
+	k = which(GENS == g)[0];
+	lines = NULL;
+	for (sp in sim.subpopulations) {
+		inds = (SYSTEM == "haploid") ? sp.individuals else sp.subsetIndividuals(sex = "F");
+		w = sp.cachedFitness(inds.index);                  // fitness of each breeding female
+		c = inds.countOfMutationsOfType(m1);               // copies she carries (0, 1, 2; haploid 0, 1)
+		pfs = sum(w * c) / (ploidy * sum(w));              // allele frequency after selection
+		picked = sample(inds, NSAMP[k], replace = T, weights = w);
+		x = sum(picked.countOfMutationsOfType(m1));
+		lines = c(lines, paste(sp.id, g, pfs, x, ploidy * NSAMP[k], sep = "\t"));
+	}
+	writeFile(OUT, lines, append = T);
+}
+
+// every tick from 2 on, early: record generation (tick - 2) if it is a sampling generation;
+// in tick 2 (generation 0 recorded), switch selection on so that it acts from generation 1
+2: early() {
+	g = community.tick - 2;
+	if (any(GENS == g)) record(g);
+	if (g == 0) MUT.setSelectionCoeff(asFloat(S));
+	if (g == max(GENS)) community.simulationFinished();
+}
+
+// haplodiploid only: a son received one haplosome from his mother (haploidGenome1) and one from his father
+// (haploidGenome2); in SLiM the first haplosome of an offspring always comes from the mother (checked). Make his haploidGenome2 an exact copy of haploidGenome1 so that he is effectively haploid.
+// Done before fitness is computed at the end of the tick.
+2: late() {
+	if (SYSTEM != "haplodiploid") return;
+	for (sp in sim.subpopulations) {
+		males = sp.subsetIndividuals(sex = "M");
+		h1 = males.haploidGenome1.containsMutations(MUT);
+		h2 = males.haploidGenome2.containsMutations(MUT);
+		males.haploidGenome2[h1 & !h2].addMutations(MUT);
+		males.haploidGenome2[!h1 & h2].removeMutations(MUT);
+	}
+}
+
+// SLiM needs a fixed last tick; the run actually stops earlier, after the last sampling generation
+// (community.simulationFinished() above)
+100000 late() { }

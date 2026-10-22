@@ -1,0 +1,34 @@
+scenario	run	generation	mean_spot	mean_slim	z_mean	sd_spot	sd_slim	sd_ratio	ks_D	ks_p
+diploid_N1000_s0.02	selected	20	0.1190	0.1183	0.67	0.0327	0.0338	0.968		
+diploid_N1000_s0.02	selected	40	0.1405	0.1410	-0.32	0.0524	0.0545	0.961		
+diploid_N1000_s0.02	selected	90	0.2074	0.2079	-0.16	0.0964	0.1037	0.929	0.0320	0.253
+diploid_N1000_neutral	neutral	20	0.1009	0.1015	-0.60	0.0304	0.0311	0.979		
+diploid_N1000_neutral	neutral	40	0.1019	0.1022	-0.17	0.0431	0.0437	0.988		
+diploid_N1000_neutral	neutral	90	0.1015	0.1029	-0.69	0.0645	0.0653	0.988	0.0235	0.634
+diploid_N1000_s0.05_rec	selected	20	0.1105	0.1092	1.25	0.0341	0.0338	1.010		
+diploid_N1000_s0.05_rec	selected	40	0.1238	0.1227	0.66	0.0549	0.0559	0.982		
+diploid_N1000_s0.05_rec	selected	90	0.1796	0.1743	1.32	0.1258	0.1262	0.997	0.0355	0.158
+diploid_N200_s0.05	selected	20	0.1505	0.1519	-0.50	0.0867	0.0872	0.994		
+diploid_N200_s0.05	selected	40	0.2138	0.2178	-0.85	0.1463	0.1522	0.962		
+diploid_N200_s0.05	selected	90	0.4192	0.4111	0.92	0.2763	0.2744	1.007	0.0255	0.529
+diploid_N200_neutral	neutral	20	0.0973	0.0992	-0.86	0.0654	0.0686	0.954		
+diploid_N200_neutral	neutral	40	0.0970	0.0998	-0.95	0.0915	0.0943	0.970		
+diploid_N200_neutral	neutral	90	0.0965	0.1026	-1.44	0.1294	0.1389	0.932	0.0290	0.365
+haploid_N1000_s0.02	selected	20	0.0718	0.0722	-0.30	0.0388	0.0397	0.979		
+haploid_N1000_s0.02	selected	40	0.1012	0.1010	0.11	0.0712	0.0714	0.997		
+haploid_N1000_s0.02	selected	90	0.2124	0.2149	-0.47	0.1631	0.1663	0.981	0.0160	0.959
+haploid_N1000_neutral	neutral	20	0.0499	0.0478	2.19	0.0312	0.0288	1.083		
+haploid_N1000_neutral	neutral	40	0.0502	0.0477	1.90	0.0438	0.0417	1.050		
+haploid_N1000_neutral	neutral	90	0.0489	0.0504	-0.74	0.0633	0.0653	0.971	0.0145	0.984
+haplodiploid_N1000_s0.02	selected	20	0.1258	0.1242	1.26	0.0401	0.0400	1.002		
+haplodiploid_N1000_s0.02	selected	40	0.1575	0.1561	0.67	0.0648	0.0654	0.991		
+haplodiploid_N1000_s0.02	selected	90	0.2564	0.2592	-0.71	0.1244	0.1268	0.981	0.0275	0.431
+haplodiploid_N1000_neutral	neutral	20	0.1009	0.0994	1.37	0.0339	0.0356	0.954		
+haplodiploid_N1000_neutral	neutral	40	0.1003	0.0998	0.29	0.0484	0.0492	0.984		
+haplodiploid_N1000_neutral	neutral	90	0.0992	0.0997	-0.19	0.0737	0.0722	1.021	0.0240	0.607
+haplodiploid_N2000_s0.05	selected	20	0.0188	0.0186	0.37	0.0132	0.0131	1.006		
+haplodiploid_N2000_s0.05	selected	40	0.0359	0.0349	1.05	0.0308	0.0298	1.033		
+haplodiploid_N2000_s0.05	selected	90	0.1476	0.1424	1.34	0.1243	0.1198	1.037	0.0250	0.554
+haplodiploid_N2000_neutral	neutral	20	0.0100	0.0097	1.06	0.0081	0.0081	1.003		
+haplodiploid_N2000_neutral	neutral	40	0.0103	0.0097	1.54	0.0118	0.0112	1.055		
+haplodiploid_N2000_neutral	neutral	90	0.0099	0.0098	0.30	0.0172	0.0169	1.016	0.0165	0.947

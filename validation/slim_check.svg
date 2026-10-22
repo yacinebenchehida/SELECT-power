@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="450" viewBox="0 0 1360 450" font-family="Helvetica,Arial,sans-serif">
+<defs><g id="m0"><circle r="3.5" fill="#2B59D9" stroke="#fff" stroke-width="0.6"/></g><g id="m1"><circle r="3.5" fill="#fff" stroke="#2B59D9" stroke-width="1.5"/></g><g id="m2"><rect x="-3.5" y="-3.5" width="7.0" height="7.0" fill="#0E9F6E" stroke="#fff" stroke-width="0.6"/></g><g id="m3"><rect x="-3.5" y="-3.5" width="7.0" height="7.0" fill="#fff" stroke="#0E9F6E" stroke-width="1.5"/></g><g id="m4"><path d="M0 -4.5L4.0 3.0H-4.0Z" fill="#C27A12" stroke="#fff" stroke-width="0.6"/></g><g id="m5"><path d="M0 -4.5L4.0 3.0H-4.0Z" fill="#fff" stroke="#C27A12" stroke-width="1.5"/></g><g id="m6"><circle r="4" fill="#2B59D9" stroke="#fff" stroke-width="0.6"/></g><g id="m7"><rect x="-4" y="-4" width="8" height="8" fill="#0E9F6E" stroke="#fff" stroke-width="0.6"/></g><g id="m8"><path d="M0 -5L4.5 3.5H-4.5Z" fill="#C27A12" stroke="#fff" stroke-width="0.6"/></g><g id="m9"><circle r="4" fill="#fff" stroke="#5A6480" stroke-width="1.5"/></g></defs>
+<rect width="1360" height="450" fill="#fff"/>
+<text x="70.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">Mean allele frequency</text>
+<text x="18.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">a</text>
+<line x1="70" x2="320" y1="300.0" y2="300.0" stroke="#E1E5EF"/>
+<text x="64" y="304.0" font-size="11" text-anchor="end" fill="#5A6480">0</text>
+<line x1="70" x2="320" y1="244.4" y2="244.4" stroke="#E1E5EF"/>
+<text x="64" y="248.4" font-size="11" text-anchor="end" fill="#5A6480">0.1</text>
+<line x1="70" x2="320" y1="188.9" y2="188.9" stroke="#E1E5EF"/>
+<text x="64" y="192.9" font-size="11" text-anchor="end" fill="#5A6480">0.2</text>
+<line x1="70" x2="320" y1="133.3" y2="133.3" stroke="#E1E5EF"/>
+<text x="64" y="137.3" font-size="11" text-anchor="end" fill="#5A6480">0.3</text>
+<line x1="70" x2="320" y1="77.8" y2="77.8" stroke="#E1E5EF"/>
+<text x="64" y="81.8" font-size="11" text-anchor="end" fill="#5A6480">0.4</text>
+<line x1="70.0" x2="70.0" y1="300" y2="304" stroke="#5A6480"/>
+<text x="70.0" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0</text>
+<line x1="125.6" x2="125.6" y1="300" y2="304" stroke="#5A6480"/>
+<text x="125.6" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.1</text>
+<line x1="181.1" x2="181.1" y1="300" y2="304" stroke="#5A6480"/>
+<text x="181.1" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.2</text>
+<line x1="236.7" x2="236.7" y1="300" y2="304" stroke="#5A6480"/>
+<text x="236.7" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.3</text>
+<line x1="292.2" x2="292.2" y1="300" y2="304" stroke="#5A6480"/>
+<text x="292.2" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.4</text>
+<rect x="70" y="50" width="250" height="250" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="195.0" y="336.0" font-size="12" text-anchor="middle" fill="#0F1730">SPOT</text>
+<text x="26.0" y="175.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 26.0 175.0)">SLiM</text>
+<path d="M70.0 300.0L320.0 50.0" fill="none" stroke="#5A6480" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="1"/>
+<use href="#m0" x="136.1" y="234.3"/>
+<use href="#m0" x="148.1" y="221.7"/>
+<use href="#m0" x="185.2" y="184.5"/>
+<use href="#m1" x="126.1" y="243.6"/>
+<use href="#m1" x="126.6" y="243.2"/>
+<use href="#m1" x="126.4" y="242.8"/>
+<use href="#m0" x="131.4" y="239.3"/>
+<use href="#m0" x="138.8" y="231.8"/>
+<use href="#m0" x="169.8" y="203.2"/>
+<use href="#m0" x="153.6" y="215.6"/>
+<use href="#m0" x="188.8" y="179.0"/>
+<use href="#m0" x="302.9" y="71.6"/>
+<use href="#m1" x="124.1" y="244.9"/>
+<use href="#m1" x="123.9" y="244.6"/>
+<use href="#m1" x="123.6" y="243.0"/>
+<use href="#m2" x="109.9" y="259.9"/>
+<use href="#m2" x="126.2" y="243.9"/>
+<use href="#m2" x="188.0" y="180.6"/>
+<use href="#m3" x="97.7" y="273.4"/>
+<use href="#m3" x="97.9" y="273.5"/>
+<use href="#m3" x="97.2" y="272.0"/>
+<use href="#m4" x="139.9" y="231.0"/>
+<use href="#m4" x="157.5" y="213.3"/>
+<use href="#m4" x="212.4" y="156.0"/>
+<use href="#m5" x="126.1" y="244.8"/>
+<use href="#m5" x="125.7" y="244.6"/>
+<use href="#m5" x="125.1" y="244.6"/>
+<use href="#m4" x="80.4" y="289.7"/>
+<use href="#m4" x="89.9" y="280.6"/>
+<use href="#m4" x="152.0" y="220.9"/>
+<use href="#m5" x="75.6" y="294.6"/>
+<use href="#m5" x="75.7" y="294.6"/>
+<use href="#m5" x="75.5" y="294.6"/>
+<text x="400.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">Spread between replicates (SD)</text>
+<text x="348.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">b</text>
+<line x1="400" x2="650" y1="300.0" y2="300.0" stroke="#E1E5EF"/>
+<text x="394" y="304.0" font-size="11" text-anchor="end" fill="#5A6480">0</text>
+<line x1="400" x2="650" y1="216.7" y2="216.7" stroke="#E1E5EF"/>
+<text x="394" y="220.7" font-size="11" text-anchor="end" fill="#5A6480">0.1</text>
+<line x1="400" x2="650" y1="133.3" y2="133.3" stroke="#E1E5EF"/>
+<text x="394" y="137.3" font-size="11" text-anchor="end" fill="#5A6480">0.2</text>
+<line x1="400" x2="650" y1="50.0" y2="50.0" stroke="#E1E5EF"/>
+<text x="394" y="54.0" font-size="11" text-anchor="end" fill="#5A6480">0.3</text>
+<line x1="400.0" x2="400.0" y1="300" y2="304" stroke="#5A6480"/>
+<text x="400.0" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0</text>
+<line x1="483.3" x2="483.3" y1="300" y2="304" stroke="#5A6480"/>
+<text x="483.3" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.1</text>
+<line x1="566.7" x2="566.7" y1="300" y2="304" stroke="#5A6480"/>
+<text x="566.7" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.2</text>
+<line x1="650.0" x2="650.0" y1="300" y2="304" stroke="#5A6480"/>
+<text x="650.0" y="317" font-size="11" text-anchor="middle" fill="#5A6480">0.3</text>
+<rect x="400" y="50" width="250" height="250" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="525.0" y="336.0" font-size="12" text-anchor="middle" fill="#0F1730">SPOT</text>
+<text x="356.0" y="175.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 356.0 175.0)">SLiM</text>
+<path d="M400.0 300.0L650.0 50.0" fill="none" stroke="#5A6480" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="1"/>
+<use href="#m0" x="427.2" y="271.8"/>
+<use href="#m0" x="443.7" y="254.6"/>
+<use href="#m0" x="480.3" y="213.6"/>
+<use href="#m1" x="425.3" y="274.1"/>
+<use href="#m1" x="435.9" y="263.6"/>
+<use href="#m1" x="453.8" y="245.6"/>
+<use href="#m0" x="428.4" y="271.8"/>
+<use href="#m0" x="445.8" y="253.4"/>
+<use href="#m0" x="504.8" y="194.8"/>
+<use href="#m0" x="472.2" y="227.3"/>
+<use href="#m0" x="521.9" y="173.2"/>
+<use href="#m0" x="630.2" y="71.3"/>
+<use href="#m1" x="454.5" y="242.8"/>
+<use href="#m1" x="476.2" y="221.4"/>
+<use href="#m1" x="507.8" y="184.2"/>
+<use href="#m2" x="432.3" y="266.9"/>
+<use href="#m2" x="459.3" y="240.5"/>
+<use href="#m2" x="535.9" y="161.4"/>
+<use href="#m3" x="426.0" y="276.0"/>
+<use href="#m3" x="436.5" y="265.2"/>
+<use href="#m3" x="452.8" y="245.6"/>
+<use href="#m4" x="433.4" y="266.7"/>
+<use href="#m4" x="454.0" y="245.5"/>
+<use href="#m4" x="503.7" y="194.3"/>
+<use href="#m5" x="428.2" y="270.3"/>
+<use href="#m5" x="440.3" y="259.0"/>
+<use href="#m5" x="461.4" y="239.8"/>
+<use href="#m4" x="411.0" y="289.1"/>
+<use href="#m4" x="425.7" y="275.2"/>
+<use href="#m4" x="503.6" y="200.2"/>
+<use href="#m5" x="406.8" y="293.2"/>
+<use href="#m5" x="409.8" y="290.7"/>
+<use href="#m5" x="414.3" y="285.9"/>
+<use href="#m6" x="88.0" y="62.0"/>
+<text x="105.0" y="66.0" font-size="11" text-anchor="start" fill="#0F1730">diploid</text>
+<use href="#m7" x="88.0" y="79.0"/>
+<text x="105.0" y="83.0" font-size="11" text-anchor="start" fill="#0F1730">haploid</text>
+<use href="#m8" x="88.0" y="96.0"/>
+<text x="105.0" y="100.0" font-size="11" text-anchor="start" fill="#0F1730">haplodiploid</text>
+<use href="#m9" x="88.0" y="113.0"/>
+<text x="105.0" y="117.0" font-size="11" text-anchor="start" fill="#0F1730">hollow: neutral runs</text>
+<text x="730.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">Power (drift-aware trend test)</text>
+<text x="678.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">c</text>
+<line x1="730" x2="980" y1="264.3" y2="264.3" stroke="#E1E5EF"/>
+<text x="724" y="268.3" font-size="11" text-anchor="end" fill="#5A6480">20%</text>
+<line x1="730" x2="980" y1="192.9" y2="192.9" stroke="#E1E5EF"/>
+<text x="724" y="196.9" font-size="11" text-anchor="end" fill="#5A6480">40%</text>
+<line x1="730" x2="980" y1="121.4" y2="121.4" stroke="#E1E5EF"/>
+<text x="724" y="125.4" font-size="11" text-anchor="end" fill="#5A6480">60%</text>
+<line x1="730" x2="980" y1="50.0" y2="50.0" stroke="#E1E5EF"/>
+<text x="724" y="54.0" font-size="11" text-anchor="end" fill="#5A6480">80%</text>
+<line x1="765.7" x2="765.7" y1="300" y2="304" stroke="#5A6480"/>
+<text x="765.7" y="317" font-size="11" text-anchor="middle" fill="#5A6480">20%</text>
+<line x1="837.1" x2="837.1" y1="300" y2="304" stroke="#5A6480"/>
+<text x="837.1" y="317" font-size="11" text-anchor="middle" fill="#5A6480">40%</text>
+<line x1="908.6" x2="908.6" y1="300" y2="304" stroke="#5A6480"/>
+<text x="908.6" y="317" font-size="11" text-anchor="middle" fill="#5A6480">60%</text>
+<line x1="980.0" x2="980.0" y1="300" y2="304" stroke="#5A6480"/>
+<text x="980.0" y="317" font-size="11" text-anchor="middle" fill="#5A6480">80%</text>
+<rect x="730" y="50" width="250" height="250" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="855.0" y="336.0" font-size="12" text-anchor="middle" fill="#0F1730">SPOT</text>
+<text x="686.0" y="175.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 686.0 175.0)">SLiM</text>
+<path d="M730.0 300.0L980.0 50.0" fill="none" stroke="#5A6480" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="1"/>
+<line x1="809.1" x2="809.1" y1="240.8" y2="219.9" stroke="#2B59D9" stroke-width="1.2"/>
+<use href="#m6" x="809.1" y="230.4"/>
+<line x1="782.3" x2="782.3" y1="261.8" y2="242.5" stroke="#2B59D9" stroke-width="1.2"/>
+<use href="#m6" x="782.3" y="252.1"/>
+<line x1="885.7" x2="885.7" y1="169.7" y2="147.1" stroke="#2B59D9" stroke-width="1.2"/>
+<use href="#m6" x="885.7" y="158.4"/>
+<line x1="849.5" x2="849.5" y1="189.1" y2="166.6" stroke="#0E9F6E" stroke-width="1.2"/>
+<use href="#m7" x="849.5" y="177.9"/>
+<line x1="840.7" x2="840.7" y1="194.2" y2="171.9" stroke="#C27A12" stroke-width="1.2"/>
+<use href="#m8" x="840.7" y="183.0"/>
+<line x1="938.2" x2="938.2" y1="102.3" y2="81.3" stroke="#C27A12" stroke-width="1.2"/>
+<use href="#m8" x="938.2" y="91.8"/>
+<text x="1060.0" y="40.0" font-size="13" text-anchor="start" fill="#0F1730" font-weight="600">SPOT's threshold on SLiM</text>
+<text x="1008.0" y="40.0" font-size="15" text-anchor="start" fill="#0F1730" font-weight="700">d</text>
+<line x1="1060" x2="1340" y1="300.0" y2="300.0" stroke="#E1E5EF"/>
+<text x="1054" y="304.0" font-size="11" text-anchor="end" fill="#5A6480">3%</text>
+<line x1="1060" x2="1340" y1="250.0" y2="250.0" stroke="#E1E5EF"/>
+<text x="1054" y="254.0" font-size="11" text-anchor="end" fill="#5A6480">4%</text>
+<line x1="1060" x2="1340" y1="200.0" y2="200.0" stroke="#E1E5EF"/>
+<text x="1054" y="204.0" font-size="11" text-anchor="end" fill="#5A6480">5%</text>
+<line x1="1060" x2="1340" y1="150.0" y2="150.0" stroke="#E1E5EF"/>
+<text x="1054" y="154.0" font-size="11" text-anchor="end" fill="#5A6480">6%</text>
+<line x1="1060" x2="1340" y1="100.0" y2="100.0" stroke="#E1E5EF"/>
+<text x="1054" y="104.0" font-size="11" text-anchor="end" fill="#5A6480">7%</text>
+<line x1="1060" x2="1340" y1="50.0" y2="50.0" stroke="#E1E5EF"/>
+<text x="1054" y="54.0" font-size="11" text-anchor="end" fill="#5A6480">8%</text>
+<rect x="1060" y="50" width="280" height="250" fill="none" stroke="#0F1730" stroke-width=".8"/>
+<text x="1016.0" y="175.0" font-size="12" text-anchor="middle" fill="#0F1730" transform="rotate(-90 1016.0 175.0)">false-positive rate (nominal 5%)</text>
+<path d="M1060.0 200.0L1340.0 200.0" fill="none" stroke="#5A6480" stroke-width="1.2" stroke-dasharray="5 4" stroke-opacity="1"/>
+<line x1="1088.0" x2="1088.0" y1="177.0" y2="129.0" stroke="#2B59D9" stroke-width="1.2"/>
+<use href="#m6" x="1088.0" y="153.0"/>
+<text x="1088.0" y="314.0" font-size="10" text-anchor="middle" fill="#0F1730">diploid</text>
+<text x="1088.0" y="326.0" font-size="10" text-anchor="middle" fill="#0F1730">Ne 1,000</text>
+<text x="1088.0" y="338.0" font-size="10" text-anchor="middle" fill="#5A6480">n = 8,000</text>
+<line x1="1144.0" x2="1144.0" y1="207.0" y2="159.0" stroke="#2B59D9" stroke-width="1.2"/>
+<use href="#m6" x="1144.0" y="183.0"/>
+<text x="1144.0" y="314.0" font-size="10" text-anchor="middle" fill="#0F1730">diploid</text>
+<text x="1144.0" y="326.0" font-size="10" text-anchor="middle" fill="#0F1730">Ne 200</text>
+<text x="1144.0" y="338.0" font-size="10" text-anchor="middle" fill="#5A6480">n = 8,000</text>
+<line x1="1200.0" x2="1200.0" y1="256.5" y2="158.5" stroke="#0E9F6E" stroke-width="1.2"/>
+<use href="#m7" x="1200.0" y="207.5"/>
+<text x="1200.0" y="314.0" font-size="10" text-anchor="middle" fill="#0F1730">haploid</text>
+<text x="1200.0" y="326.0" font-size="10" text-anchor="middle" fill="#0F1730">Ne 1,000</text>
+<text x="1200.0" y="338.0" font-size="10" text-anchor="middle" fill="#5A6480">n = 2,000</text>
+<line x1="1256.0" x2="1256.0" y1="196.0" y2="148.0" stroke="#C27A12" stroke-width="1.2"/>
+<use href="#m8" x="1256.0" y="172.0"/>
+<text x="1256.0" y="314.0" font-size="10" text-anchor="middle" fill="#0F1730">haplodipl.</text>
+<text x="1256.0" y="326.0" font-size="10" text-anchor="middle" fill="#0F1730">Ne 750</text>
+<text x="1256.0" y="338.0" font-size="10" text-anchor="middle" fill="#5A6480">n = 8,000</text>
+<line x1="1312.0" x2="1312.0" y1="266.5" y2="168.5" stroke="#C27A12" stroke-width="1.2"/>
+<use href="#m8" x="1312.0" y="217.5"/>
+<text x="1312.0" y="314.0" font-size="10" text-anchor="middle" fill="#0F1730">haplodipl.</text>
+<text x="1312.0" y="326.0" font-size="10" text-anchor="middle" fill="#0F1730">Ne 1,500</text>
+<text x="1312.0" y="338.0" font-size="10" text-anchor="middle" fill="#5A6480">n = 2,000</text>
+<text x="70.0" y="395.0" font-size="11" text-anchor="start" fill="#5A6480">Same scenarios simulated by SPOT and by SLiM 5.2 (2,000 replicate populations each; d: up to 8,000 SLiM neutral replicates, SPOT threshold from 20,000). Sampling at generations 0, 20, 40 and 90,</text>
+<text x="70.0" y="411.0" font-size="11" text-anchor="start" fill="#5A6480">20/20/20/40 females, perfect genotypes. a, b: allele frequency among breeding females after selection at generations 20, 40 and 90. c, d: bars show ±2 standard errors.</text>
+</svg>

@@ -1,0 +1,6 @@
+neutral_scenario	system	NF	NM	p0	threshold_spot_20000	n_slim	fpr_on_slim	se	z_vs_5pc	sd_Z_spot	sd_Z_slim	fpr_on_independent_spot
+diploid_N1000_neutral	diploid	500	500	0.1	2.429	8000	0.0594	0.0024	3.85	1.557	1.576	0.0509
+diploid_N200_neutral	diploid	100	100	0.1	4.155	8000	0.0534	0.0024	1.39	2.509	2.515	0.0508
+haploid_N1000_neutral	haploid	1000	1000	0.05	2.245	2000	0.0485	0.0049	-0.31	1.346	1.362	0.0480
+haplodiploid_N1000_neutral	haplodiploid	500	500	0.1	2.645	8000	0.0556	0.0024	2.31	1.687	1.709	0.0522
+haplodiploid_N2000_neutral	haplodiploid	1000	1000	0.01	1.735	2000	0.0465	0.0049	-0.72	1.025	1.000	0.0517
