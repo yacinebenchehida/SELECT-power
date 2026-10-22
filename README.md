@@ -258,7 +258,7 @@ migration          m'   = 1 − (1 − m)^λ
 sampling times     t'   = t / λ
 ```
 
-This keeps Ne·s and the total drift over the period unchanged; sampling, genotype calling and the test are not affected. λ is chosen automatically so that about 2,000 generations are simulated, but it is capped so that the rescaled selection stays at or below 0.025 and the rescaled breeding numbers at or above 200. These limits come from comparisons with full simulations (see `validation/`), in which rescaled and full power agreed within Monte Carlo error. The status line says when rescaling is used. If the caps would require simulating more than 10,000 generations, λ is raised anyway to keep the page fast, and a note marks the result as approximate.
+This keeps Ne·s and the total drift over the period unchanged; sampling, genotype calling and the test are not affected. λ is chosen automatically so that about 2,000 generations are simulated, but it is capped so that the rescaled selection stays at or below 0.025 and the rescaled breeding numbers at or above 200. These limits come from comparisons with full simulations (see [`validation/README.md`](validation/README.md)), in which rescaled and full power agreed within Monte Carlo error. The status line says when rescaling is used. If the caps would require simulating more than 10,000 generations, λ is raised anyway to keep the page fast, and a note marks the result as approximate.
 
 ---
 
