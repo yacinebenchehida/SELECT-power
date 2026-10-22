@@ -4,26 +4,22 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 
 ## 1. Software before submission
 
-- [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations; summary and figure in [`validation/README.md`](../validation/README.md).
+- [x] **Rescaling for very many generations** (historical DNA of bacteria and viruses): done. λ chosen automatically (about 2,000 simulated generations), capped at scaled s ≤ 0.025 and scaled N ≥ 200; validated against full simulations; summary and figure in [`validation/rescaling.md`](../validation/rescaling.md).
 - [x] **Use all processor cores (Web Workers)**: done for the power curve, planner and sampling comparison; results identical to serial runs.
 - [x] **Save, load and share settings; export results as CSV**: done (shareable link, settings file, CSV downloads). Useful for the paper: each figure can come with a link that reproduces it.
 - [ ] Final pass on the page, README and guide after these changes; check every number quoted in the guide.
 - [ ] Organism-specific advice in the README ("Choosing settings for your organism": insects, long-lived vertebrates, plants, pathogens).
-- [ ] Freeze a version for the paper (currently 0.9.0; release 1.0.0 on GitHub and archive it on Zenodo to get a DOI, which the journal requires).
+- [ ] Freeze a version for the paper (currently 0.9.1; release 1.0.0 on GitHub and archive it on Zenodo to get a DOI, which the journal requires).
 - [x] **Licence**: MIT (`LICENSE`), with `CITATION.cff` for GitHub's "Cite this repository" button.
 - [x] **Example scenarios** in the page (bumblebees, long-lived mammal, human ancient DNA, bacterial pathogen, large diploid population, analytic baseline), version number and "How to cite", and PNG/SVG download of every chart.
 
 ## 2. Validation (main results section)
 
-- [ ] **False-positive rate is correct.** With no selection, across small and large Ne, 2 to 10 time points, haploid, diploid and haplodiploid systems, low and high depth: the drift-aware test should reject about 5% of neutral replicates, while the naive test rejects far more when drift is strong.
-  - Figure: false-positive rate against Ne, one line for each test.
-- [ ] **Agreement with known theory.**
-  - With no drift and perfect genotypes, power should match the exact binomial (textbook) calculation.
-  - The neutral variance of allele-frequency change should match p(1−p)·t/(2Ne) (plus sampling variance).
-  - Haploid deterministic trajectory against p(1+s)^t / (1 − p + p(1+s)^t).
-  - Table or scatter plot of SPOT against theory (points on the diagonal).
-- [ ] **Monte Carlo precision.** Repeat runs with different seeds: power varies by about ±1–2 points with the default number of replicates. This justifies the defaults.
-- [x] **Rescaling against full simulations** across s, Ne, ploidy and number of generations: done, see [`validation/README.md`](../validation/README.md) (methods, results, figure and caveats, ready to adapt as a results subsection or supplement).
+- [x] **False-positive rate**: done, see [`validation/false_positive_rate.md`](../validation/false_positive_rate.md). The drift-aware test holds 5% (trend test 4.5–5.4%) across Ne, inheritance systems and design factors; the naive test reaches up to 23%.
+- [x] **Gaussian fallback for many loci fixed** (version 0.9.1): SPOT now simulates 10/α′ neutral replicates (up to 200,000), which keeps the false-positive rate at 1.0–1.2 times nominal; the earlier Gaussian fit gave up to 8 times. See the same file.
+- [x] **Agreement with theory**: done, see [`validation/theory.md`](../validation/theory.md) (exact power without drift, heterozygosity loss under drift, selection trajectories).
+- [x] **Monte Carlo precision**: done, see [`validation/monte_carlo_precision.md`](../validation/monte_carlo_precision.md).
+- [x] **Rescaling against full simulations** across s, Ne, ploidy and number of generations: done, see [`validation/rescaling.md`](../validation/rescaling.md) (methods, results, figure and caveats, ready to adapt as a results subsection or supplement).
 - [ ] Spot-check a few designs (full and rescaled) against an independent simulator such as SLiM.
 
 ## 3. Worked examples (application section)
