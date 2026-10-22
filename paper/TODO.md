@@ -20,7 +20,7 @@ Working checklist for the SPOT paper. Related literature is listed in [`RELATED_
 - [x] **Agreement with theory**: done, see [`validation/theory.md`](../validation/theory.md) (exact power without drift, heterozygosity loss under drift, selection trajectories).
 - [x] **Monte Carlo precision**: done, see [`validation/monte_carlo_precision.md`](../validation/monte_carlo_precision.md).
 - [x] **Rescaling against full simulations** across s, Ne, ploidy and number of generations: done, see [`validation/rescaling.md`](../validation/rescaling.md) (methods, results, figure and caveats, ready to adapt as a results subsection or supplement).
-- [ ] Spot-check a few designs (full and rescaled) against an independent simulator such as SLiM.
+- [x] **Comparison with SLiM**: done, see [`validation/slim.md`](../validation/slim.md) (6 scenarios, diploid, haploid and haplodiploid, full simulation; rescaling not compared with SLiM). Small excess of false positives (5.6–5.9%) in two scenarios, cause not identified.
 
 ## 3. Worked examples (application section)
 
